@@ -1,25 +1,32 @@
 {
-  "name": "libscie-cli",
-  "version": "0.0.1",
-  "description": "Command Line Interface (CLI) for a p2p scholarly communication infrastructure.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/libscie/cli.git"
-  },
-  "keywords": [
-    "cli",
-    "p2p",
-    "research",
-    "communication"
-  ],
-  "author": "Liberate Science",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/libscie/cli/issues"
-  },
-  "homepage": "https://github.com/libscie/cli#readme"
+    "name": "libscie-cli",
+    "version": "0.0.1",
+    "description": "Command Line Interface (CLI) for a p2p scholarly communication infrastructure.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/libscie/cli.git"
+    },
+    "keywords": [
+        "cli",
+        "p2p",
+        "research",
+        "communication"
+    ],
+    "author": "Liberate Science",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/libscie/cli/issues"
+    },
+    "homepage": "https://github.com/libscie/cli#readme",
+    "dependencies": {
+        "libscie-api": "0.0.1",
+        "meow": "^5.0.0"
+    },
+    "bin": {
+        "libscie": "./cli.js"
+    }
 }
