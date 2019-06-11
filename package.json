@@ -24,7 +24,8 @@
     "homepage": "https://github.com/libscie/cli#readme",
     "dependencies": {
         "libscie-api": "0.0.1",
-        "meow": "^5.0.0"
+        "meow": "^5.0.0",
+        "prompts": "^2.1.0"
     },
     "bin": {
         "libscie": "./cli.js"
