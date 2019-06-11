@@ -2,8 +2,8 @@
 'use strict'
 
 const fs = require('fs')
-const meow = require('meow');
 const libscie = require('libscie-api')
+const meow = require('meow');
 const prompts = require('prompts')
 
 const cli = meow(`
@@ -14,7 +14,8 @@ const cli = meow(`
 	  --env, -e  Custom environment (defaults to ~/.libscie/)
 
 	Examples
-	  $ libscie init profile
+      $ libscie                 [interactive mode]
+      $ libscie init profile
       $ libscie register
       $ libscie search
 `, {
@@ -26,40 +27,84 @@ const cli = meow(`
 	}
 })
 
+// env checks
 if ( !cli.flags.env ) cli.flags.env = '~./libscie'
 
-// if no args show help
-if ( cli.input.length == 0 ) console.log(cli.help)
-
-if ( cli.input[0] === 'init' ) {
+// if no args go full interactive
+// need to add conditional question forwarding
+if ( cli.input.length === 0 ) {
     (async () => {
-        const response = await prompts(
-            [
-                {
-                    type: 'text',
-                    name: 'title',
-                    message: 'Title or Name:'
-                },
-                {
-                    type: 'text',
-                    name: 'description',
-                    message: 'Description'
-                }
-            ]);
-        
-        libscie.init(cli.input[1],
-                     cli.flags.env,
-                     response.title,
-                     response.description)
-    })();
-    
+        const action = await askAction()
+        if ( action === 'init' ) {
+            const type = await askType()
+            const meta = await askMeta()
+
+            libscie.init(type,
+                         cli.flags.env,
+                         meta.title,
+                         meta.description)
+        }
+
+        if ( action === 'reg' ) {
+            await askReg()
+        }
+    })()
 }
 
-if ( cli.input[0] === 'register' ) {
-    // provide list of isOwner & type === 'module'
-    // interactive search + selection
-    // provide list of isOwner & type === 'profile'
-    // interactive search + selection
+// can export all askX to ./lib/ask.js
+// not now
+async function askAction () {
+    const qs = {
+        type: 'select',
+        name: 'action',
+        message: 'Pick an action',
+        choices: [
+            { title: 'Initialize', value: 'init' },
+            { title: 'Register', value: 'reg' }
+        ],
+        initial: 0
+    };
+
+    let res = await prompts(qs)
+    return res.action
 }
 
-if ( cli.input[0] === 'search' ) {}
+async function askType () {
+    const qs = {
+        type: 'select',
+        name: 'type',
+        message: 'Pick a type',
+        choices: [
+            { title: 'Module', value: 'module' },
+            { title: 'Profile', value: 'profile' }
+        ],
+        initial: 0
+    };
+
+    let res = await prompts(qs)
+    return res.type
+}
+
+async function askMeta () {
+    const qs = [
+        {
+            type: 'text',
+            name: 'title',
+            message: 'Title'
+        },
+        {
+            type: 'text',
+            name: 'description',
+            message: 'Description'
+        }];
+
+    let res = await prompts(qs)
+    return res
+}
+
+// need to get the caching straight
+// then i can provide a title based selection
+async function askReg () {
+    // select the module to register
+    // select the profile to register to
+}
