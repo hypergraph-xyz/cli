@@ -1,7 +1,10 @@
 #!/usr/bin/env node
-'use strict';
+'use strict'
+
+const fs = require('fs')
 const meow = require('meow');
 const libscie = require('libscie-api')
+const prompts = require('prompts')
 
 const cli = meow(`
 	Usage
@@ -13,20 +16,43 @@ const cli = meow(`
 	Examples
 	  $ libscie init profile
       $ libscie register
+      $ libscie search
 `, {
 	flags: {
-		rainbow: {
+		env: {
 			type: 'string',
 			alias: 'e'
 		}
 	}
 })
 
+if ( !cli.flags.env ) cli.flags.env = '~./libscie'
+
+// if no args show help
+if ( cli.input.length == 0 ) console.log(cli.help)
+
 if ( cli.input[0] === 'init' ) {
-    libscie.init(cli.input[1], cli.flags.env)
-    // prompt for title
-    // prompt for description
-    // add to index
+    (async () => {
+        const response = await prompts(
+            [
+                {
+                    type: 'text',
+                    name: 'title',
+                    message: 'Title or Name:'
+                },
+                {
+                    type: 'text',
+                    name: 'description',
+                    message: 'Description'
+                }
+            ]);
+        
+        libscie.init(cli.input[1],
+                     cli.flags.env,
+                     response.title,
+                     response.description)
+    })();
+    
 }
 
 if ( cli.input[0] === 'register' ) {
@@ -36,4 +62,4 @@ if ( cli.input[0] === 'register' ) {
     // interactive search + selection
 }
 
-console.log(cli.flags.env);
+if ( cli.input[0] === 'search' ) {}
