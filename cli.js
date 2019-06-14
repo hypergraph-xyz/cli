@@ -16,6 +16,7 @@ const cli = meow(`
 	Examples
       $ libscie                 [interactive mode]
       $ libscie init profile
+      $ libscie cache
       $ libscie register
       $ libscie search
 `, {
@@ -28,7 +29,7 @@ const cli = meow(`
 })
 
 // env checks
-if ( !cli.flags.env ) cli.flags.env = '~./libscie'
+if ( !cli.flags.env ) cli.flags.env = '/home/chjh/.libscie'
 
 // if no args go full interactive
 // need to add conditional question forwarding
@@ -45,8 +46,15 @@ if ( cli.input.length === 0 ) {
                          meta.description)
         }
 
+        if ( action === 'cache' ) {
+            libscie.buildCache(cli.flags.env)
+        }
+        
         if ( action === 'reg' ) {
-            await askReg()
+            const answer = await askReg(cli.flags.env)
+            const module = answer.register
+            const profile = answer.registerTo
+            // register latest version to profile
         }
     })()
 }
@@ -60,7 +68,8 @@ async function askAction () {
         message: 'Pick an action',
         choices: [
             { title: 'Initialize', value: 'init' },
-            { title: 'Register', value: 'reg' }
+            { title: 'Register', value: 'reg' },
+            { title: 'Cache', value: 'cache' }
         ],
         initial: 0
     };
@@ -102,9 +111,44 @@ async function askMeta () {
     return res
 }
 
-// need to get the caching straight
-// then i can provide a title based selection
-async function askReg () {
-    // select the module to register
-    // select the profile to register to
+
+async function select (type, env) {
+    // TODO check profile for writable
+    // WAITING on cache containing isOwner
+    let cache = await libscie.readCache(env)
+
+    let choices = cache.filter(mod => mod.type === type).
+        map(choice => {
+            let obj = {}
+            obj.title = choice.title
+            obj.value = choice.hash
+
+            return obj
+        })
+
+    return choices
+}
+
+async function askReg (env) {
+    let modopts = await select('module', env)
+    let profopts = await select('profile', env)
+
+    console.log(profopts)
+    const qs = [
+        {
+            type: 'select',
+            name: 'register',
+            message: 'Pick a module to register',
+            choices:  modopts
+        },
+        {
+            type: 'select',
+            name: 'registerTo',
+            message: 'Pick a profile to register to',
+            choices:  profopts
+        }
+    ]
+
+    let res = await prompts(qs)
+    return res
 }
