@@ -15,10 +15,6 @@ const cli = meow(`
 
 	Examples
       $ libscie                 [interactive mode]
-      $ libscie init profile
-      $ libscie cache
-      $ libscie register
-      $ libscie search
 `, {
 	flags: {
 		env: {
@@ -32,7 +28,6 @@ const cli = meow(`
 if ( !cli.flags.env ) cli.flags.env = '/home/chjh/.libscie'
 
 // if no args go full interactive
-// need to add conditional question forwarding
 if ( cli.input.length === 0 ) {
     (async () => {
         const action = await askAction()
@@ -58,6 +53,12 @@ if ( cli.input.length === 0 ) {
         }
     })()
 }
+
+// add semi-interactive depending on amount of args need to add
+// non-interactive to allow for scripting scripting will be worthwhile
+// to simulate whole environments on the fly
+
+/////////////////////////////////////////////////////////
 
 // can export all askX to ./lib/ask.js
 // not now
@@ -131,16 +132,19 @@ async function askReg (env) {
     let modopts = await select('module', env)
     let profopts = await select('profile', env)
     // if opts empty (either) then throw error to build cache
-    
+
+    // might improve the autocomplete by using fuzzy search
+    // doable with the suggest function
+    // https://github.com/terkelg/prompts#autocompletemessage-choices-initial-suggest-limit-style
     const qs = [
         {
-            type: 'select',
+            type: 'autocomplete',
             name: 'register',
             message: 'Pick a module to register',
             choices:  modopts
         },
         {
-            type: 'select',
+            type: 'autocomplete',
             name: 'registerTo',
             message: 'Pick a profile to register to',
             choices:  profopts
