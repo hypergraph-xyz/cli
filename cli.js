@@ -113,11 +113,9 @@ async function askMeta () {
 
 
 async function select (type, env) {
-    // TODO check profile for writable
-    // WAITING on cache containing isOwner
     let cache = await libscie.readCache(env)
 
-    let choices = cache.filter(mod => mod.type === type).
+    let choices = cache.filter(mod => mod.type === type & mod.isOwner).
         map(choice => {
             let obj = {}
             obj.title = choice.title
@@ -132,8 +130,8 @@ async function select (type, env) {
 async function askReg (env) {
     let modopts = await select('module', env)
     let profopts = await select('profile', env)
-
-    console.log(profopts)
+    // if opts empty (either) then throw error to build cache
+    
     const qs = [
         {
             type: 'select',
