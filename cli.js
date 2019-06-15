@@ -50,11 +50,14 @@ if ( cli.input.length === 0 ) {
             const module = answer.register
             const profile = answer.registerTo
             // register latest version to profile
+            libscie.reg(module, profile, cli.flags.env)
         }
     })()
 }
 
 // add semi-interactive depending on amount of args need to add
+if ( cli.input.length === 1 ) {}
+
 // non-interactive to allow for scripting scripting will be worthwhile
 // to simulate whole environments on the fly
 
