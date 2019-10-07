@@ -4,6 +4,7 @@
 const libscie = require('libscie-api')
 const meow = require('meow')
 const prompts = require('prompts')
+const { homedir } = require('os')
 
 const cli = meow(
   `
@@ -28,7 +29,7 @@ const cli = meow(
 
 const main = async () => {
   // env checks
-  if (!cli.flags.env) cli.flags.env = '/home/chjh/.libscie'
+  if (!cli.flags.env) cli.flags.env = `${homedir()}/.libscie`
 
   // if no args go full interactive
   if (cli.input.length === 0) {
