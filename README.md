@@ -3,6 +3,7 @@
 [![NPM](https://nodei.co/npm/libscie-cli.png)](https://npmjs.org/package/libscie-cli)
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Code Style Prettier Standard](https://img.shields.io/badge/format-prettier_standard-ff69b4.svg)](https://github.com/sheerun/prettier-standard)
 
 Command Line Interface (CLI) for a Public Collaborative Project (PCP)
 infrastructure.
