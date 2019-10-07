@@ -26,12 +26,12 @@ const cli = meow(
   }
 )
 
-// env checks
-if (!cli.flags.env) cli.flags.env = '/home/chjh/.libscie'
+const main = async () => {
+  // env checks
+  if (!cli.flags.env) cli.flags.env = '/home/chjh/.libscie'
 
-// if no args go full interactive
-if (cli.input.length === 0) {
-  ;(async () => {
+  // if no args go full interactive
+  if (cli.input.length === 0) {
     const action = await askAction()
     if (action === 'init') {
       const type = await askType()
@@ -51,15 +51,20 @@ if (cli.input.length === 0) {
       // register latest version to profile
       libscie.reg(module, profile, cli.flags.env)
     }
-  })()
+  }
+
+  // add semi-interactive depending on amount of args need to add
+  if (cli.input.length === 1) {
+  }
+
+  // non-interactive to allow for scripting scripting will be worthwhile
+  // to simulate whole environments on the fly
 }
 
-// add semi-interactive depending on amount of args need to add
-if (cli.input.length === 1) {
-}
-
-// non-interactive to allow for scripting scripting will be worthwhile
-// to simulate whole environments on the fly
+main().catch(err => {
+  console.error(err)
+  process.exit(1)
+})
 
 /// //////////////////////////////////////////////////////
 
