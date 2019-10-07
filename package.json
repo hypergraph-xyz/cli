@@ -4,7 +4,7 @@
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "standard"
     },
     "repository": {
         "type": "git",
@@ -29,5 +29,8 @@
     },
     "bin": {
         "libscie": "./cli.js"
+    },
+    "devDependencies": {
+        "standard": "^14.3.1"
     }
 }
