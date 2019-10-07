@@ -1,6 +1,7 @@
 # Liberate Science CLI
 
 [![NPM](https://nodei.co/npm/libscie-cli.png)](https://npmjs.org/package/libscie-cli)
+
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 Command Line Interface (CLI) for a Public Collaborative Project (PCP)
