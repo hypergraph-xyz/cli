@@ -4,7 +4,7 @@
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
     "scripts": {
-        "test": "standard"
+        "test": "prettier-standard '**/*.js' && standard"
     },
     "repository": {
         "type": "git",
@@ -31,6 +31,7 @@
         "libscie": "./cli.js"
     },
     "devDependencies": {
+        "prettier-standard": "^15.0.1",
         "standard": "^14.3.1"
     }
 }
