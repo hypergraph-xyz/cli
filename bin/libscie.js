@@ -69,8 +69,7 @@ function askAction () {
       { title: 'Initialize', value: 'init' },
       { title: 'Register', value: 'reg' },
       { title: 'Cache', value: 'cache' }
-    ],
-    initial: 0
+    ]
   })
 }
 
@@ -81,8 +80,7 @@ function askType () {
     choices: [
       { title: 'Module', value: 'module' },
       { title: 'Profile', value: 'profile' }
-    ],
-    initial: 0
+    ]
   })
 }
 
