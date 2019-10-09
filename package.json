@@ -28,7 +28,7 @@
         "prompts": "^2.1.0"
     },
     "bin": {
-        "libscie": "./cli.js"
+        "libscie": "./bin/libscie.js"
     },
     "devDependencies": {
         "prettier-standard": "^15.0.1",
