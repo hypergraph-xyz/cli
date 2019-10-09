@@ -30,7 +30,8 @@ const cli = meow(
 
 const actions = {}
 
-actions.Initialize = {
+actions.init = {
+  title: 'Initialize',
   input: [askType],
   handler: async ({ env, input: [type] }) => {
     const { title, description } = await askMeta()
@@ -38,7 +39,8 @@ actions.Initialize = {
   }
 }
 
-actions.Register = {
+actions.register = {
+  title: 'Register',
   handler: async ({ env }) => {
     const answer = await askReg(env)
     const module = answer.register
@@ -48,7 +50,8 @@ actions.Register = {
   }
 }
 
-actions.Cache = {
+actions.cache = {
+  title: 'Cache',
   handler: async ({ env }) => {
     libscie.buildCache(env)
   }
@@ -86,9 +89,9 @@ function askAction () {
   return prompt({
     type: 'select',
     message: 'Pick an action',
-    choices: Object.keys(actions).map(name => ({
-      title: name,
-      value: name
+    choices: Object.entries(actions).map(([value, { title }]) => ({
+      title,
+      value
     }))
   })
 }
