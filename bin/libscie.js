@@ -3,7 +3,7 @@
 
 const libscie = require('libscie-api')
 const meow = require('meow')
-const prompts = require('prompts')
+const prompt = require('../lib/prompt')
 const { homedir } = require('os')
 
 const cli = meow(
@@ -61,10 +61,9 @@ main().catch(err => {
 
 // can export all askX to ./lib/ask.js
 // not now
-async function askAction () {
-  const qs = {
+function askAction () {
+  return prompt({
     type: 'select',
-    name: 'action',
     message: 'Pick an action',
     choices: [
       { title: 'Initialize', value: 'init' },
@@ -72,44 +71,31 @@ async function askAction () {
       { title: 'Cache', value: 'cache' }
     ],
     initial: 0
-  }
-
-  const res = await prompts(qs)
-  return res.action
+  })
 }
 
-async function askType () {
-  const qs = {
+function askType () {
+  return prompt({
     type: 'select',
-    name: 'type',
     message: 'Pick a type',
     choices: [
       { title: 'Module', value: 'module' },
       { title: 'Profile', value: 'profile' }
     ],
     initial: 0
-  }
-
-  const res = await prompts(qs)
-  return res.type
+  })
 }
 
 async function askMeta () {
-  const qs = [
-    {
-      type: 'text',
-      name: 'title',
-      message: 'Title'
-    },
-    {
-      type: 'text',
-      name: 'description',
-      message: 'Description'
-    }
-  ]
-
-  const res = await prompts(qs)
-  return res
+  const title = await prompt({
+    type: 'text',
+    message: 'Title'
+  })
+  const description = await prompt({
+    type: 'text',
+    message: 'Description'
+  })
+  return { title, description }
 }
 
 async function select (type, env) {
@@ -136,21 +122,16 @@ async function askReg (env) {
   // might improve the autocomplete by using fuzzy search
   // doable with the suggest function
   // https://github.com/terkelg/prompts#autocompletemessage-choices-initial-suggest-limit-style
-  const qs = [
-    {
-      type: 'autocomplete',
-      name: 'register',
-      message: 'Pick a module to register',
-      choices: modopts
-    },
-    {
-      type: 'autocomplete',
-      name: 'registerTo',
-      message: 'Pick a profile to register to',
-      choices: profopts
-    }
-  ]
+  const register = await prompt({
+    type: 'autocomplete',
+    message: 'Pick a module to register',
+    choices: modopts
+  })
+  const registerTo = await prompt({
+    type: 'autocomplete',
+    message: 'Pick a profile to register to',
+    choices: profopts
+  })
 
-  const res = await prompts(qs)
-  return res
+  return { register, registerTo }
 }
