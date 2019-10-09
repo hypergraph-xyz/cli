@@ -29,35 +29,27 @@ const cli = meow(
 )
 
 const main = async () => {
-  // if no args go full interactive
-  if (cli.input.length === 0) {
-    const action = await askAction()
-    if (action === 'init') {
-      const type = await askType()
-      const meta = await askMeta()
+  let [action, ...input] = cli.input
+  if (!action) action = await askAction()
 
-      libscie.init(type, cli.flags.env, meta.title, meta.description)
-    }
+  if (action === 'init') {
+    const type = input[0] || (await askType())
+    const { title, description } = await askMeta()
 
-    if (action === 'cache') {
-      libscie.buildCache(cli.flags.env)
-    }
-
-    if (action === 'reg') {
-      const answer = await askReg(cli.flags.env)
-      const module = answer.register
-      const profile = answer.registerTo
-      // register latest version to profile
-      libscie.reg(module, profile, cli.flags.env)
-    }
+    libscie.init(type, cli.flags.env, title, description)
   }
 
-  // add semi-interactive depending on amount of args need to add
-  if (cli.input.length === 1) {
+  if (action === 'cache') {
+    libscie.buildCache(cli.flags.env)
   }
 
-  // non-interactive to allow for scripting scripting will be worthwhile
-  // to simulate whole environments on the fly
+  if (action === 'reg') {
+    const answer = await askReg(cli.flags.env)
+    const module = answer.register
+    const profile = answer.registerTo
+    // register latest version to profile
+    libscie.reg(module, profile, cli.flags.env)
+  }
 }
 
 main().catch(err => {
