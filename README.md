@@ -1,6 +1,6 @@
-# Liberate Science CLI
+# Hypergraph CLI
 
-[![NPM](https://nodei.co/npm/libscie-cli.png)](https://npmjs.org/package/libscie-cli)
+[![NPM](https://nodei.co/npm/hypergraph-cli.png)](https://npmjs.org/package/hypergraph-cli)
 
 [![Build Status](https://travis-ci.com/hypergraph-xyz/cli.svg?branch=master)](https://travis-ci.com/hypergraph-xyz/cli)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
@@ -17,7 +17,7 @@ benefit from a step-by-step approach with provenance pretty much
 ## Installation
 
 ```bash
-npm install -g libscie-cli
+npm install -g hypergraph-cli
 ```
 
 If you do not have [NodeJS](https://nodejs.org/en/) installed, please
@@ -30,24 +30,24 @@ install `node`.
 This tool *directly* allows you to start using public collaborative
 infrastructure.
 
-After installation, the `libscie` command is exported to your command
+After installation, the `hypergraph` command is exported to your command
 line. 
 
 We follow a simple format for the commands. However, we realize this
 isn't easy to remember at first so you can also invoke interactive
-mode by simply giving `libscie`. You will be guided through all the
+mode by simply giving `hypergraph`. You will be guided through all the
 options one-by-one. :angel-tone4:
 
 All commands are structured as
 
 ```bash
-libscie <action> <input> <arguments>
+hypergraph <action> <input> <arguments>
 ```
 
 You will always be provided with an interactive set of options if you
 omit an action, input, or argument(s) (if relevant). 
 
-Help is provided under `libscie --help` and the maintainers will do
+Help is provided under `hypergraph --help` and the maintainers will do
 their best to answer your questions in the issues.
 
 ## Contributing

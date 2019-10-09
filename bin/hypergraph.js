@@ -9,20 +9,20 @@ const { homedir } = require('os')
 const cli = meow(
   `
   Usage
-    $ libscie <action> <input>
+    $ hypergraph <action> <input>
 
   Options
-    --env, -e  Custom environment (defaults to ~/.libscie/)
+    --env, -e  Custom environment (defaults to ~/.hypergraph/)
 
   Examples
-      $ libscie                 [interactive mode]
+      $ hypergraph                 [interactive mode]
 `,
   {
     flags: {
       env: {
         type: 'string',
         alias: 'e',
-        default: `${homedir()}/.libscie`
+        default: `${homedir()}/.hypergraph`
       }
     }
   }

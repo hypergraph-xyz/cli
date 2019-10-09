@@ -1,5 +1,5 @@
 {
-    "name": "libscie-cli",
+    "name": "hypergraph-cli",
     "version": "0.0.1",
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
@@ -8,7 +8,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/libscie/cli.git"
+        "url": "git+https://github.com/hypergraph-xyz/cli.git"
     },
     "keywords": [
         "cli",
@@ -19,16 +19,16 @@
     "author": "Liberate Science",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/libscie/cli/issues"
+        "url": "https://github.com/hypergraph-xyz/cli/issues"
     },
-    "homepage": "https://github.com/libscie/cli#readme",
+    "homepage": "https://github.com/hypergraph-xyz/cli#readme",
     "dependencies": {
         "libscie-api": "0.0.1",
         "meow": "^5.0.0",
         "prompts": "^2.1.0"
     },
     "bin": {
-        "libscie": "./bin/libscie.js"
+        "hypergraph": "./bin/hypergraph.js"
     },
     "devDependencies": {
         "prettier-standard": "^15.0.1",
