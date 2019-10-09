@@ -21,16 +21,14 @@ const cli = meow(
     flags: {
       env: {
         type: 'string',
-        alias: 'e'
+        alias: 'e',
+        default: `${homedir()}/.libscie`
       }
     }
   }
 )
 
 const main = async () => {
-  // env checks
-  if (!cli.flags.env) cli.flags.env = `${homedir()}/.libscie`
-
   // if no args go full interactive
   if (cli.input.length === 0) {
     const action = await askAction()
