@@ -28,28 +28,49 @@ const cli = meow(
   }
 )
 
-const main = async () => {
-  let [action, ...input] = cli.input
-  if (!action) action = await askAction()
+const actions = {}
 
-  if (action === 'init') {
-    const type = input[0] || (await askType())
+actions.init = {
+  input: [askType],
+  handler: async ({ env, input: [type] }) => {
     const { title, description } = await askMeta()
-
-    libscie.init(type, cli.flags.env, title, description)
+    libscie.init(type, env, title, description)
   }
+}
 
-  if (action === 'cache') {
-    libscie.buildCache(cli.flags.env)
+actions.cache = {
+  handler: async ({ env }) => {
+    libscie.buildCache(env)
   }
+}
 
-  if (action === 'reg') {
-    const answer = await askReg(cli.flags.env)
+actions.reg = {
+  handler: async ({ env }) => {
+    const answer = await askReg(env)
     const module = answer.register
     const profile = answer.registerTo
     // register latest version to profile
-    libscie.reg(module, profile, cli.flags.env)
+    libscie.reg(module, profile, env)
   }
+}
+
+const main = async () => {
+  let [actionName, ...input] = cli.input
+  if (!actionName) actionName = await askAction()
+
+  const action = actions[actionName]
+  if (action.input) {
+    for (const [idx, getInput] of Object.entries(action.input)) {
+      if (!input[idx]) {
+        input[idx] = await getInput()
+      }
+    }
+  }
+
+  await action.handler({
+    ...cli.flags,
+    input
+  })
 }
 
 main().catch(err => {
