@@ -23,7 +23,7 @@
     },
     "homepage": "https://github.com/hypergraph-xyz/cli#readme",
     "dependencies": {
-        "libscie-api": "0.0.1",
+        "@p2pcommons/sdk-js": "github:p2pcommons/sdk-js",
         "meow": "^5.0.0",
         "prompts": "^2.1.0"
     },

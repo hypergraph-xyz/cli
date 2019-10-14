@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-const libscie = require('libscie-api')
+const P2PCommons = require('@p2pcommons/sdk-js')
 const meow = require('meow')
 const prompt = require('../lib/prompt')
 const { homedir } = require('os')
@@ -32,28 +32,46 @@ const actions = {}
 
 actions.init = {
   title: 'Initialize',
-  input: [askType],
+  input: [
+    async () =>
+      prompt({
+        type: 'select',
+        message: 'Pick a type',
+        choices: [
+          { title: 'Content', value: 'content' },
+          { title: 'Profile', value: 'profile' }
+        ]
+      })
+  ],
   handler: async ({ env, input: [type] }) => {
+    const p2p = P2PCommons({ baseDir: env })
     const { title, description } = await askMeta()
-    libscie.init(type, env, title, description)
+
+    await p2p.init({ type, title, description })
   }
 }
 
 actions.register = {
   title: 'Register',
   handler: async ({ env }) => {
-    const answer = await askReg(env)
-    const module = answer.register
-    const profile = answer.registerTo
-    // register latest version to profile
-    libscie.reg(module, profile, env)
+    console.log('TODO')
+    process.exit(1)
+
+    // const answer = await askReg(env)
+    // const module = answer.register
+    // const profile = answer.registerTo
+    // // register latest version to profile
+    // libscie.reg(module, profile, env)
   }
 }
 
 actions.cache = {
   title: 'Cache',
   handler: async ({ env }) => {
-    libscie.buildCache(env)
+    console.log('TODO')
+    process.exit(1)
+
+    // libscie.buildCache(env)
   }
 }
 
@@ -96,17 +114,6 @@ function askAction () {
   })
 }
 
-function askType () {
-  return prompt({
-    type: 'select',
-    message: 'Pick a type',
-    choices: [
-      { title: 'Module', value: 'module' },
-      { title: 'Profile', value: 'profile' }
-    ]
-  })
-}
-
 async function askMeta () {
   const title = await prompt({
     type: 'text',
@@ -119,40 +126,40 @@ async function askMeta () {
   return { title, description }
 }
 
-async function select (type, env) {
-  const cache = await libscie.readCache(env)
+// async function select (type, env) {
+//   const cache = await libscie.readCache(env)
 
-  const choices = cache
-    .filter(mod => (mod.type === type) & mod.isOwner)
-    .map(choice => {
-      const obj = {}
-      obj.title = choice.title
-      obj.value = choice.hash
+//   const choices = cache
+//     .filter(mod => (mod.type === type) & mod.isOwner)
+//     .map(choice => {
+//       const obj = {}
+//       obj.title = choice.title
+//       obj.value = choice.hash
 
-      return obj
-    })
+//       return obj
+//     })
 
-  return choices
-}
+//   return choices
+// }
 
-async function askReg (env) {
-  const modopts = await select('module', env)
-  const profopts = await select('profile', env)
-  // if opts empty (either) then throw error to build cache
+// async function askReg (env) {
+//   const modopts = await select('module', env)
+//   const profopts = await select('profile', env)
+//   // if opts empty (either) then throw error to build cache
 
-  // might improve the autocomplete by using fuzzy search
-  // doable with the suggest function
-  // https://github.com/terkelg/prompts#autocompletemessage-choices-initial-suggest-limit-style
-  const register = await prompt({
-    type: 'autocomplete',
-    message: 'Pick a module to register',
-    choices: modopts
-  })
-  const registerTo = await prompt({
-    type: 'autocomplete',
-    message: 'Pick a profile to register to',
-    choices: profopts
-  })
+//   // might improve the autocomplete by using fuzzy search
+//   // doable with the suggest function
+//   // https://github.com/terkelg/prompts#autocompletemessage-choices-initial-suggest-limit-style
+//   const register = await prompt({
+//     type: 'autocomplete',
+//     message: 'Pick a module to register',
+//     choices: modopts
+//   })
+//   const registerTo = await prompt({
+//     type: 'autocomplete',
+//     message: 'Pick a profile to register to',
+//     choices: profopts
+//   })
 
-  return { register, registerTo }
-}
+//   return { register, registerTo }
+// }
