@@ -1,5 +1,5 @@
 {
-    "name": "hypergraph-cli",
+    "name": "@hypergraph-xyz/cli",
     "version": "0.0.1",
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
