@@ -2,12 +2,11 @@
 'use strict'
 
 const P2PCommons = require('@p2pcommons/sdk-js')
-const meow = require('meow')
+const minimist = require('minimist')
 const prompt = require('../lib/prompt')
 const { homedir } = require('os')
 
-const cli = meow(
-  `
+const help = `
   Usage
     $ hypergraph <action> <input>
 
@@ -16,17 +15,22 @@ const cli = meow(
 
   Examples
       $ hypergraph                 [interactive mode]
-`,
-  {
-    flags: {
-      env: {
-        type: 'string',
-        alias: 'e',
-        default: `${homedir()}/.hypergraph`
-      }
-    }
+`
+
+const argv = minimist(process.argv.slice(2), {
+  alias: {
+    env: 'e',
+    help: 'h'
+  },
+  default: {
+    env: `${homedir()}/.hypergraph`
   }
-)
+})
+
+if (argv.help) {
+  console.log(help)
+  process.exit(1)
+}
 
 const actions = {}
 
@@ -76,7 +80,7 @@ actions.cache = {
 }
 
 const main = async () => {
-  let [actionName, ...input] = cli.input
+  let [actionName, ...input] = argv._
   if (!actionName) actionName = await askAction()
 
   const action = actions[actionName]
@@ -89,7 +93,7 @@ const main = async () => {
   }
 
   await action.handler({
-    ...cli.flags,
+    ...argv,
     input
   })
 }
