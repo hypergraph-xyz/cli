@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict'
 
+process.title = 'hypergraph'
+
 const P2PCommons = require('@p2pcommons/sdk-js')
 const minimist = require('minimist')
 const prompt = require('../lib/prompt')
