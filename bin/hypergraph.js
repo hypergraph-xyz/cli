@@ -3,6 +3,8 @@
 
 process.title = 'hypergraph'
 
+require('fs.promises')
+
 const P2PCommons = require('@p2pcommons/sdk-js')
 const minimist = require('minimist')
 const prompt = require('../lib/prompt')
