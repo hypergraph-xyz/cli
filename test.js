@@ -52,3 +52,5 @@ test('init', async t => {
     t.equal(code, 0)
   })
 })
+
+test('get')

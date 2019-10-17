@@ -13,11 +13,19 @@ const help = `
   Usage
     $ hypergraph <action> <input>
 
+  Actions
+    init <type>         Initialize a module
+    get  <type> <hash>  Display a module's metadata
+
   Options
-    --env, -e  Custom dotfiles path in home directory (defaults to .p2pcommons)
+    --env, -e           Custom dotfiles path in home directory (defaults to .p2pcommons)
+  
+  Module types
+    - content           A content module
+    - profile           A user profile module
 
   Examples
-      $ hypergraph                 [interactive mode]
+    $ hypergraph      [interactive mode]
 `
 
 const argv = minimist(process.argv.slice(2), {
@@ -36,55 +44,54 @@ const actions = {}
 
 actions.init = {
   title: 'Initialize',
-  input: [
-    async () =>
-      prompt({
-        type: 'select',
-        message: 'Pick a type',
-        choices: [
-          { title: 'Content', value: 'content' },
-          { title: 'Profile', value: 'profile' }
-        ]
-      })
-  ],
-  handler: async ({ env, input: [type] }) => {
-    const p2p = new P2PCommons({ baseDir: env })
-    const [{ title, description }] = await Promise.all([
-      askMeta(),
-      p2p.ready()
-    ])
-    
-
+  input: [askType],
+  handler: async (p2p, [type]) => {
+    const { title, description } = await askMeta()
     const { url } = await p2p.init({ type, title, description })
+
     console.log(`dat://${url.toString('hex')}`)
     console.log(`Initialized ${type} module`)
-    await p2p.destroy()
   }
 }
 
-// actions.register = {
-//   title: 'Register',
-//   handler: async ({ env }) => {
-//     console.log('TODO')
-//     process.exit(1)
+actions.get = {
+  title: 'Get metadata',
+  input: [
+    askType,
+    () =>
+      prompt({
+        type: 'text',
+        message: 'Hash'
+      })
+  ],
+  handler: async (p2p, [type, hash]) => {
+    const meta = await p2p.get(type, hash)
 
-//     // const answer = await askReg(env)
-//     // const module = answer.register
-//     // const profile = answer.registerTo
-//     // // register latest version to profile
-//     // libscie.reg(module, profile, env)
-//   }
-// }
-
-// actions.cache = {
-//   title: 'Cache',
-//   handler: async ({ env }) => {
-//     console.log('TODO')
-//     process.exit(1)
-
-//     // libscie.buildCache(env)
-//   }
-// }
+    for (const [key, value] of Object.entries(meta)) {
+      process.stdout.write(`${key}: `)
+      switch (typeof value) {
+        case 'string':
+          if (['type', 'modType'].includes(key)) {
+            process.stdout.write(value)
+          } else {
+            process.stdout.write(`'${value}'`)
+          }
+          break
+        case 'boolean':
+          process.stdout.write(String(value))
+          break
+        case 'object':
+          if (Buffer.isBuffer(value)) {
+            process.stdout.write(value.toString('hex'))
+          } else if (Array.isArray(value)) {
+            process.stdout.write(`[${value.join(', ')}]`)
+          }
+          break
+      }
+      process.stdout.write('\n')
+    }
+  }
+}
 
 const main = async () => {
   let [actionName, ...input] = argv._
@@ -99,10 +106,10 @@ const main = async () => {
   }
   // }
 
-  await action.handler({
-    ...argv,
-    input
-  })
+  const p2p = new P2PCommons({ baseDir: argv.env })
+  await p2p.ready()
+  await action.handler(p2p, input)
+  await p2p.destroy()
 }
 
 main().catch(err => {
@@ -114,10 +121,17 @@ main().catch(err => {
   process.exit(1)
 })
 
-/// //////////////////////////////////////////////////////
+function askType () {
+  return prompt({
+    type: 'select',
+    message: 'Select type',
+    choices: [
+      { title: 'Content', value: 'content' },
+      { title: 'Profile', value: 'profile' }
+    ]
+  })
+}
 
-// can export all askX to ./lib/ask.js
-// not now
 function askAction () {
   return prompt({
     type: 'select',
@@ -140,41 +154,3 @@ async function askMeta () {
   })
   return { title, description }
 }
-
-// async function select (type, env) {
-//   const cache = await libscie.readCache(env)
-
-//   const choices = cache
-//     .filter(mod => (mod.type === type) & mod.isOwner)
-//     .map(choice => {
-//       const obj = {}
-//       obj.title = choice.title
-//       obj.value = choice.hash
-
-//       return obj
-//     })
-
-//   return choices
-// }
-
-// async function askReg (env) {
-//   const modopts = await select('module', env)
-//   const profopts = await select('profile', env)
-//   // if opts empty (either) then throw error to build cache
-
-//   // might improve the autocomplete by using fuzzy search
-//   // doable with the suggest function
-//   // https://github.com/terkelg/prompts#autocompletemessage-choices-initial-suggest-limit-style
-//   const register = await prompt({
-//     type: 'autocomplete',
-//     message: 'Pick a module to register',
-//     choices: modopts
-//   })
-//   const registerTo = await prompt({
-//     type: 'autocomplete',
-//     message: 'Pick a profile to register to',
-//     choices: profopts
-//   })
-
-//   return { register, registerTo }
-// }
