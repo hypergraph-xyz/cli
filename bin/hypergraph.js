@@ -100,7 +100,11 @@ const main = async () => {
 }
 
 main().catch(err => {
-  console.error(err)
+  // istanbul ignore next
+  if (!(err instanceof prompt.Abort)) {
+    console.error(err)
+  }
+
   process.exit(1)
 })
 
