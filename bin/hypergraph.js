@@ -14,18 +14,18 @@ const help = `
     $ hypergraph <action> <input>
 
   Actions
-    init <type>         Initialize a module
-    get  <type> <hash>  Display a module's metadata
+    init <type>               Initialize a module
+    get  <type> <hash> [key]  Display a module's metadata
 
   Options
-    --env, -e           Custom dotfiles path in home directory (defaults to .p2pcommons)
+    --env, -e                 Custom dotfiles path in home directory (defaults to .p2pcommons)
   
   Module types
-    - content           A content module
-    - profile           A user profile module
+    - content                 A content module
+    - profile                 A user profile module
 
   Examples
-    $ hypergraph      [interactive mode]
+    $ hypergraph              [interactive mode]
 `
 
 const argv = minimist(process.argv.slice(2), {
@@ -62,23 +62,21 @@ actions.get = {
       prompt({
         type: 'text',
         message: 'Hash'
-      })
+      }),
+    () => {}
   ],
-  handler: async (p2p, [type, hash]) => {
+  handler: async (p2p, [type, hash, key]) => {
     const meta = await p2p.get(type, hash)
-
-    console.log(
-      JSON.stringify(
-        meta,
-        (key, value) => {
-          return key === 'url'
-            ? `dat://${Buffer.from(value).toString('hex')}`
-            : value
-        },
-        2
-      )
-    )
+    if (key) {
+      console.log(JSON.stringify(renderKV(key, meta[key])))
+    } else {
+      console.log(JSON.stringify(meta, renderKV, 2))
+    }
   }
+}
+
+const renderKV = (key, value) => {
+  return key === 'url' ? `dat://${Buffer.from(value).toString('hex')}` : value
 }
 
 const main = async () => {

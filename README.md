@@ -28,24 +28,24 @@ install `node`.
 ## Usage
 
 ```bash
-$ hypergraph --helpo
+$ hypergraph --help
 
   Usage
     $ hypergraph <action> <input>
 
   Actions
-    init <type>         Initialize a module
-    get  <type> <hash>  Display a module's metadata
+    init <type>               Initialize a module
+    get  <type> <hash> [key]  Display a module's metadata
 
   Options
-    --env, -e           Custom dotfiles path in home directory (defaults to .p2pcommons)
+    --env, -e                 Custom dotfiles path in home directory (defaults to .p2pcommons)
 
   Module types
-    - content           A content module
-    - profile           A user profile module
+    - content                 A content module
+    - profile                 A user profile module
 
   Examples
-    $ hypergraph      [interactive mode]
+    $ hypergraph              [interactive mode]
 
 ```
 
