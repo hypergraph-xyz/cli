@@ -175,7 +175,7 @@ const main = async () => {
 }
 
 main().catch(err => {
-  // istanbul ignore next
+  // istanbul ignore else
   if (err instanceof UserError) {
     if (err.message) console.error(err.message)
   } else {
