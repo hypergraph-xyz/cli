@@ -67,29 +67,17 @@ actions.get = {
   handler: async (p2p, [type, hash]) => {
     const meta = await p2p.get(type, hash)
 
-    for (const [key, value] of Object.entries(meta)) {
-      process.stdout.write(`${key}: `)
-      switch (typeof value) {
-        case 'string':
-          if (['type', 'modType'].includes(key)) {
-            process.stdout.write(value)
-          } else {
-            process.stdout.write(`'${value}'`)
-          }
-          break
-        case 'boolean':
-          process.stdout.write(String(value))
-          break
-        case 'object':
-          if (Buffer.isBuffer(value)) {
-            process.stdout.write(value.toString('hex'))
-          } else if (Array.isArray(value)) {
-            process.stdout.write(`[${value.join(', ')}]`)
-          }
-          break
-      }
-      process.stdout.write('\n')
-    }
+    console.log(
+      JSON.stringify(
+        meta,
+        (key, value) => {
+          return key === 'url'
+            ? `dat://${Buffer.from(value).toString('hex')}`
+            : value
+        },
+        2
+      )
+    )
   }
 }
 
