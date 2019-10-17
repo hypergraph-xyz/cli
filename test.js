@@ -3,22 +3,10 @@
 const { test } = require('tap')
 const { spawn } = require('child_process')
 const { promisify } = require('util')
+const match = require('stream-match')
 
 const hypergraph = args =>
   spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
-
-const match = async (stream, string) =>
-  new Promise(resolve => {
-    let buf = ''
-    const onData = data => {
-      buf += data
-      if (buf.includes(string)) {
-        stream.removeListener('data', onData)
-        resolve()
-      }
-    }
-    stream.on('data', onData)
-  })
 
 test('init', async t => {
   const ps = hypergraph('init content')
