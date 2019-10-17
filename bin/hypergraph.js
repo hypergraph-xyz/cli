@@ -90,7 +90,16 @@ const renderKV = (key, value) => {
 
 const main = async () => {
   let [actionName, ...rawInput] = argv._
-  if (!actionName) actionName = await askAction()
+  if (!actionName) {
+    actionName = await prompt({
+      type: 'select',
+      message: 'Pick an action',
+      choices: Object.entries(actions).map(([value, { title }]) => ({
+        title,
+        value
+      }))
+    })
+  }
 
   const action = actions[actionName]
   const input = {}
@@ -121,16 +130,5 @@ function askType () {
       { title: 'Content', value: 'content' },
       { title: 'Profile', value: 'profile' }
     ]
-  })
-}
-
-function askAction () {
-  return prompt({
-    type: 'select',
-    message: 'Pick an action',
-    choices: Object.entries(actions).map(([value, { title }]) => ({
-      title,
-      value
-    }))
   })
 }
