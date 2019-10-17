@@ -46,7 +46,14 @@ actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
   handler: async (p2p, { type }) => {
-    const { title, description } = await askMeta()
+    const title = await prompt({
+      type: 'text',
+      message: 'Title'
+    })
+    const description = await prompt({
+      type: 'text',
+      message: 'Description'
+    })
     const { url } = await p2p.init({ type, title, description })
 
     console.log(`dat://${url.toString('hex')}`)
@@ -126,16 +133,4 @@ function askAction () {
       value
     }))
   })
-}
-
-async function askMeta () {
-  const title = await prompt({
-    type: 'text',
-    message: 'Title'
-  })
-  const description = await prompt({
-    type: 'text',
-    message: 'Description'
-  })
-  return { title, description }
 }
