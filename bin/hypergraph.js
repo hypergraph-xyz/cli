@@ -48,10 +48,16 @@ actions.init = {
       })
   ],
   handler: async ({ env, input: [type] }) => {
-    const p2p = P2PCommons({ baseDir: env })
-    const { title, description } = await askMeta()
+    const p2p = new P2PCommons({ baseDir: env })
+    const [{ title, description }] = await Promise.all([
+      askMeta(),
+      p2p.ready()
+    ])
+    
 
-    await p2p.init({ type, title, description })
+    const { url } = await p2p.init({ type, title, description })
+    console.log(`dat://${url.toString('hex')}`)
+    console.log(`Initialized ${type} module`)
     await p2p.destroy()
   }
 }
