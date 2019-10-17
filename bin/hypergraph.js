@@ -14,18 +14,18 @@ const help = `
     $ hypergraph <action> <input>
 
   Actions
-    init <type>               Initialize a module
-    get  <type> <hash> [key]  Display a module's metadata
+    create <type>              Create a module
+    read   <type> <hash> [key] Read a module's metadata
 
   Options
-    --env, -e                 Custom dotfiles path in home directory (defaults to .p2pcommons)
+    --env, -e                  Custom dotfiles path in home directory (defaults to .p2pcommons)
   
   Module types
-    - content                 A content module
-    - profile                 A user profile module
+    - content                  A content module
+    - profile                  A user profile module
 
   Examples
-    $ hypergraph              [interactive mode]
+    $ hypergraph               [interactive mode]
 `
 
 const argv = minimist(process.argv.slice(2), {
@@ -42,20 +42,19 @@ if (argv.help) {
 
 const actions = {}
 
-actions.init = {
-  title: 'Initialize',
+actions.create = {
+  title: 'Create',
   input: [askType],
   handler: async (p2p, [type]) => {
     const { title, description } = await askMeta()
     const { url } = await p2p.init({ type, title, description })
 
     console.log(`dat://${url.toString('hex')}`)
-    console.log(`Initialized ${type} module`)
   }
 }
 
-actions.get = {
-  title: 'Get metadata',
+actions.read = {
+  title: 'Read metadata',
   input: [
     askType,
     () =>

@@ -18,21 +18,21 @@ test('help', async t => {
 
 test('default', async t => {
   const ps = hypergraph('')
-  await match(ps.stdout, 'Initialize')
+  await match(ps.stdout, 'Create')
   ps.kill()
 })
 
 test('abort prompt', async t => {
   const ps = hypergraph('')
-  await match(ps.stdout, 'Initialize')
+  await match(ps.stdout, 'Create')
   ps.stdin.write('\x03') // Ctrl+C
   const code = await onExit(ps)
   t.equal(code, 1)
 })
 
-test('init', async t => {
+test('create', async t => {
   await t.test('prompt type, title, description', async t => {
-    const ps = hypergraph('init')
+    const ps = hypergraph('create')
     await match(ps.stdout, 'Profile')
     ps.stdin.write('\n')
     await match(ps.stdout, 'Title')
@@ -44,7 +44,7 @@ test('init', async t => {
   })
 
   await t.test('prompt title, description', async t => {
-    const ps = hypergraph('init content')
+    const ps = hypergraph('create content')
     ps.stdin.write('title\n')
     await match(ps.stdout, 'Description')
     ps.stdin.write('description\n')
@@ -53,4 +53,4 @@ test('init', async t => {
   })
 })
 
-test('get')
+test('read')
