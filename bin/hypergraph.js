@@ -8,14 +8,13 @@ require('fs.promises')
 const P2PCommons = require('@p2pcommons/sdk-js')
 const minimist = require('minimist')
 const prompt = require('../lib/prompt')
-const { homedir } = require('os')
 
 const help = `
   Usage
     $ hypergraph <action> <input>
 
   Options
-    --env, -e  Custom environment (defaults to ~/.hypergraph/)
+    --env, -e  Custom dotfiles path in home directory (defaults to .hypergraph)
 
   Examples
       $ hypergraph                 [interactive mode]
@@ -27,7 +26,7 @@ const argv = minimist(process.argv.slice(2), {
     help: 'h'
   },
   default: {
-    env: `${homedir()}/.hypergraph`
+    env: '.hypergraph'
   }
 })
 
