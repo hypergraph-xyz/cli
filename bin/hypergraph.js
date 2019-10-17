@@ -85,13 +85,13 @@ const main = async () => {
   if (!actionName) actionName = await askAction()
 
   const action = actions[actionName]
-  if (action.input) {
-    for (const [idx, getInput] of Object.entries(action.input)) {
-      if (!input[idx]) {
-        input[idx] = await getInput()
-      }
+  // if (action.input) {
+  for (const [idx, getInput] of Object.entries(action.input)) {
+    if (!input[idx]) {
+      input[idx] = await getInput()
     }
   }
+  // }
 
   await action.handler({
     ...argv,
