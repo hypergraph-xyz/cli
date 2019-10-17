@@ -43,7 +43,7 @@ if (argv.help) {
 const actions = {}
 
 actions.create = {
-  title: 'Create',
+  title: 'Create a module',
   input: [askType],
   handler: async (p2p, [type]) => {
     const { title, description } = await askMeta()
