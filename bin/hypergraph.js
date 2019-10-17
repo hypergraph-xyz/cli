@@ -44,8 +44,8 @@ const actions = {}
 
 actions.create = {
   title: 'Create a module',
-  input: [askType],
-  handler: async (p2p, [type]) => {
+  input: [{ name: 'type', resolve: askType }],
+  handler: async (p2p, { type }) => {
     const { title, description } = await askMeta()
     const { url } = await p2p.init({ type, title, description })
 
@@ -56,15 +56,18 @@ actions.create = {
 actions.read = {
   title: 'Read metadata',
   input: [
-    askType,
-    () =>
-      prompt({
-        type: 'text',
-        message: 'Hash'
-      }),
-    () => {}
+    { name: 'type', resolve: askType },
+    {
+      name: 'hash',
+      resolve: () =>
+        prompt({
+          type: 'text',
+          message: 'Hash'
+        })
+    },
+    { name: 'key' }
   ],
-  handler: async (p2p, [type, hash, key]) => {
+  handler: async (p2p, { type, hash, key }) => {
     const meta = await p2p.get(type, hash)
     if (key) {
       console.log(JSON.stringify(renderKV(key, meta[key])))
@@ -79,17 +82,14 @@ const renderKV = (key, value) => {
 }
 
 const main = async () => {
-  let [actionName, ...input] = argv._
+  let [actionName, ...rawInput] = argv._
   if (!actionName) actionName = await askAction()
 
   const action = actions[actionName]
-  // if (action.input) {
-  for (const [idx, getInput] of Object.entries(action.input)) {
-    if (!input[idx]) {
-      input[idx] = await getInput()
-    }
+  const input = {}
+  for (const [idx, { name, resolve }] of Object.entries(action.input)) {
+    input[name] = rawInput[idx] || (resolve && (await resolve()))
   }
-  // }
 
   const p2p = new P2PCommons({ baseDir: argv.env })
   await p2p.ready()
