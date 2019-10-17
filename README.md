@@ -27,6 +27,20 @@ install `node`.
 
 ## Usage
 
+```bash
+$ hypergraph --help
+
+  Usage
+    $ hypergraph <action> <input>
+
+  Options
+    --env, -e  Custom dotfiles path in home directory (defaults to .p2pcommons)
+
+  Examples
+      $ hypergraph                 [interactive mode]
+
+```
+
 This tool *directly* allows you to start using public collaborative
 infrastructure.
 
