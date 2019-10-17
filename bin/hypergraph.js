@@ -8,24 +8,27 @@ require('fs.promises')
 const P2PCommons = require('@p2pcommons/sdk-js')
 const minimist = require('minimist')
 const prompt = require('../lib/prompt')
+const UserError = require('../lib/user-error')
 
 const help = `
   Usage
     $ hypergraph <action> <input>
 
   Actions
-    create <type>              Create a module
-    read   <type> <hash> [key] Read a module's metadata
+    create <type>                    Create a module
+    read   <type> <hash> [key]       Read a module's metadata
+    update <type> <hash> [key value] Update a module's metadata
 
   Options
-    --env, -e                  Custom dotfiles path in home directory (defaults to .p2pcommons)
+    --env, -e                        Custom dotfiles path in home directory
+                                     (defaults to .p2pcommons)
   
   Module types
-    - content                  A content module
-    - profile                  A user profile module
+    - content                        A content module
+    - profile                        A user profile module
 
   Examples
-    $ hypergraph               [interactive mode]
+    $ hypergraph                     [interactive mode]
 `
 
 const argv = minimist(process.argv.slice(2), {
@@ -84,6 +87,48 @@ actions.read = {
   }
 }
 
+actions.update = {
+  title: 'Update metadata',
+  input: [
+    { name: 'type', resolve: askType },
+    {
+      name: 'hash',
+      resolve: () =>
+        prompt({
+          type: 'text',
+          message: 'Hash'
+        })
+    },
+    { name: 'key' },
+    { name: 'value' }
+  ],
+  handler: async (p2p, { type, hash, key, value }) => {
+    const meta = await p2p.get(type, hash)
+
+    if (key) {
+      if (!allowedKeyUpdates.includes(key)) {
+        throw new InvalidKeyError(
+          `Only allowed to update keys ${allowedKeyUpdates.join(', ')}`
+        )
+      }
+      meta[key] = value || ''
+    } else {
+      for (const key of allowedKeyUpdates) {
+        meta[key] = await prompt({
+          type: 'text',
+          message: key,
+          initial: meta[key]
+        })
+      }
+    }
+
+    await p2p.set(meta)
+  }
+}
+
+const allowedKeyUpdates = ['title', 'description', 'main']
+class InvalidKeyError extends UserError {}
+
 const renderKV = (key, value) => {
   return key === 'url' ? `dat://${Buffer.from(value).toString('hex')}` : value
 }
@@ -115,7 +160,9 @@ const main = async () => {
 
 main().catch(err => {
   // istanbul ignore next
-  if (!(err instanceof prompt.Abort)) {
+  if (err instanceof UserError) {
+    if (err.message) console.error(err.message)
+  } else {
     console.error(err)
   }
 
