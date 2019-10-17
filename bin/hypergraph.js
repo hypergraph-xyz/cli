@@ -14,7 +14,7 @@ const help = `
     $ hypergraph <action> <input>
 
   Options
-    --env, -e  Custom dotfiles path in home directory (defaults to .hypergraph)
+    --env, -e  Custom dotfiles path in home directory (defaults to .p2pcommons)
 
   Examples
       $ hypergraph                 [interactive mode]
@@ -24,9 +24,6 @@ const argv = minimist(process.argv.slice(2), {
   alias: {
     env: 'e',
     help: 'h'
-  },
-  default: {
-    env: '.hypergraph'
   }
 })
 
