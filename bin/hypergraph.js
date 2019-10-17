@@ -56,29 +56,29 @@ actions.init = {
   }
 }
 
-actions.register = {
-  title: 'Register',
-  handler: async ({ env }) => {
-    console.log('TODO')
-    process.exit(1)
+// actions.register = {
+//   title: 'Register',
+//   handler: async ({ env }) => {
+//     console.log('TODO')
+//     process.exit(1)
 
-    // const answer = await askReg(env)
-    // const module = answer.register
-    // const profile = answer.registerTo
-    // // register latest version to profile
-    // libscie.reg(module, profile, env)
-  }
-}
+//     // const answer = await askReg(env)
+//     // const module = answer.register
+//     // const profile = answer.registerTo
+//     // // register latest version to profile
+//     // libscie.reg(module, profile, env)
+//   }
+// }
 
-actions.cache = {
-  title: 'Cache',
-  handler: async ({ env }) => {
-    console.log('TODO')
-    process.exit(1)
+// actions.cache = {
+//   title: 'Cache',
+//   handler: async ({ env }) => {
+//     console.log('TODO')
+//     process.exit(1)
 
-    // libscie.buildCache(env)
-  }
-}
+//     // libscie.buildCache(env)
+//   }
+// }
 
 const main = async () => {
   let [actionName, ...input] = argv._
