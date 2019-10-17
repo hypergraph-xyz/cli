@@ -2,11 +2,19 @@
 
 const { test } = require('tap')
 const { spawn } = require('child_process')
-const { promisify } = require('util')
 const match = require('stream-match')
 
 const hypergraph = args =>
   spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
+
+const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
+
+test('help', async t => {
+  const ps = hypergraph('--help')
+  await match(ps.stdout, 'interactive mode')
+  const code = await onExit(ps)
+  t.equal(code, 1)
+})
 
 test('default', async t => {
   const ps = hypergraph('')
@@ -23,7 +31,8 @@ test('init', async t => {
     ps.stdin.write('title\n')
     await match(ps.stdout, 'Description')
     ps.stdin.write('description\n')
-    await promisify(ps.once.bind(ps))('exit')
+    const code = await onExit(ps)
+    t.equal(code, 0)
   })
 
   await t.test('prompt title, description', async t => {
@@ -31,6 +40,7 @@ test('init', async t => {
     ps.stdin.write('title\n')
     await match(ps.stdout, 'Description')
     ps.stdin.write('description\n')
-    await promisify(ps.once.bind(ps))('exit')
+    const code = await onExit(ps)
+    t.equal(code, 0)
   })
 })
