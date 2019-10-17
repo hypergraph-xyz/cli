@@ -22,6 +22,14 @@ test('default', async t => {
   ps.kill()
 })
 
+test('abort prompt', async t => {
+  const ps = hypergraph('')
+  await match(ps.stdout, 'Initialize')
+  ps.stdin.write('\x03') // Ctrl+C
+  const code = await onExit(ps)
+  t.equal(code, 1)
+})
+
 test('init', async t => {
   await t.test('prompt type, title, description', async t => {
     const ps = hypergraph('init')
