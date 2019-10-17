@@ -52,6 +52,7 @@ actions.init = {
     const { title, description } = await askMeta()
 
     await p2p.init({ type, title, description })
+    await p2p.destroy()
   }
 }
 
