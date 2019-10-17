@@ -165,7 +165,7 @@ const main = async () => {
       type: 'select',
       message: 'Pick an action',
       choices: Object.entries(actions).map(([value, { title }]) => ({
-        title: `${title} (${value})`,
+        title,
         value
       }))
     })
