@@ -9,6 +9,7 @@ const P2PCommons = require('@p2pcommons/sdk-js')
 const minimist = require('minimist')
 const prompt = require('../lib/prompt')
 const UserError = require('../lib/user-error')
+const { version } = require('../package.json')
 
 const help = `
   Usage
@@ -23,6 +24,8 @@ const help = `
   Options
     --env, -e                        Custom dotfiles path in home directory
                                      (defaults to .p2pcommons)
+    --help, -h                       Display help text
+    --version, -v                    Display version
   
   Module types
     - content                        A content module
@@ -35,13 +38,19 @@ const help = `
 const argv = minimist(process.argv.slice(2), {
   alias: {
     env: 'e',
-    help: 'h'
+    help: 'h',
+    version: 'v'
   }
 })
 
 if (argv.help) {
   console.log(help)
   process.exit(1)
+}
+
+if (argv.version) {
+  console.log(version)
+  process.exit(0)
 }
 
 const actions = {}
