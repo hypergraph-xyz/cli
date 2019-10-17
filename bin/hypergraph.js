@@ -18,6 +18,7 @@ const help = `
     create <type>                    Create a module
     read   <type> <hash> [key]       Read a module's metadata
     update <type> <hash> [key value] Update a module's metadata
+    list   <type>                    List writable modules
 
   Options
     --env, -e                        Custom dotfiles path in home directory
@@ -123,6 +124,21 @@ actions.update = {
     }
 
     await p2p.set(meta)
+  }
+}
+
+actions.list = {
+  title: 'List writable modules',
+  input: [{ name: 'type', resolve: askType }],
+  handler: async (p2p, { type }) => {
+    const fn = {
+      content: 'listContent',
+      profile: 'listProfiles'
+    }[type]
+    const mods = await p2p[fn]()
+    for (const mod of mods) {
+      console.log(`dat://${mod.url.toString('hex')}`)
+    }
   }
 }
 

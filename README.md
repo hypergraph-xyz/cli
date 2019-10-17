@@ -37,6 +37,7 @@ $ hypergraph --help
     create <type>                    Create a module
     read   <type> <hash> [key]       Read a module's metadata
     update <type> <hash> [key value] Update a module's metadata
+    list   <type>                    List writable modules
 
   Options
     --env, -e                        Custom dotfiles path in home directory
