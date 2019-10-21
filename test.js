@@ -1,15 +1,19 @@
 'use strict'
 
+require('fs.promises')
+
 const { test } = require('tap')
 const { spawn } = require('child_process')
 const match = require('stream-match')
+const { promises: fs } = require('fs')
+const { homedir } = require('os')
 
 const hypergraph = args =>
   spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
 
 const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
 
-test('help', async t => {
+test('--help', async t => {
   const ps = hypergraph('--help')
   await match(ps.stdout, 'interactive mode')
   const code = await onExit(ps)
