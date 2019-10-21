@@ -10,29 +10,29 @@ const { homedir, tmpdir } = require('os')
 const { encode, decode } = require('dat-encoding')
 const { promisify } = require('util')
 
-const hypergraphSpawn = args =>
+const cliSpawn = args =>
   spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
 
-const hypergraphExec = args =>
+const cliExec = args =>
   promisify(exec)(`node ${__dirname}/bin/hypergraph.js ${args}`)
 
 const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
 
 test('--help', async t => {
-  const ps = hypergraphSpawn('--help')
+  const ps = cliSpawn('--help')
   await match(ps.stdout, 'interactive mode')
   const code = await onExit(ps)
   t.equal(code, 1)
 })
 
 test('default', async t => {
-  const ps = hypergraphSpawn('')
+  const ps = cliSpawn('')
   await match(ps.stdout, 'Create')
   ps.kill()
 })
 
 test('abort prompt', async t => {
-  const ps = hypergraphSpawn('')
+  const ps = cliSpawn('')
   await match(ps.stdout, 'Create')
   ps.stdin.write('\x03') // Ctrl+C
   const code = await onExit(ps)
@@ -41,7 +41,7 @@ test('abort prompt', async t => {
 
 test('create', async t => {
   await t.test('create', async t => {
-    const ps = hypergraphSpawn('create')
+    const ps = cliSpawn('create')
     await match(ps.stdout, 'Profile')
     ps.stdin.write('\n')
     await match(ps.stdout, 'Title')
@@ -53,7 +53,7 @@ test('create', async t => {
   })
 
   await t.test('create <type>', async t => {
-    const ps = hypergraphSpawn('create content')
+    const ps = cliSpawn('create content')
     ps.stdin.write('title\n')
     await match(ps.stdout, 'Description')
     ps.stdin.write('description\n')
@@ -62,29 +62,25 @@ test('create', async t => {
   })
 
   await t.test('create <type> --title --description', async t => {
-    const { stdout } = await hypergraphExec(
-      'create content --title=t --description=d'
-    )
+    const { stdout } = await cliExec('create content --title=t --description=d')
     t.ok(decode(stdout.trim()))
   })
 
   await t.test('--env', async t => {
-    await hypergraphExec('create content -t=t -d=d')
+    await cliExec('create content -t=t -d=d')
     await fs.stat(`${homedir()}/.p2pcommons`)
 
-    await hypergraphExec(`create content -t=t -d=d --env=${tmpdir()}/.test`)
+    await cliExec(`create content -t=t -d=d --env=${tmpdir()}/.test`)
     await fs.stat(`${tmpdir()}/.test`)
   })
 })
 
 test('read', async t => {
   await t.test('read <hash>', async t => {
-    let { stdout } = await hypergraphExec(
-      'create content --title=t --description=d'
-    )
+    let { stdout } = await cliExec('create content --title=t --description=d')
     const key = decode(stdout.trim())
 
-    ;({ stdout } = await hypergraphExec(`read ${encode(key)}`))
+    ;({ stdout } = await cliExec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
       title: 't',
@@ -100,12 +96,10 @@ test('read', async t => {
   })
 
   await t.test('read <hash> <key>', async t => {
-    let { stdout } = await hypergraphExec(
-      'create content --title=t --description=d'
-    )
+    let { stdout } = await cliExec('create content --title=t --description=d')
     const hash = stdout.trim()
 
-    ;({ stdout } = await hypergraphExec(`read ${hash} title`))
+    ;({ stdout } = await cliExec(`read ${hash} title`))
     t.equal(stdout.trim(), '"t"')
   })
 })
