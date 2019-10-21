@@ -78,7 +78,7 @@ actions.create = {
     }
     const { url } = await p2p.init({ type, title, description })
 
-    console.log(encode(url))
+    console.log(`dat://${encode(url)}`)
   }
 }
 

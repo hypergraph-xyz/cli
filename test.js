@@ -7,7 +7,7 @@ const { spawn, exec } = require('child_process')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
 const { homedir, tmpdir } = require('os')
-const { decode } = require('dat-encoding')
+const { encode, decode } = require('dat-encoding')
 const { promisify } = require('util')
 
 const hypergraphSpawn = args =>
@@ -82,14 +82,14 @@ test('read', async t => {
     let { stdout } = await hypergraphExec(
       'create content --title=t --description=d'
     )
-    const hash = stdout.trim()
+    const key = decode(stdout.trim())
 
-    ;({ stdout } = await hypergraphExec(`read ${hash}`))
+    ;({ stdout } = await hypergraphExec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
       title: 't',
       description: 'd',
-      url: `dat://${hash}`,
+      url: `dat://${encode(key)}`,
       type: 'content',
       subtype: 'content',
       main: '',
