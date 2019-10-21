@@ -151,3 +151,14 @@ test('update', async t => {
     })
   })
 })
+
+test('list', async t => {
+  let { stdout } = await cliExec('create content --t=t --d=d')
+  const contentKey = decode(stdout.trim())
+  ;({ stdout } = await cliExec('create profile --t=t --d=d'))
+  const profileKey = decode(stdout.trim())
+
+  ;({ stdout } = await cliExec('list content'))
+  t.ok(stdout.includes(`dat://${encode(contentKey)}`))
+  t.notOk(stdout.includes(`dat://${encode(profileKey)}`))
+})
