@@ -103,3 +103,51 @@ test('read', async t => {
     t.equal(stdout.trim(), '"t"')
   })
 })
+
+test('update', async t => {
+  await t.test('update <hash>', async t => {
+    let { stdout } = await cliExec('create content --title=t --description=d')
+    const key = decode(stdout.trim())
+
+    const ps = await cliSpawn(`update ${encode(key)}`)
+    await match(ps.stdout, 'title')
+    ps.stdin.write('\n') // keep value
+    await match(ps.stdout, 'description')
+    ps.stdin.write('beep\n')
+    await match(ps.stdout, 'main')
+    ps.stdin.write('main\n')
+    ;({ stdout } = await cliExec(`read ${encode(key)}`))
+    const meta = JSON.parse(stdout)
+    t.deepEqual(meta, {
+      title: 't',
+      description: 'beep',
+      url: `dat://${encode(key)}`,
+      type: 'content',
+      subtype: 'content',
+      main: 'main',
+      license: '',
+      authors: [],
+      parents: []
+    })
+  })
+
+  await t.test('update <hash> <key> <value>', async t => {
+    let { stdout } = await cliExec('create content --title=t --description=d')
+    const key = decode(stdout.trim())
+
+    await cliExec(`update ${encode(key)} main main`)
+    ;({ stdout } = await cliExec(`read ${encode(key)}`))
+    const meta = JSON.parse(stdout)
+    t.deepEqual(meta, {
+      title: 't',
+      description: 'd',
+      url: `dat://${encode(key)}`,
+      type: 'content',
+      subtype: 'content',
+      main: 'main',
+      license: '',
+      authors: [],
+      parents: []
+    })
+  })
+})

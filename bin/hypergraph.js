@@ -124,7 +124,7 @@ actions.update = {
     { name: 'value' }
   ],
   handler: async (p2p, { hash, key, value }) => {
-    const meta = await p2p.get(hash)
+    const meta = await p2p.get(decode(hash).toString('hex'))
 
     if (key) {
       if (!allowedKeyUpdates.includes(key)) {
