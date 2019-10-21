@@ -104,8 +104,8 @@ actions.list = {
       content: 'listContent',
       profile: 'listProfiles'
     }[type]
-    const mods = await p2p[fn]()
-    for (const mod of mods) {
+    const dbItems = await p2p[fn]()
+    for (const { rawJSON: mod } of dbItems) {
       console.log(`dat://${mod.url.toString('hex')}`)
     }
   }
