@@ -34,22 +34,22 @@ $ hypergraph --help
     $ hypergraph <action> <input>
 
   Actions
-    create <type>                    Create a module
-    read   <type> <hash> [key]       Read a module's metadata
-    update <type> <hash> [key value] Update a module's metadata
-    list   <type>                    List writable modules
+    create <type>              Create a module
+    read   <hash> [key]        Read a module's metadata
+    update <hash> [key value]  Update a module's metadata
+    list   <type>              List writable modules
 
   Options
-    --env, -e                        Dotfiles path (default ~/.p2pcommons)
-    --help, -h                       Display help text
-    --version, -v                    Display version
+    --env, -e                  Dotfiles path (default ~/.p2pcommons)
+    --help, -h                 Display help text
+    --version, -v              Display version
 
   Module types
-    - content                        A content module
-    - profile                        A user profile module
+    - content                  A content module
+    - profile                  A user profile module
 
   Examples
-    $ hypergraph                     [interactive mode]
+    $ hypergraph               [interactive mode]
 
 ```
 
