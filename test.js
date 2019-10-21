@@ -77,4 +77,35 @@ test('create', async t => {
   })
 })
 
-test('read')
+test('read', async t => {
+  await t.test('read <hash>', async t => {
+    let { stdout } = await hypergraphExec(
+      'create content --title=t --description=d'
+    )
+    const hash = stdout.trim()
+
+    ;({ stdout } = await hypergraphExec(`read ${hash}`))
+    const meta = JSON.parse(stdout)
+    t.deepEqual(meta, {
+      title: 't',
+      description: 'd',
+      url: `dat://${hash}`,
+      type: 'content',
+      subtype: 'content',
+      main: '',
+      license: '',
+      authors: [],
+      parents: []
+    })
+  })
+
+  await t.test('read <hash> <key>', async t => {
+    let { stdout } = await hypergraphExec(
+      'create content --title=t --description=d'
+    )
+    const hash = stdout.trim()
+
+    ;({ stdout } = await hypergraphExec(`read ${hash} title`))
+    t.equal(stdout.trim(), '"t"')
+  })
+})
