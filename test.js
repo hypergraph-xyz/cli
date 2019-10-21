@@ -55,6 +55,26 @@ test('create', async t => {
     const code = await onExit(ps)
     t.equal(code, 0)
   })
+
+  await t.test('--env', async t => {
+    let ps = hypergraph('create content')
+    ps.stdin.write('title\n')
+    await match(ps.stdout, 'Description')
+    ps.stdin.write('description\n')
+    let code = await onExit(ps)
+    t.equal(code, 0)
+
+    await fs.stat(`${homedir()}/.p2pcommons`)
+
+    ps = hypergraph('create content --env=.test')
+    ps.stdin.write('title\n')
+    await match(ps.stdout, 'Description')
+    ps.stdin.write('description\n')
+    code = await onExit(ps)
+    t.equal(code, 0)
+
+    await fs.stat(`${homedir()}/.test`)
+  })
 })
 
 test('read')
