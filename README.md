@@ -40,8 +40,7 @@ $ hypergraph --help
     list   <type>                    List writable modules
 
   Options
-    --env, -e                        Custom dotfiles path in home directory
-                                     (defaults to .p2pcommons)
+    --env, -e                        Dotfiles path (default ~/.p2pcommons)
     --help, -h                       Display help text
     --version, -v                    Display version
 

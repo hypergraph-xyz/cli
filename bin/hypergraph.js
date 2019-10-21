@@ -10,6 +10,7 @@ const minimist = require('minimist')
 const prompt = require('../lib/prompt')
 const UserError = require('../lib/user-error')
 const { version } = require('../package.json')
+const { resolve } = require('path')
 
 const help = `
   Usage
@@ -22,8 +23,7 @@ const help = `
     list   <type>                    List writable modules
 
   Options
-    --env, -e                        Custom dotfiles path in home directory
-                                       (defaults to .p2pcommons)
+    --env, -e                        Dotfiles path (default ~/.p2pcommons)
     --help, -h                       Display help text
     --version, -v                    Display version
   
@@ -76,7 +76,6 @@ actions.create = {
 actions.read = {
   title: 'Read metadata',
   input: [
-    { name: 'type', resolve: askType },
     {
       name: 'hash',
       resolve: () =>
@@ -87,8 +86,8 @@ actions.read = {
     },
     { name: 'key' }
   ],
-  handler: async (p2p, { type, hash, key }) => {
-    const meta = await p2p.get(type, hash)
+  handler: async (p2p, { hash, key }) => {
+    const meta = await p2p.get(hash)
     if (key) {
       console.log(JSON.stringify(renderKV(key, meta[key])))
     } else {
@@ -100,7 +99,6 @@ actions.read = {
 actions.update = {
   title: 'Update metadata',
   input: [
-    { name: 'type', resolve: askType },
     {
       name: 'hash',
       resolve: () =>
@@ -112,8 +110,8 @@ actions.update = {
     { name: 'key' },
     { name: 'value' }
   ],
-  handler: async (p2p, { type, hash, key, value }) => {
-    const meta = await p2p.get(type, hash)
+  handler: async (p2p, { hash, key, value }) => {
+    const meta = await p2p.get(hash)
 
     if (key) {
       if (!allowedKeyUpdates.includes(key)) {
@@ -177,7 +175,7 @@ const main = async () => {
     input[name] = rawInput[idx] || (resolve && (await resolve()))
   }
 
-  const p2p = new P2PCommons({ baseDir: argv.env })
+  const p2p = new P2PCommons({ baseDir: argv.env && resolve(argv.env) })
   await p2p.ready()
   await action.handler(p2p, input)
   await p2p.destroy()

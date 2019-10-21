@@ -6,7 +6,7 @@ const { test } = require('tap')
 const { spawn } = require('child_process')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
-const { homedir } = require('os')
+const { homedir, tmpdir } = require('os')
 
 const hypergraph = args =>
   spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
@@ -66,14 +66,14 @@ test('create', async t => {
 
     await fs.stat(`${homedir()}/.p2pcommons`)
 
-    ps = hypergraph('create content --env=.test')
+    ps = hypergraph(`create content --env=${tmpdir()}/.test`)
     ps.stdin.write('title\n')
     await match(ps.stdout, 'Description')
     ps.stdin.write('description\n')
     code = await onExit(ps)
     t.equal(code, 0)
 
-    await fs.stat(`${homedir()}/.test`)
+    await fs.stat(`${tmpdir()}/.test`)
   })
 })
 
