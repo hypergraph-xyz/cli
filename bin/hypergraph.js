@@ -11,6 +11,7 @@ const prompt = require('../lib/prompt')
 const UserError = require('../lib/user-error')
 const { version } = require('../package.json')
 const { resolve } = require('path')
+const { encode, decode } = require('dat-encoding')
 
 const help = `
   Usage
@@ -26,6 +27,8 @@ const help = `
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
     --help, -h                 Display help text
     --version, -v              Display version
+    --title, -t                Module title
+    --description, -d          Module description
   
   Module types
     - content                  A content module
@@ -39,7 +42,9 @@ const argv = minimist(process.argv.slice(2), {
   alias: {
     env: 'e',
     help: 'h',
-    version: 'v'
+    version: 'v',
+    title: 't',
+    description: 'd'
   }
 })
 
@@ -58,18 +63,22 @@ const actions = {}
 actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
-  handler: async (p2p, { type }) => {
-    const title = await prompt({
-      type: 'text',
-      message: 'Title'
-    })
-    const description = await prompt({
-      type: 'text',
-      message: 'Description'
-    })
+  handler: async (p2p, { type, title, description }) => {
+    if (!title) {
+      title = await prompt({
+        type: 'text',
+        message: 'Title'
+      })
+    }
+    if (!description) {
+      description = await prompt({
+        type: 'text',
+        message: 'Description'
+      })
+    }
     const { url } = await p2p.init({ type, title, description })
 
-    console.log(`dat://${url.toString('hex')}`)
+    console.log(encode(url))
   }
 }
 
@@ -87,11 +96,15 @@ actions.read = {
     { name: 'key' }
   ],
   handler: async (p2p, { hash, key }) => {
-    const meta = await p2p.get(hash)
+    const meta = await p2p.get(decode(hash).toString('hex'))
+    const out = {
+      ...meta,
+      url: `dat://${encode(meta.url)}`
+    }
     if (key) {
-      console.log(JSON.stringify(renderKV(key, meta[key])))
+      console.log(JSON.stringify(out[key]))
     } else {
-      console.log(JSON.stringify(meta, renderKV, 2))
+      console.log(JSON.stringify(out, null, 2))
     }
   }
 }
@@ -152,10 +165,6 @@ actions.list = {
 const allowedKeyUpdates = ['title', 'description', 'main']
 class InvalidKeyError extends UserError {}
 
-const renderKV = (key, value) => {
-  return key === 'url' ? `dat://${Buffer.from(value).toString('hex')}` : value
-}
-
 const main = async () => {
   let [actionName, ...rawInput] = argv._
   if (!actionName) {
@@ -177,7 +186,7 @@ const main = async () => {
 
   const p2p = new P2PCommons({ baseDir: argv.env && resolve(argv.env) })
   await p2p.ready()
-  await action.handler(p2p, input)
+  await action.handler(p2p, { ...argv, ...input })
   await p2p.destroy()
 }
 

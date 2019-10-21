@@ -3,31 +3,36 @@
 require('fs.promises')
 
 const { test } = require('tap')
-const { spawn } = require('child_process')
+const { spawn, exec } = require('child_process')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
 const { homedir, tmpdir } = require('os')
+const { decode } = require('dat-encoding')
+const { promisify } = require('util')
 
-const hypergraph = args =>
+const hypergraphSpawn = args =>
   spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
+
+const hypergraphExec = args =>
+  promisify(exec)(`node ${__dirname}/bin/hypergraph.js ${args}`)
 
 const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
 
 test('--help', async t => {
-  const ps = hypergraph('--help')
+  const ps = hypergraphSpawn('--help')
   await match(ps.stdout, 'interactive mode')
   const code = await onExit(ps)
   t.equal(code, 1)
 })
 
 test('default', async t => {
-  const ps = hypergraph('')
+  const ps = hypergraphSpawn('')
   await match(ps.stdout, 'Create')
   ps.kill()
 })
 
 test('abort prompt', async t => {
-  const ps = hypergraph('')
+  const ps = hypergraphSpawn('')
   await match(ps.stdout, 'Create')
   ps.stdin.write('\x03') // Ctrl+C
   const code = await onExit(ps)
@@ -35,8 +40,8 @@ test('abort prompt', async t => {
 })
 
 test('create', async t => {
-  await t.test('prompt type, title, description', async t => {
-    const ps = hypergraph('create')
+  await t.test('create', async t => {
+    const ps = hypergraphSpawn('create')
     await match(ps.stdout, 'Profile')
     ps.stdin.write('\n')
     await match(ps.stdout, 'Title')
@@ -47,8 +52,8 @@ test('create', async t => {
     t.equal(code, 0)
   })
 
-  await t.test('prompt title, description', async t => {
-    const ps = hypergraph('create content')
+  await t.test('create <type>', async t => {
+    const ps = hypergraphSpawn('create content')
     ps.stdin.write('title\n')
     await match(ps.stdout, 'Description')
     ps.stdin.write('description\n')
@@ -56,23 +61,18 @@ test('create', async t => {
     t.equal(code, 0)
   })
 
-  await t.test('--env', async t => {
-    let ps = hypergraph('create content')
-    ps.stdin.write('title\n')
-    await match(ps.stdout, 'Description')
-    ps.stdin.write('description\n')
-    let code = await onExit(ps)
-    t.equal(code, 0)
+  await t.test('create <type> --title --description', async t => {
+    const { stdout } = await hypergraphExec(
+      'create content --title=t --description=d'
+    )
+    t.ok(decode(stdout.trim()))
+  })
 
+  await t.test('--env', async t => {
+    await hypergraphExec('create content -t=t -d=d')
     await fs.stat(`${homedir()}/.p2pcommons`)
 
-    ps = hypergraph(`create content --env=${tmpdir()}/.test`)
-    ps.stdin.write('title\n')
-    await match(ps.stdout, 'Description')
-    ps.stdin.write('description\n')
-    code = await onExit(ps)
-    t.equal(code, 0)
-
+    await hypergraphExec(`create content -t=t -d=d --env=${tmpdir()}/.test`)
     await fs.stat(`${tmpdir()}/.test`)
   })
 })

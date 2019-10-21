@@ -43,6 +43,8 @@ $ hypergraph --help
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
     --help, -h                 Display help text
     --version, -v              Display version
+    --title, -t                Module title
+    --description, -d          Module description
 
   Module types
     - content                  A content module
