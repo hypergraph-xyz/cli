@@ -3,8 +3,7 @@
 
 process.title = 'hypergraph'
 
-require('fs.promises')
-
+require('../lib/fs-promises')
 const minimist = require('minimist')
 const UserError = require('../lib/user-error')
 const { version } = require('../package.json')

@@ -1,7 +1,6 @@
 'use strict'
 
-require('fs.promises')
-
+require('./lib/fs-promises')
 const { test } = require('tap')
 const { spawn, exec } = require('child_process')
 const match = require('stream-match')
