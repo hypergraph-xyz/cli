@@ -8,6 +8,7 @@ const { promises: fs } = require('fs')
 const { homedir, tmpdir } = require('os')
 const { encode, decode } = require('dat-encoding')
 const { promisify } = require('util')
+const { version } = require('./package')
 
 const cliSpawn = args =>
   spawn(`${__dirname}/bin/hypergraph.js`, [...args.split(' ')])
@@ -22,6 +23,11 @@ test('--help', async t => {
   await match(ps.stdout, 'interactive mode')
   const code = await onExit(ps)
   t.equal(code, 1)
+})
+
+test('--version', async t => {
+  const { stdout } = await cliExec('--version')
+  t.ok(stdout.includes(version))
 })
 
 test('default', async t => {
