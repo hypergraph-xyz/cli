@@ -4,7 +4,7 @@
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
     "scripts": {
-        "test": "prettier-standard '**/*.js' && standard && node test.js"
+        "test": "prettier-standard '**/*.js' && standard && node bin/hypergraph.js --help && node test.js"
     },
     "repository": {
         "type": "git",
