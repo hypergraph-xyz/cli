@@ -212,6 +212,12 @@ test('update', async t => {
   })
 })
 
+test('open', async t => {
+  const ps = cliSpawn('open')
+  await match(ps.stdout, 'Hash')
+  ps.kill()
+})
+
 test('list', async t => {
   let { stdout } = await cliExec('create content --t=t --d=d')
   const contentKey = decode(stdout.trim())
