@@ -37,6 +37,7 @@ $ hypergraph --help
     create <type>              Create a module
     read   <hash> [key]        Read a module's metadata
     update <hash> [key value]  Update a module's metadata
+    open   <hash>              Open a module's folder
     list   <type>              List writable modules
 
   Options
@@ -45,7 +46,7 @@ $ hypergraph --help
     --version, -v              Display version
     --title, -t                Module title
     --description, -d          Module description
-
+  
   Module types
     - content                  A content module
     - profile                  A user profile module

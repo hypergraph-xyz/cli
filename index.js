@@ -7,6 +7,8 @@ const UserError = require('./lib/user-error')
 const { resolve } = require('path')
 const { encode, decode } = require('dat-encoding')
 const capitalize = require('capitalize')
+const open = require('open')
+const { homedir } = require('os')
 
 const actions = {}
 
@@ -94,6 +96,23 @@ actions.update = {
   }
 }
 
+actions.open = {
+  title: 'Open module folder',
+  input: [
+    {
+      name: 'hash',
+      resolve: () =>
+        prompt({
+          type: 'text',
+          message: 'Hash'
+        })
+    }
+  ],
+  handler: async (_, { hash, env }) => {
+    await open(`${env}/${hash}`)
+  }
+}
+
 actions.list = {
   title: 'List writable modules',
   input: [{ name: 'type', resolve: askType }],
@@ -142,9 +161,10 @@ const hypergraph = async argv => {
     input[name] = rawInput[idx] || (resolve && (await resolve()))
   }
 
-  const p2p = new P2PCommons({ baseDir: argv.env && resolve(argv.env) })
+  const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
+  const p2p = new P2PCommons({ baseDir: env })
   await p2p.ready()
-  await action.handler(p2p, { ...argv, ...input })
+  await action.handler(p2p, { ...argv, ...input, env })
   await p2p.destroy()
 }
 

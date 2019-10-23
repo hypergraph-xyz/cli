@@ -17,6 +17,7 @@ const help = `
     create <type>              Create a module
     read   <hash> [key]        Read a module's metadata
     update <hash> [key value]  Update a module's metadata
+    open   <hash>              Open a module's folder
     list   <type>              List writable modules
 
   Options
