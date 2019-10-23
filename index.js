@@ -112,6 +112,7 @@ actions.open = {
     }
   ],
   handler: async (_, { hash, env }) => {
+    // istanbul ignore next
     await open(`${env}/${hash}`)
   }
 }
