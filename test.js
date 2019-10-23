@@ -209,6 +209,26 @@ test('update', async t => {
       }
       t.ok(threw)
     })
+
+    await t.test('clear value', async t => {
+      let { stdout } = await cliExec('create content --t=t --d=d')
+      const key = decode(stdout.trim())
+
+      await cliExec(`update ${encode(key)} main`)
+      ;({ stdout } = await cliExec(`read ${encode(key)}`))
+      const meta = JSON.parse(stdout)
+      t.deepEqual(meta, {
+        title: 't',
+        description: 'd',
+        url: `dat://${encode(key)}`,
+        type: 'content',
+        subtype: 'content',
+        main: '',
+        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        authors: [],
+        parents: []
+      })
+    })
   })
 })
 
