@@ -84,6 +84,17 @@ test('create', async t => {
 })
 
 test('read', async t => {
+  await t.test('read', async t => {
+    const { stdout } = await cliExec('create content --title=t --description=d')
+    const key = decode(stdout.trim())
+
+    const ps = cliSpawn('read')
+    ps.stdin.write(`${encode(key)}\n`)
+    await match(ps.stdout, `dat://${encode(key)}`)
+    const code = await onExit(ps)
+    t.equal(code, 0)
+  })
+
   await t.test('read <hash>', async t => {
     let { stdout } = await cliExec('create content --title=t --description=d')
     const key = decode(stdout.trim())
