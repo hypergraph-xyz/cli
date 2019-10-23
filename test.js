@@ -32,7 +32,7 @@ test('--version', async t => {
 
 test('default', async t => {
   const ps = cliSpawn('')
-  await match(ps.stdout, 'Create')
+  await match(ps.stdout, 'interactive mode')
   ps.kill()
 })
 
