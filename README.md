@@ -38,6 +38,7 @@ $ hypergraph --help
     read   <hash> [key]        Read a module's metadata
     update <hash> [key value]  Update a module's metadata
     open   <hash>              Open a module's folder
+    path   <hash>              Print module path
     list   <type>              List writable modules
 
   Options

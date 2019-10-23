@@ -276,6 +276,24 @@ test('open', async t => {
   ps.kill()
 })
 
+test('path', async t => {
+  // For this action the modules don't need to exist
+  const hash =
+    '41fac1c7ee0cde5b75ed2de9917a841b3c408dc04e0374a03cb610492f2c486f'
+
+  await t.test('path', async t => {
+    const ps = cliSpawn('path')
+    await match(ps.stdout, 'Hash')
+    ps.stdin.write(`${hash}\n`)
+    await match(ps.stdout, `${homedir()}/.p2pcommons/${hash}`)
+  })
+
+  await t.test('path <hash>', async t => {
+    const { stdout } = await cliExec(`path ${hash}`)
+    t.equal(stdout.trim(), `${homedir()}/.p2pcommons/${hash}`)
+  })
+})
+
 test('list', async t => {
   await t.test('list content', async t => {
     let { stdout } = await cliExec('create content -t=t -d=d')

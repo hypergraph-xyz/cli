@@ -132,6 +132,23 @@ actions.open = {
   }
 }
 
+actions.path = {
+  title: 'Print module path',
+  input: [
+    {
+      name: 'hash',
+      resolve: () =>
+        prompt({
+          type: 'text',
+          message: 'Hash'
+        })
+    }
+  ],
+  handler: async (_, { hash, env }) => {
+    console.log(`${env}/${encode(hash)}`)
+  }
+}
+
 actions.list = {
   title: 'List writable modules',
   input: [{ name: 'type', resolve: askType }],
