@@ -11,7 +11,7 @@ const { promisify } = require('util')
 const { version } = require('./package')
 
 const cliSpawn = args =>
-  spawn([`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
+  spawn(`${__dirname}/bin/hypergraph.js`, [args.split(' ')])
 
 const cliExec = args =>
   promisify(exec)(`${__dirname}/bin/hypergraph.js ${args}`)
