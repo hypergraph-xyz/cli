@@ -88,7 +88,7 @@ test('read', async t => {
       type: 'content',
       subtype: 'content',
       main: '',
-      license: '',
+      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
       parents: []
     })
@@ -124,7 +124,7 @@ test('update', async t => {
       type: 'content',
       subtype: 'content',
       main: 'main',
-      license: '',
+      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
       parents: []
     })
@@ -144,7 +144,7 @@ test('update', async t => {
       type: 'content',
       subtype: 'content',
       main: 'main',
-      license: '',
+      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
       parents: []
     })
