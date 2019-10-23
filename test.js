@@ -11,10 +11,10 @@ const { promisify } = require('util')
 const { version } = require('./package')
 
 const cliSpawn = args =>
-  spawn(`${__dirname}/bin/hypergraph.js`, [...args.split(' ')])
+  spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
 
 const cliExec = args =>
-  promisify(exec)(`${__dirname}/bin/hypergraph.js ${args}`)
+  promisify(exec)(`node ${__dirname}/bin/hypergraph.js ${args}`)
 
 const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
 
