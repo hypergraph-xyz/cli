@@ -24,7 +24,8 @@ const help = `
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
     --help, -h                 Display help text
     --version, -v              Display version
-    --title, -t                Module title
+    --title, -t                A content module's title
+    --name, -n                 A profile module's name
     --description, -d          Module description
   
   Module types
@@ -41,7 +42,8 @@ const argv = minimist(process.argv.slice(2), {
     help: 'h',
     version: 'v',
     title: 't',
-    description: 'd'
+    description: 'd',
+    name: 'n'
   }
 })
 

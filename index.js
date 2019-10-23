@@ -1,25 +1,28 @@
 #!/usr/bin/env node
 'use strict'
 
-const P2PCommons = require('@p2pcommons/sdk-js')
 const prompt = require('./lib/prompt')
-const UserError = require('./lib/user-error')
 const { resolve } = require('path')
-const { encode, decode } = require('dat-encoding')
 const capitalize = require('capitalize')
 const open = require('open')
 const { homedir } = require('os')
+const P2P = require('./lib/p2p')
 
 const actions = {}
 
 actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
-  handler: async (p2p, { type, title, description }) => {
-    if (!title) {
+  handler: async (p2p, { type, title, name, description }) => {
+    if (type === 'content' && !title) {
       title = await prompt({
         type: 'text',
         message: 'Title'
+      })
+    } else if (type === 'profile' && !name) {
+      name = await prompt({
+        type: 'text',
+        message: 'Name'
       })
     }
     if (!description) {
@@ -28,9 +31,9 @@ actions.create = {
         message: 'Description'
       })
     }
-    const { url } = await p2p.init({ type, title, description })
 
-    console.log(`dat://${encode(url)}`)
+    const { url } = await p2p.init({ type, title, name, description })
+    console.log(url)
   }
 }
 
@@ -48,15 +51,11 @@ actions.read = {
     { name: 'key' }
   ],
   handler: async (p2p, { hash, key }) => {
-    const meta = await p2p.get(decode(hash))
-    const out = {
-      ...meta,
-      url: `dat://${encode(meta.url)}`
-    }
+    const metadata = await p2p.get(hash)
     if (key) {
-      console.log(JSON.stringify(out[key]))
+      console.log(JSON.stringify(metadata[key]))
     } else {
-      console.log(JSON.stringify(out, null, 2))
+      console.log(JSON.stringify(metadata, null, 2))
     }
   }
 }
@@ -76,31 +75,23 @@ actions.update = {
     { name: 'value' }
   ],
   handler: async (p2p, { hash, key, value }) => {
-    const meta = await p2p.get(decode(hash))
+    const metadata = await p2p.get(hash)
 
     if (key) {
-      if (!allowedKeyUpdates.includes(key)) {
-        throw new InvalidKeyError(
-          `Only allowed to update keys ${allowedKeyUpdates.join(', ')}`
-        )
-      }
-      meta[key] = value || ''
+      metadata[key] = value || ''
     } else {
-      for (const key of allowedKeyUpdates) {
-        meta[key] = await prompt({
+      for (const key of p2p.allowedKeyUpdates(metadata.type)) {
+        metadata[key] = await prompt({
           type: 'text',
           message: capitalize(key),
-          initial: meta[key]
+          initial: metadata[key]
         })
       }
     }
 
-    await p2p.set(meta)
+    await p2p.set(metadata)
   }
 }
-
-const allowedKeyUpdates = ['title', 'description', 'main']
-class InvalidKeyError extends UserError {}
 
 actions.open = {
   title: 'Open module folder',
@@ -129,8 +120,8 @@ actions.list = {
       profile: 'listProfiles'
     }[type]
     const dbItems = await p2p[fn]()
-    for (const { rawJSON: mod } of dbItems) {
-      console.log(`dat://${mod.url.toString('hex')}`)
+    for (const { rawJSON } of dbItems) {
+      console.log(rawJSON.url)
     }
   }
 }
@@ -166,7 +157,7 @@ const hypergraph = async argv => {
   }
 
   const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
-  const p2p = new P2PCommons({ baseDir: env })
+  const p2p = new P2P({ baseDir: env })
   await p2p.ready()
   await action.handler(p2p, { ...argv, ...input, env })
   await p2p.destroy()

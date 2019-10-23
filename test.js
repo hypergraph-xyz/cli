@@ -57,9 +57,20 @@ test('create', async t => {
     t.equal(code, 0)
   })
 
-  await t.test('create <type>', async t => {
+  await t.test('create content', async t => {
     const ps = cliSpawn('create content')
+    await match(ps.stdout, 'Title')
     ps.stdin.write('title\n')
+    await match(ps.stdout, 'Description')
+    ps.stdin.write('description\n')
+    const code = await onExit(ps)
+    t.equal(code, 0)
+  })
+
+  await t.test('create profile', async t => {
+    const ps = cliSpawn('create profile')
+    await match(ps.stdout, 'Name')
+    ps.stdin.write('name\n')
     await match(ps.stdout, 'Description')
     ps.stdin.write('description\n')
     const code = await onExit(ps)
@@ -239,12 +250,25 @@ test('open', async t => {
 })
 
 test('list', async t => {
-  let { stdout } = await cliExec('create content --t=t --d=d')
-  const contentKey = decode(stdout.trim())
-  ;({ stdout } = await cliExec('create profile --t=t --d=d'))
-  const profileKey = decode(stdout.trim())
+  await t.test('list content', async t => {
+    let { stdout } = await cliExec('create content -t=t -d=d')
+    const contentKey = decode(stdout.trim())
+    ;({ stdout } = await cliExec('create profile -n=n -d=d'))
+    const profileKey = decode(stdout.trim())
 
-  ;({ stdout } = await cliExec('list content'))
-  t.ok(stdout.includes(`dat://${encode(contentKey)}`))
-  t.notOk(stdout.includes(`dat://${encode(profileKey)}`))
+    ;({ stdout } = await cliExec('list content'))
+    t.ok(stdout.includes(`dat://${encode(contentKey)}`))
+    t.notOk(stdout.includes(`dat://${encode(profileKey)}`))
+  })
+
+  await t.test('list profile', async t => {
+    let { stdout } = await cliExec('create content -t=t -d=d')
+    const contentKey = decode(stdout.trim())
+    ;({ stdout } = await cliExec('create profile -n=n -d=d'))
+    const profileKey = decode(stdout.trim())
+
+    ;({ stdout } = await cliExec('list profile'))
+    t.notOk(stdout.includes(`dat://${encode(contentKey)}`))
+    t.ok(stdout.includes(`dat://${encode(profileKey)}`))
+  })
 })
