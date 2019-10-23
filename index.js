@@ -99,6 +99,9 @@ actions.update = {
   }
 }
 
+const allowedKeyUpdates = ['title', 'description', 'main']
+class InvalidKeyError extends UserError {}
+
 actions.open = {
   title: 'Open module folder',
   input: [
@@ -131,9 +134,6 @@ actions.list = {
     }
   }
 }
-
-const allowedKeyUpdates = ['title', 'description', 'main']
-class InvalidKeyError extends UserError {}
 
 function askType () {
   return prompt({
