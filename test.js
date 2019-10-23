@@ -10,10 +10,10 @@ const { encode, decode } = require('dat-encoding')
 const { promisify } = require('util')
 
 const cliSpawn = args =>
-  spawn('node', [`${__dirname}/bin/hypergraph.js`, ...args.split(' ')])
+  spawn(`${__dirname}/bin/hypergraph.js`, [...args.split(' ')])
 
 const cliExec = args =>
-  promisify(exec)(`node ${__dirname}/bin/hypergraph.js ${args}`)
+  promisify(exec)(`${__dirname}/bin/hypergraph.js ${args}`)
 
 const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
 
