@@ -45,7 +45,7 @@ actions.read = {
     { name: 'key' }
   ],
   handler: async (p2p, { hash, key }) => {
-    const meta = await p2p.get(decode(hash).toString('hex'))
+    const meta = await p2p.get(decode(hash))
     const out = {
       ...meta,
       url: `dat://${encode(meta.url)}`
@@ -73,7 +73,7 @@ actions.update = {
     { name: 'value' }
   ],
   handler: async (p2p, { hash, key, value }) => {
-    const meta = await p2p.get(decode(hash).toString('hex'))
+    const meta = await p2p.get(decode(hash))
 
     if (key) {
       if (!allowedKeyUpdates.includes(key)) {
