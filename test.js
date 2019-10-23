@@ -157,6 +157,20 @@ test('update', async t => {
       authors: [],
       parents: []
     })
+
+    await t.test('invalid key', async t => {
+      const { stdout } = await cliExec('create content --t=t --d=d')
+      const key = decode(stdout.trim())
+
+      let threw = false
+      try {
+        await cliExec(`update ${encode(key)} beep boop`)
+      } catch (err) {
+        t.ok(err.stderr.includes('update keys'))
+        threw = true
+      }
+      t.ok(threw)
+    })
   })
 })
 
