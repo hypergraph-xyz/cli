@@ -124,6 +124,33 @@ test('read', async t => {
 })
 
 test('update', async t => {
+  await t.test('update', async t => {
+    let { stdout } = await cliExec('create content --title=t --description=d')
+    const key = decode(stdout.trim())
+
+    const ps = await cliSpawn('update')
+    ps.stdin.write(`${encode(key)}\n`)
+    await match(ps.stdout, 'Title')
+    ps.stdin.write('\n') // keep value
+    await match(ps.stdout, 'Description')
+    ps.stdin.write('beep\n')
+    await match(ps.stdout, 'Main')
+    ps.stdin.write('main\n')
+    ;({ stdout } = await cliExec(`read ${encode(key)}`))
+    const meta = JSON.parse(stdout)
+    t.deepEqual(meta, {
+      title: 't',
+      description: 'beep',
+      url: `dat://${encode(key)}`,
+      type: 'content',
+      subtype: 'content',
+      main: 'main',
+      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+      authors: [],
+      parents: []
+    })
+  })
+
   await t.test('update <hash>', async t => {
     let { stdout } = await cliExec('create content --title=t --description=d')
     const key = decode(stdout.trim())
