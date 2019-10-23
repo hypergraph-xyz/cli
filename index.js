@@ -7,6 +7,8 @@ const capitalize = require('capitalize')
 const open = require('open')
 const { homedir } = require('os')
 const P2P = require('./lib/p2p')
+const { encode } = require('dat-encoding')
+const readdirp = require('readdirp')
 
 const actions = {}
 
@@ -74,18 +76,37 @@ actions.update = {
     { name: 'key' },
     { name: 'value' }
   ],
-  handler: async (p2p, { hash, key, value }) => {
+  handler: async (p2p, { env, hash, key, value }) => {
     const metadata = await p2p.get(hash)
 
     if (key) {
       metadata[key] = value || ''
     } else {
       for (const key of p2p.allowedKeyUpdates(metadata.type)) {
-        metadata[key] = await prompt({
-          type: 'text',
-          message: capitalize(key),
-          initial: metadata[key]
-        })
+        if (key === 'main') {
+          const entries = await readdirp.promise(
+            `${env}/${encode(metadata.url)}/`,
+            {
+              fileFilter: ['!dat.json', '!.*'],
+              directoryFilter: ['.dat']
+            }
+          )
+          if (!entries.length) continue
+          metadata.main = await prompt({
+            type: 'select',
+            message: 'Main',
+            choices: entries.map(entry => ({
+              title: entry.path,
+              value: entry.path
+            }))
+          })
+        } else {
+          metadata[key] = await prompt({
+            type: 'text',
+            message: capitalize(key),
+            initial: metadata[key]
+          })
+        }
       }
     }
 
@@ -107,7 +128,7 @@ actions.open = {
   ],
   handler: async (_, { hash, env }) => {
     // istanbul ignore next
-    await open(`${env}/${hash}`)
+    await open(`${env}/${encode(hash)}`)
   }
 }
 

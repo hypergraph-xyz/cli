@@ -145,8 +145,6 @@ test('update', async t => {
     ps.stdin.write('\n') // keep value
     await match(ps.stdout, 'Description')
     ps.stdin.write('beep\n')
-    await match(ps.stdout, 'Main')
-    ps.stdin.write('main\n')
     ;({ stdout } = await cliExec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
@@ -155,7 +153,7 @@ test('update', async t => {
       url: `dat://${encode(key)}`,
       type: 'content',
       subtype: 'content',
-      main: 'main',
+      main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
       parents: []
@@ -171,8 +169,6 @@ test('update', async t => {
     ps.stdin.write('\n') // keep value
     await match(ps.stdout, 'Description')
     ps.stdin.write('beep\n')
-    await match(ps.stdout, 'Main')
-    ps.stdin.write('main\n')
     ;({ stdout } = await cliExec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
@@ -181,7 +177,38 @@ test('update', async t => {
       url: `dat://${encode(key)}`,
       type: 'content',
       subtype: 'content',
-      main: 'main',
+      main: '',
+      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+      authors: [],
+      parents: []
+    })
+  })
+
+  await t.test('prompt main', async t => {
+    let { stdout } = await cliExec('create content --title=t --description=d')
+    const key = decode(stdout.trim())
+    await fs.writeFile(`${homedir()}/.p2pcommons/${encode(key)}/file.txt`, 'hi')
+
+    const ps = await cliSpawn(`update ${encode(key)}`)
+    await match(ps.stdout, 'Title')
+    ps.stdin.write('\n') // keep value
+    await match(ps.stdout, 'Description')
+    ps.stdin.write('beep\n')
+    await match(ps.stdout, 'Main')
+    await match(ps.stdout, 'file.txt')
+    ps.stdin.write('\n')
+    ps.stdin.end()
+    const code = await onExit(ps)
+    t.equal(code, 0)
+    ;({ stdout } = await cliExec(`read ${encode(key)}`))
+    const meta = JSON.parse(stdout)
+    t.deepEqual(meta, {
+      title: 't',
+      description: 'beep',
+      url: `dat://${encode(key)}`,
+      type: 'content',
+      subtype: 'content',
+      main: 'file.txt',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
       parents: []
