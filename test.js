@@ -62,7 +62,10 @@ test('create', async t => {
 
   await t.test('create <type> --title --description', async t => {
     const { stdout } = await cliExec('create content --title=t --description=d')
-    t.ok(decode(stdout.trim()))
+    const hash = encode(stdout.trim())
+    await fs.stat(`${homedir()}/.p2pcommons/${hash}`)
+    await fs.stat(`${homedir()}/.p2pcommons/${hash}/dat.json`)
+    await fs.stat(`${homedir()}/.p2pcommons/${hash}/.dat`)
   })
 
   await t.test('--env', async t => {
