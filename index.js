@@ -44,7 +44,8 @@ actions.read = {
           type: 'text',
           message: 'Hash'
         })
-    }
+    },
+    { name: 'key' }
   ],
   handler: async (p2p, { hash, key }) => {
     const meta = await p2p.get(decode(hash))
@@ -70,7 +71,9 @@ actions.update = {
           type: 'text',
           message: 'Hash'
         })
-    }
+    },
+    { name: 'key' },
+    { name: 'value' }
   ],
   handler: async (p2p, { hash, key, value }) => {
     const meta = await p2p.get(decode(hash))
