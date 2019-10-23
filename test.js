@@ -20,7 +20,7 @@ const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
 
 test('--help', async t => {
   const ps = cliSpawn('--help')
-  await match(ps.stdout, 'interactive mode')
+  await match(ps.stdout, 'Usage')
   const code = await onExit(ps)
   t.equal(code, 1)
 })
