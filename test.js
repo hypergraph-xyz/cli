@@ -112,11 +112,11 @@ test('update', async t => {
     const key = decode(stdout.trim())
 
     const ps = await cliSpawn(`update ${encode(key)}`)
-    await match(ps.stdout, 'title')
+    await match(ps.stdout, 'Title')
     ps.stdin.write('\n') // keep value
-    await match(ps.stdout, 'description')
+    await match(ps.stdout, 'Description')
     ps.stdin.write('beep\n')
-    await match(ps.stdout, 'main')
+    await match(ps.stdout, 'Main')
     ps.stdin.write('main\n')
     ;({ stdout } = await cliExec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)

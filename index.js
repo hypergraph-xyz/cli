@@ -6,6 +6,7 @@ const prompt = require('./lib/prompt')
 const UserError = require('./lib/user-error')
 const { resolve } = require('path')
 const { encode, decode } = require('dat-encoding')
+const capitalize = require('capitalize')
 
 const actions = {}
 
@@ -86,7 +87,7 @@ actions.update = {
       for (const key of allowedKeyUpdates) {
         meta[key] = await prompt({
           type: 'text',
-          message: key,
+          message: capitalize(key),
           initial: meta[key]
         })
       }
