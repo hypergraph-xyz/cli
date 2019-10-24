@@ -10,6 +10,7 @@ const P2P = require('./lib/p2p')
 const { encode } = require('dat-encoding')
 const readdirp = require('readdirp')
 const validate = require('./lib/validate')
+const UserError = require('./lib/user-error')
 
 const actions = {}
 
@@ -47,11 +48,21 @@ actions.read = {
   input: [
     {
       name: 'hash',
-      resolve: () =>
-        prompt({
-          type: 'text',
-          message: 'Hash'
+      resolve: async p2p => {
+        const res = await Promise.all([p2p.listContent(), p2p.listProfiles()])
+        const choices = [...res[0], ...res[1]].map(({ rawJSON }) => ({
+          title: rawJSON.title || rawJSON.name,
+          value: rawJSON.url
+        }))
+        if (!choices.length) {
+          throw new UserError('No modules')
+        }
+        return prompt({
+          type: 'select',
+          message: 'Select module',
+          choices
         })
+      }
     },
     { name: 'key' }
   ],
@@ -192,15 +203,16 @@ const hypergraph = async argv => {
     })
   }
 
-  const action = actions[actionName]
-  const input = {}
-  for (const [idx, { name, resolve }] of Object.entries(action.input)) {
-    input[name] = rawInput[idx] || (resolve && (await resolve()))
-  }
-
   const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
   const p2p = new P2P({ baseDir: env })
   await p2p.ready()
+
+  const action = actions[actionName]
+  const input = {}
+  for (const [idx, { name, resolve }] of Object.entries(action.input)) {
+    input[name] = rawInput[idx] || (resolve && (await resolve(p2p)))
+  }
+
   await action.handler(p2p, { ...argv, ...input, env })
   await p2p.destroy()
 }

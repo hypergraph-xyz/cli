@@ -143,14 +143,29 @@ test('create', async t => {
 
 test('read', async t => {
   await t.test('read', async t => {
-    const { stdout } = await cliExec('create content --title=t --description=d')
-    const key = decode(stdout.trim())
+    await t.test('prompt', async t => {
+      await cliExec('create content --title=t --description=d')
+      await cliExec('create profile --name=n --description=d')
 
-    const ps = cliSpawn('read')
-    ps.stdin.write(`${encode(key)}\n`)
-    await match(ps.stdout, `dat://${encode(key)}`)
-    const code = await onExit(ps)
-    t.equal(code, 0)
+      const ps = cliSpawn('read')
+      await match(ps.stdout, 'Select module')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'dat://')
+      ps.stdin.end()
+      const code = await onExit(ps)
+      t.equal(code, 0)
+    })
+
+    await t.test('no modules', async t => {
+      let threw = false
+      try {
+        await cliExec(`read --env=${tmpdir()}/${Math.random()}`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /No modules/)
+      }
+      t.ok(threw)
+    })
   })
 
   await t.test('read <hash>', async t => {
