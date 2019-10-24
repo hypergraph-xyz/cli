@@ -9,6 +9,7 @@ const { homedir } = require('os')
 const P2P = require('./lib/p2p')
 const { encode } = require('dat-encoding')
 const readdirp = require('readdirp')
+const validate = require('./lib/validate')
 
 const actions = {}
 
@@ -19,12 +20,14 @@ actions.create = {
     if (type === 'content' && !title) {
       title = await prompt({
         type: 'text',
-        message: 'Title'
+        message: 'Title',
+        validate: validate.title
       })
     } else if (type === 'profile' && !name) {
       name = await prompt({
         type: 'text',
-        message: 'Name'
+        message: 'Name',
+        validate: validate.name
       })
     }
     if (!description) {
@@ -104,7 +107,8 @@ actions.update = {
           metadata[key] = await prompt({
             type: 'text',
             message: capitalize(key),
-            initial: metadata[key]
+            initial: metadata[key],
+            validate: validate[key]
           })
         }
       }

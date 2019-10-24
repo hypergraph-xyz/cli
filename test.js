@@ -46,15 +46,46 @@ test('abort prompt', async t => {
 
 test('create', async t => {
   await t.test('create', async t => {
-    const ps = cliSpawn('create')
-    await match(ps.stdout, 'Profile')
-    ps.stdin.write('\n')
-    await match(ps.stdout, 'Title')
-    ps.stdin.write('title\n')
-    await match(ps.stdout, 'Description')
-    ps.stdin.write('description\n')
-    const code = await onExit(ps)
-    t.equal(code, 0)
+    await t.test('prompt', async t => {
+      const ps = cliSpawn('create')
+      await match(ps.stdout, 'Profile')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Title')
+      ps.stdin.write('title\n')
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('description\n')
+      const code = await onExit(ps)
+      t.equal(code, 0)
+    })
+
+    await t.test('requires title', async t => {
+      const ps = cliSpawn('create')
+      await match(ps.stdout, 'Profile')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Title')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Title required')
+      ps.stdin.write('title\n')
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('description\n')
+      const code = await onExit(ps)
+      t.equal(code, 0)
+    })
+
+    await t.test('requires name', async t => {
+      const ps = cliSpawn('create')
+      await match(ps.stdout, 'Profile')
+      ps.stdin.write(Buffer.from('1b5b42', 'hex')) // down arrow
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Name')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Name required')
+      ps.stdin.write('name\n')
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('description\n')
+      const code = await onExit(ps)
+      t.equal(code, 0)
+    })
   })
 
   await t.test('create content', async t => {
@@ -78,11 +109,27 @@ test('create', async t => {
   })
 
   await t.test('create <type> --title --description', async t => {
-    const { stdout } = await cliExec('create content --title=t --description=d')
-    const hash = encode(stdout.trim())
-    await fs.stat(`${homedir()}/.p2pcommons/${hash}`)
-    await fs.stat(`${homedir()}/.p2pcommons/${hash}/dat.json`)
-    await fs.stat(`${homedir()}/.p2pcommons/${hash}/.dat`)
+    await t.test('creates files', async t => {
+      const { stdout } = await cliExec(
+        'create content --title=t --description=d'
+      )
+      const hash = encode(stdout.trim())
+      await fs.stat(`${homedir()}/.p2pcommons/${hash}`)
+      await fs.stat(`${homedir()}/.p2pcommons/${hash}/dat.json`)
+      await fs.stat(`${homedir()}/.p2pcommons/${hash}/.dat`)
+    })
+
+    await t.test('requires title', async t => {
+      const ps = cliSpawn('create content --description=d')
+      await match(ps.stdout, 'Title')
+      ps.kill()
+    })
+
+    await t.test('requires name', async t => {
+      const ps = cliSpawn('create profile --description=d')
+      await match(ps.stdout, 'Name')
+      ps.kill()
+    })
   })
 
   await t.test('--env', async t => {
@@ -216,22 +263,44 @@ test('update', async t => {
   })
 
   await t.test('update <hash> <key> <value>', async t => {
-    let { stdout } = await cliExec('create content --title=t --description=d')
-    const key = decode(stdout.trim())
+    await t.test('updates main', async t => {
+      let { stdout } = await cliExec('create content --title=t --description=d')
+      const key = decode(stdout.trim())
 
-    await cliExec(`update ${encode(key)} main main`)
-    ;({ stdout } = await cliExec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 't',
-      description: 'd',
-      url: `dat://${encode(key)}`,
-      type: 'content',
-      subtype: 'content',
-      main: 'main',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
+      await cliExec(`update ${encode(key)} main main`)
+      ;({ stdout } = await cliExec(`read ${encode(key)}`))
+      const meta = JSON.parse(stdout)
+      t.deepEqual(meta, {
+        title: 't',
+        description: 'd',
+        url: `dat://${encode(key)}`,
+        type: 'content',
+        subtype: 'content',
+        main: 'main',
+        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        authors: [],
+        parents: []
+      })
+    })
+
+    await t.test('updates title', async t => {
+      let { stdout } = await cliExec('create content --title=t --description=d')
+      const key = decode(stdout.trim())
+
+      await cliExec(`update ${encode(key)} title beep`)
+      ;({ stdout } = await cliExec(`read ${encode(key)}`))
+      const meta = JSON.parse(stdout)
+      t.deepEqual(meta, {
+        title: 'beep',
+        description: 'd',
+        url: `dat://${encode(key)}`,
+        type: 'content',
+        subtype: 'content',
+        main: '',
+        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        authors: [],
+        parents: []
+      })
     })
 
     await t.test('invalid key', async t => {
@@ -266,6 +335,34 @@ test('update', async t => {
         authors: [],
         parents: []
       })
+    })
+
+    await t.test('requires title', async t => {
+      const { stdout } = await cliExec('create content --t=t --d=d')
+      const key = decode(stdout.trim())
+
+      let threw = false
+      try {
+        await cliExec(`update ${encode(key)} title`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Title required/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('requires name', async t => {
+      const { stdout } = await cliExec('create profile --n=n --d=d')
+      const key = decode(stdout.trim())
+
+      let threw = false
+      try {
+        await cliExec(`update ${encode(key)} name`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Name required/)
+      }
+      t.ok(threw)
     })
   })
 })
