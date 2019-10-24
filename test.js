@@ -473,6 +473,54 @@ test('update', async t => {
       }
       t.ok(threw)
     })
+
+    await t.test('no name update for content', async t => {
+      const { exec } = createEnv()
+
+      const { stdout } = await exec('create content -t=t -d=d -y')
+      const key = decode(stdout.trim())
+
+      let threw = false
+      try {
+        await exec(`update ${encode(key)} name beep`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /update keys/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('no title update for profile', async t => {
+      const { exec } = createEnv()
+
+      const { stdout } = await exec('create profile -n=n -d=d -y')
+      const key = decode(stdout.trim())
+
+      let threw = false
+      try {
+        await exec(`update ${encode(key)} title beep`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /update keys/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('no adding new key', async t => {
+      const { exec } = createEnv()
+
+      const { stdout } = await exec('create content -t=t -d=d -y')
+      const key = decode(stdout.trim())
+
+      let threw = false
+      try {
+        await exec(`update ${encode(key)} foo bar`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /update keys/)
+      }
+      t.ok(threw)
+    })
   })
 })
 
