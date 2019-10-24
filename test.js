@@ -525,9 +525,10 @@ test('update', async t => {
 })
 
 test('open', async t => {
-  const { spawn } = createEnv()
+  const { exec, spawn } = createEnv()
+  await exec('create content -t=t -d=d -y')
   const ps = spawn('open')
-  await match(ps.stdout, 'Hash')
+  await match(ps.stdout, 'Select module')
   ps.kill()
 })
 

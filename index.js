@@ -54,27 +54,7 @@ actions.create = {
 
 actions.read = {
   title: 'Read metadata',
-  input: [
-    {
-      name: 'hash',
-      resolve: async p2p => {
-        const res = await Promise.all([p2p.listContent(), p2p.listProfiles()])
-        const choices = [...res[0], ...res[1]].map(({ rawJSON }) => ({
-          title: rawJSON.title || rawJSON.name,
-          value: rawJSON.url
-        }))
-        if (!choices.length) {
-          throw new UserError('No modules')
-        }
-        return prompt({
-          type: 'select',
-          message: 'Select module',
-          choices
-        })
-      }
-    },
-    { name: 'key' }
-  ],
+  input: [{ name: 'hash', resolve: askModules }, { name: 'key' }],
   handler: async (p2p, { hash, key }) => {
     const metadata = await p2p.get(hash)
     if (key) {
@@ -152,16 +132,7 @@ actions.update = {
 
 actions.open = {
   title: 'Open module folder',
-  input: [
-    {
-      name: 'hash',
-      resolve: () =>
-        prompt({
-          type: 'text',
-          message: 'Hash'
-        })
-    }
-  ],
+  input: [{ name: 'hash', resolve: askModules }],
   handler: async (_, { hash, env }) => {
     // istanbul ignore next
     await open(`${env}/${encode(hash)}`)
@@ -208,6 +179,22 @@ function askType () {
       { title: 'Content', value: 'content' },
       { title: 'Profile', value: 'profile' }
     ]
+  })
+}
+
+async function askModules (p2p) {
+  const res = await Promise.all([p2p.listContent(), p2p.listProfiles()])
+  const choices = [...res[0], ...res[1]].map(({ rawJSON }) => ({
+    title: rawJSON.title || rawJSON.name,
+    value: rawJSON.url
+  }))
+  if (!choices.length) {
+    throw new UserError('No modules')
+  }
+  return prompt({
+    type: 'select',
+    message: 'Select module',
+    choices
   })
 }
 
