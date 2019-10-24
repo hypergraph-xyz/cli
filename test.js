@@ -2,42 +2,50 @@
 
 require('./lib/fs-promises')
 const { test } = require('tap')
-const { spawn, exec } = require('child_process')
+const childProcess = require('child_process')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
-const { homedir, tmpdir } = require('os')
+const { tmpdir } = require('os')
 const { encode, decode } = require('dat-encoding')
 const { promisify } = require('util')
 const { version } = require('./package')
 
-const cliSpawn = args =>
-  spawn(`${__dirname}/bin/hypergraph.js`, args.split(' '))
-
-const cliExec = args =>
-  promisify(exec)(`${__dirname}/bin/hypergraph.js ${args}`)
+const createEnv = () => {
+  const path = `${__dirname}/bin/hypergraph.js`
+  const env = `${tmpdir()}/${Date.now()}-${Math.random()}`
+  const spawn = args =>
+    childProcess.spawn(path, [...args.split(' '), `--env=${env}`])
+  const exec = args =>
+    promisify(childProcess.exec)(`${path} ${args} --env=${env}`)
+  return { env, spawn, exec }
+}
 
 const onExit = ps => new Promise(resolve => ps.on('exit', resolve))
 
 test('--help', async t => {
-  const ps = cliSpawn('--help')
+  const { spawn } = createEnv()
+  const ps = spawn('--help')
   await match(ps.stdout, 'interactive mode')
   const code = await onExit(ps)
   t.equal(code, 1)
 })
 
 test('--version', async t => {
-  const { stdout } = await cliExec('--version')
+  const { exec } = createEnv()
+  const { stdout } = await exec('--version')
   t.ok(stdout.includes(version))
 })
 
 test('default', async t => {
-  const ps = cliSpawn('')
+  const { spawn } = createEnv()
+  const ps = spawn('')
   await match(ps.stdout, 'Create')
   ps.kill()
 })
 
 test('abort prompt', async t => {
-  const ps = cliSpawn('')
+  const { spawn } = createEnv()
+  const ps = spawn('')
   await match(ps.stdout, 'Create')
   ps.stdin.write('\x03') // Ctrl+C
   const code = await onExit(ps)
@@ -47,7 +55,8 @@ test('abort prompt', async t => {
 test('create', async t => {
   await t.test('create', async t => {
     await t.test('prompt', async t => {
-      const ps = cliSpawn('create')
+      const { spawn } = createEnv()
+      const ps = spawn('create')
       await match(ps.stdout, 'Profile')
       ps.stdin.write('\n')
       await match(ps.stdout, 'Title')
@@ -62,7 +71,8 @@ test('create', async t => {
     })
 
     await t.test('requires title', async t => {
-      const ps = cliSpawn('create -y')
+      const { spawn } = createEnv()
+      const ps = spawn('create -y')
       await match(ps.stdout, 'Profile')
       ps.stdin.write('\n')
       await match(ps.stdout, 'Title')
@@ -76,7 +86,8 @@ test('create', async t => {
     })
 
     await t.test('requires name', async t => {
-      const ps = cliSpawn('create -y')
+      const { spawn } = createEnv()
+      const ps = spawn('create -y')
       await match(ps.stdout, 'Profile')
       ps.stdin.write(Buffer.from('1b5b42', 'hex')) // down arrow
       ps.stdin.write('\n')
@@ -91,7 +102,8 @@ test('create', async t => {
     })
 
     await t.test('requires license confirmation', async t => {
-      const ps = cliSpawn('create')
+      const { spawn } = createEnv()
+      const ps = spawn('create')
       await match(ps.stdout, 'Profile')
       ps.stdin.write('\n')
       await match(ps.stdout, 'Title')
@@ -105,7 +117,8 @@ test('create', async t => {
     })
 
     await t.test('license confirmation ca be skipped', async t => {
-      const ps = cliSpawn('create -y')
+      const { spawn } = createEnv()
+      const ps = spawn('create -y')
       await match(ps.stdout, 'Profile')
       ps.stdin.write('\n')
       await match(ps.stdout, 'Title')
@@ -118,7 +131,8 @@ test('create', async t => {
   })
 
   await t.test('create content', async t => {
-    const ps = cliSpawn('create content -y')
+    const { spawn } = createEnv()
+    const ps = spawn('create content -y')
     await match(ps.stdout, 'Title')
     ps.stdin.write('title\n')
     await match(ps.stdout, 'Description')
@@ -128,7 +142,8 @@ test('create', async t => {
   })
 
   await t.test('create profile', async t => {
-    const ps = cliSpawn('create profile -y')
+    const { spawn } = createEnv()
+    const ps = spawn('create profile -y')
     await match(ps.stdout, 'Name')
     ps.stdin.write('name\n')
     await match(ps.stdout, 'Description')
@@ -139,42 +154,39 @@ test('create', async t => {
 
   await t.test('create <type> --title --description', async t => {
     await t.test('creates files', async t => {
-      const { stdout } = await cliExec('create content --t=t --d=d -y')
+      const { exec, env } = createEnv()
+      const { stdout } = await exec('create content --t=t --d=d -y')
       const hash = encode(stdout.trim())
-      await fs.stat(`${homedir()}/.p2pcommons/${hash}`)
-      await fs.stat(`${homedir()}/.p2pcommons/${hash}/dat.json`)
-      await fs.stat(`${homedir()}/.p2pcommons/${hash}/.dat`)
+      await fs.stat(`${env}/${hash}`)
+      await fs.stat(`${env}/${hash}/dat.json`)
+      await fs.stat(`${env}/${hash}/.dat`)
     })
 
     await t.test('requires title', async t => {
-      const ps = cliSpawn('create content --description=d -y')
+      const { spawn } = createEnv()
+      const ps = spawn('create content --description=d -y')
       await match(ps.stdout, 'Title')
       ps.kill()
     })
 
     await t.test('requires name', async t => {
-      const ps = cliSpawn('create profile --description=d -y')
+      const { spawn } = createEnv()
+      const ps = spawn('create profile --description=d -y')
       await match(ps.stdout, 'Name')
       ps.kill()
     })
-  })
-
-  await t.test('--env', async t => {
-    await cliExec('create content -t=t -d=d -y')
-    await fs.stat(`${homedir()}/.p2pcommons`)
-
-    await cliExec(`create content -t=t -d=d -y --env=${tmpdir()}/.test`)
-    await fs.stat(`${tmpdir()}/.test`)
   })
 })
 
 test('read', async t => {
   await t.test('read', async t => {
     await t.test('prompt', async t => {
-      await cliExec('create content --title=t --description=d -y')
-      await cliExec('create profile --name=n --description=d -y')
+      const { exec, spawn } = createEnv()
 
-      const ps = cliSpawn('read')
+      await exec('create content --title=t --description=d -y')
+      await exec('create profile --name=n --description=d -y')
+
+      const ps = spawn('read')
       await match(ps.stdout, 'Select module')
       ps.stdin.write('\n')
       await match(ps.stdout, 'dat://')
@@ -184,9 +196,10 @@ test('read', async t => {
     })
 
     await t.test('no modules', async t => {
+      const { exec } = createEnv()
       let threw = false
       try {
-        await cliExec(`read --env=${tmpdir()}/${Math.random()}`)
+        await exec('read')
       } catch (err) {
         threw = true
         t.match(err.message, /No modules/)
@@ -196,10 +209,12 @@ test('read', async t => {
   })
 
   await t.test('read <hash>', async t => {
-    let { stdout } = await cliExec('create content --t=t --d=d -y')
+    const { exec } = createEnv()
+
+    let { stdout } = await exec('create content --t=t --d=d -y')
     const key = decode(stdout.trim())
 
-    ;({ stdout } = await cliExec(`read ${encode(key)}`))
+    ;({ stdout } = await exec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
       title: 't',
@@ -215,10 +230,12 @@ test('read', async t => {
   })
 
   await t.test('read <hash> <key>', async t => {
-    let { stdout } = await cliExec('create content --t=t --d=d -y')
+    const { exec } = createEnv()
+
+    let { stdout } = await exec('create content --t=t --d=d -y')
     const hash = stdout.trim()
 
-    ;({ stdout } = await cliExec(`read ${hash} title`))
+    ;({ stdout } = await exec(`read ${hash} title`))
     t.equal(stdout.trim(), '"t"')
   })
 })
@@ -226,10 +243,12 @@ test('read', async t => {
 test('update', async t => {
   await t.test('update', async t => {
     await t.test('prompt', async t => {
-      await cliExec('create content --title=t --description=d -y')
-      await cliExec('create profile --name=n --description=d -y')
+      const { exec, spawn } = createEnv()
 
-      const ps = await cliSpawn('update')
+      await exec('create content --title=t --description=d -y')
+      await exec('create profile --name=n --description=d -y')
+
+      const ps = await spawn('update')
       await match(ps.stdout, 'Select module')
       ps.stdin.write('\n')
       await match(ps.stdout, 'Title')
@@ -241,9 +260,10 @@ test('update', async t => {
     })
 
     await t.test('no modules', async t => {
+      const { exec } = createEnv()
       let threw = false
       try {
-        await cliExec(`update --env=${tmpdir()}/${Math.random()}`)
+        await exec('update')
       } catch (err) {
         threw = true
         t.match(err.message, /No modules/)
@@ -253,15 +273,17 @@ test('update', async t => {
   })
 
   await t.test('update <hash>', async t => {
-    let { stdout } = await cliExec('create content --t=t --d=d -y')
+    const { exec, spawn } = createEnv()
+
+    let { stdout } = await exec('create content --t=t --d=d -y')
     const key = decode(stdout.trim())
 
-    const ps = await cliSpawn(`update ${encode(key)}`)
+    const ps = await spawn(`update ${encode(key)}`)
     await match(ps.stdout, 'Title')
     ps.stdin.write('\n') // keep value
     await match(ps.stdout, 'Description')
     ps.stdin.write('beep\n')
-    ;({ stdout } = await cliExec(`read ${encode(key)}`))
+    ;({ stdout } = await exec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
       title: 't',
@@ -277,11 +299,13 @@ test('update', async t => {
   })
 
   await t.test('prompt main', async t => {
-    let { stdout } = await cliExec('create content --t=t --d=d -y')
-    const key = decode(stdout.trim())
-    await fs.writeFile(`${homedir()}/.p2pcommons/${encode(key)}/file.txt`, 'hi')
+    const { exec, spawn, env } = createEnv()
 
-    const ps = await cliSpawn(`update ${encode(key)}`)
+    let { stdout } = await exec('create content --t=t --d=d -y')
+    const key = decode(stdout.trim())
+    await fs.writeFile(`${env}/${encode(key)}/file.txt`, 'hi')
+
+    const ps = await spawn(`update ${encode(key)}`)
     await match(ps.stdout, 'Title')
     ps.stdin.write('\n') // keep value
     await match(ps.stdout, 'Description')
@@ -292,7 +316,7 @@ test('update', async t => {
     ps.stdin.end()
     const code = await onExit(ps)
     t.equal(code, 0)
-    ;({ stdout } = await cliExec(`read ${encode(key)}`))
+    ;({ stdout } = await exec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
       title: 't',
@@ -309,11 +333,13 @@ test('update', async t => {
 
   await t.test('update <hash> <key> <value>', async t => {
     await t.test('updates main', async t => {
-      let { stdout } = await cliExec('create content --t=t --d=d -y')
+      const { exec } = createEnv()
+
+      let { stdout } = await exec('create content --t=t --d=d -y')
       const key = decode(stdout.trim())
 
-      await cliExec(`update ${encode(key)} main main`)
-      ;({ stdout } = await cliExec(`read ${encode(key)}`))
+      await exec(`update ${encode(key)} main main`)
+      ;({ stdout } = await exec(`read ${encode(key)}`))
       const meta = JSON.parse(stdout)
       t.deepEqual(meta, {
         title: 't',
@@ -329,11 +355,13 @@ test('update', async t => {
     })
 
     await t.test('updates title', async t => {
-      let { stdout } = await cliExec('create content --t=t --d=d -y')
+      const { exec } = createEnv()
+
+      let { stdout } = await exec('create content --t=t --d=d -y')
       const key = decode(stdout.trim())
 
-      await cliExec(`update ${encode(key)} title beep`)
-      ;({ stdout } = await cliExec(`read ${encode(key)}`))
+      await exec(`update ${encode(key)} title beep`)
+      ;({ stdout } = await exec(`read ${encode(key)}`))
       const meta = JSON.parse(stdout)
       t.deepEqual(meta, {
         title: 'beep',
@@ -349,12 +377,14 @@ test('update', async t => {
     })
 
     await t.test('invalid key', async t => {
-      const { stdout } = await cliExec('create content --t=t --d=d -y')
+      const { exec } = createEnv()
+
+      const { stdout } = await exec('create content --t=t --d=d -y')
       const key = decode(stdout.trim())
 
       let threw = false
       try {
-        await cliExec(`update ${encode(key)} beep boop`)
+        await exec(`update ${encode(key)} beep boop`)
       } catch (err) {
         t.ok(err.stderr.includes('update keys'))
         threw = true
@@ -363,11 +393,13 @@ test('update', async t => {
     })
 
     await t.test('clear value', async t => {
-      let { stdout } = await cliExec('create content --t=t --d=d -y')
+      const { exec } = createEnv()
+
+      let { stdout } = await exec('create content --t=t --d=d -y')
       const key = decode(stdout.trim())
 
-      await cliExec(`update ${encode(key)} main`)
-      ;({ stdout } = await cliExec(`read ${encode(key)}`))
+      await exec(`update ${encode(key)} main`)
+      ;({ stdout } = await exec(`read ${encode(key)}`))
       const meta = JSON.parse(stdout)
       t.deepEqual(meta, {
         title: 't',
@@ -383,12 +415,14 @@ test('update', async t => {
     })
 
     await t.test('requires title', async t => {
-      const { stdout } = await cliExec('create content --t=t --d=d -y')
+      const { exec } = createEnv()
+
+      const { stdout } = await exec('create content --t=t --d=d -y')
       const key = decode(stdout.trim())
 
       let threw = false
       try {
-        await cliExec(`update ${encode(key)} title`)
+        await exec(`update ${encode(key)} title`)
       } catch (err) {
         threw = true
         t.match(err.message, /Title required/)
@@ -397,12 +431,14 @@ test('update', async t => {
     })
 
     await t.test('requires name', async t => {
-      const { stdout } = await cliExec('create profile --n=n --d=d -y')
+      const { exec } = createEnv()
+
+      const { stdout } = await exec('create profile --n=n --d=d -y')
       const key = decode(stdout.trim())
 
       let threw = false
       try {
-        await cliExec(`update ${encode(key)} name`)
+        await exec(`update ${encode(key)} name`)
       } catch (err) {
         threw = true
         t.match(err.message, /Name required/)
@@ -413,7 +449,8 @@ test('update', async t => {
 })
 
 test('open', async t => {
-  const ps = cliSpawn('open')
+  const { spawn } = createEnv()
+  const ps = spawn('open')
   await match(ps.stdout, 'Hash')
   ps.kill()
 })
@@ -424,39 +461,47 @@ test('path', async t => {
     '41fac1c7ee0cde5b75ed2de9917a841b3c408dc04e0374a03cb610492f2c486f'
 
   await t.test('path', async t => {
-    const ps = cliSpawn('path')
+    const { spawn, env } = createEnv()
+
+    const ps = spawn('path')
     await match(ps.stdout, 'Hash')
     ps.stdin.write(`${hash}\n`)
-    await match(ps.stdout, `${homedir()}/.p2pcommons/${hash}`)
+    await match(ps.stdout, `${env}/${hash}`)
   })
 
   await t.test('path <hash>', async t => {
-    const { stdout } = await cliExec(`path ${hash}`)
-    t.equal(stdout.trim(), `${homedir()}/.p2pcommons/${hash}`)
+    const { exec, env } = createEnv()
+
+    const { stdout } = await exec(`path ${hash}`)
+    t.equal(stdout.trim(), `${env}/${hash}`)
   })
 })
 
 test('list', async t => {
   await t.test('list content', async t => {
+    const { exec } = createEnv()
+
     const contentTitle = String(Math.random())
     const profileName = String(Math.random())
 
-    await cliExec(`create content -t=${contentTitle} -d=d -y`)
-    await cliExec(`create profile -n=${profileName} -d=d -y`)
+    await exec(`create content -t=${contentTitle} -d=d -y`)
+    await exec(`create profile -n=${profileName} -d=d -y`)
 
-    const { stdout } = await cliExec('list content')
+    const { stdout } = await exec('list content')
     t.ok(stdout.includes(contentTitle))
     t.notOk(stdout.includes(profileName))
   })
 
   await t.test('list profile', async t => {
+    const { exec } = createEnv()
+
     const contentTitle = String(Math.random())
     const profileName = String(Math.random())
 
-    await cliExec(`create content -t=${contentTitle} -d=d -y`)
-    await cliExec(`create profile -n=${profileName} -d=d -y`)
+    await exec(`create content -t=${contentTitle} -d=d -y`)
+    await exec(`create profile -n=${profileName} -d=d -y`)
 
-    const { stdout } = await cliExec('list profile')
+    const { stdout } = await exec('list profile')
     t.notOk(stdout.includes(contentTitle))
     t.ok(stdout.includes(profileName))
   })
