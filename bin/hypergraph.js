@@ -43,9 +43,10 @@ const argv = minimist(process.argv.slice(2), {
     help: 'h',
     version: 'v',
     title: 't',
-    description: 'd',
-    name: 'n'
-  }
+    name: 'n',
+    description: 'd'
+  },
+  string: ['env', 'title', 'name', 'description']
 })
 
 if (argv.help) {

@@ -186,7 +186,7 @@ actions.list = {
     }[type]
     const dbItems = await p2p[fn]()
     for (const { rawJSON } of dbItems) {
-      console.log(rawJSON.url)
+      console.log(rawJSON.title || rawJSON.name)
     }
   }
 }

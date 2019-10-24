@@ -411,24 +411,26 @@ test('path', async t => {
 
 test('list', async t => {
   await t.test('list content', async t => {
-    let { stdout } = await cliExec('create content -t=t -d=d')
-    const contentKey = decode(stdout.trim())
-    ;({ stdout } = await cliExec('create profile -n=n -d=d'))
-    const profileKey = decode(stdout.trim())
+    const contentTitle = String(Math.random())
+    const profileName = String(Math.random())
 
-    ;({ stdout } = await cliExec('list content'))
-    t.ok(stdout.includes(`dat://${encode(contentKey)}`))
-    t.notOk(stdout.includes(`dat://${encode(profileKey)}`))
+    await cliExec(`create content -t=${contentTitle} -d=d`)
+    await cliExec(`create profile -n=${profileName} -d=d`)
+
+    const { stdout } = await cliExec('list content')
+    t.ok(stdout.includes(contentTitle))
+    t.notOk(stdout.includes(profileName))
   })
 
   await t.test('list profile', async t => {
-    let { stdout } = await cliExec('create content -t=t -d=d')
-    const contentKey = decode(stdout.trim())
-    ;({ stdout } = await cliExec('create profile -n=n -d=d'))
-    const profileKey = decode(stdout.trim())
+    const contentTitle = String(Math.random())
+    const profileName = String(Math.random())
 
-    ;({ stdout } = await cliExec('list profile'))
-    t.notOk(stdout.includes(`dat://${encode(contentKey)}`))
-    t.ok(stdout.includes(`dat://${encode(profileKey)}`))
+    await cliExec(`create content -t=${contentTitle} -d=d`)
+    await cliExec(`create profile -n=${profileName} -d=d`)
+
+    const { stdout } = await cliExec('list profile')
+    t.notOk(stdout.includes(contentTitle))
+    t.ok(stdout.includes(profileName))
   })
 })
