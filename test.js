@@ -198,27 +198,30 @@ test('read', async t => {
 
 test('update', async t => {
   await t.test('update', async t => {
-    let { stdout } = await cliExec('create content --title=t --description=d')
-    const key = decode(stdout.trim())
+    await t.test('prompt', async t => {
+      await cliExec('create content --title=t --description=d')
+      await cliExec('create profile --name=n --description=d')
 
-    const ps = await cliSpawn('update')
-    ps.stdin.write(`${encode(key)}\n`)
-    await match(ps.stdout, 'Title')
-    ps.stdin.write('\n') // keep value
-    await match(ps.stdout, 'Description')
-    ps.stdin.write('beep\n')
-    ;({ stdout } = await cliExec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 't',
-      description: 'beep',
-      url: `dat://${encode(key)}`,
-      type: 'content',
-      subtype: 'content',
-      main: '',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
+      const ps = await cliSpawn('update')
+      await match(ps.stdout, 'Select module')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Title')
+      ps.stdin.write('\n') // keep value
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('beep\n')
+      const code = await onExit(ps)
+      t.equal(code, 0)
+    })
+
+    await t.test('no modules', async t => {
+      let threw = false
+      try {
+        await cliExec(`update --env=${tmpdir()}/${Math.random()}`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /No modules/)
+      }
+      t.ok(threw)
     })
   })
 

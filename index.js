@@ -81,11 +81,23 @@ actions.update = {
   input: [
     {
       name: 'hash',
-      resolve: () =>
-        prompt({
-          type: 'text',
-          message: 'Hash'
+      resolve: async p2p => {
+        const res = await Promise.all([p2p.listContent(), p2p.listProfiles()])
+        const choices = [...res[0], ...res[1]]
+          .filter(mod => mod.isWritable)
+          .map(({ rawJSON }) => ({
+            title: rawJSON.title || rawJSON.name,
+            value: rawJSON.url
+          }))
+        if (!choices.length) {
+          throw new UserError('No modules')
+        }
+        return prompt({
+          type: 'select',
+          message: 'Select module',
+          choices
         })
+      }
     },
     { name: 'key' },
     { name: 'value' }
