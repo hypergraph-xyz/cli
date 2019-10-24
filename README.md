@@ -47,6 +47,7 @@ $ hypergraph --help
     --title, -t                A content module's title
     --name, -n                 A profile module's name
     --description, -d          Module description
+    --yes, -y                  Confirm license for module creation
 
   Module types
     - content                  A content module

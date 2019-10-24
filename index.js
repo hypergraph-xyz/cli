@@ -17,7 +17,7 @@ const actions = {}
 actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
-  handler: async (p2p, { type, title, name, description }) => {
+  handler: async (p2p, { type, title, name, description, yes }) => {
     if (type === 'content' && !title) {
       title = await prompt({
         type: 'text',
@@ -36,6 +36,15 @@ actions.create = {
         type: 'text',
         message: 'Description'
       })
+    }
+
+    if (!yes) {
+      const confirmed = await prompt({
+        type: 'confirm',
+        message:
+          'License: https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+      })
+      if (!confirmed) throw new UserError('License not confirmed')
     }
 
     const { url } = await p2p.init({ type, title, name, description })
