@@ -273,28 +273,56 @@ test('update', async t => {
   })
 
   await t.test('update <hash>', async t => {
-    const { exec, spawn } = createEnv()
+    await t.test('content', async t => {
+      const { exec, spawn } = createEnv()
 
-    let { stdout } = await exec('create content --t=t --d=d -y')
-    const key = decode(stdout.trim())
+      let { stdout } = await exec('create content --t=t --d=d -y')
+      const key = decode(stdout.trim())
 
-    const ps = await spawn(`update ${encode(key)}`)
-    await match(ps.stdout, 'Title')
-    ps.stdin.write('\n') // keep value
-    await match(ps.stdout, 'Description')
-    ps.stdin.write('beep\n')
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 't',
-      description: 'beep',
-      url: `dat://${encode(key)}`,
-      type: 'content',
-      subtype: 'content',
-      main: '',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
+      const ps = await spawn(`update ${encode(key)}`)
+      await match(ps.stdout, 'Title')
+      ps.stdin.write('\n') // keep value
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('beep\n')
+      ;({ stdout } = await exec(`read ${encode(key)}`))
+      const meta = JSON.parse(stdout)
+      t.deepEqual(meta, {
+        title: 't',
+        description: 'beep',
+        url: `dat://${encode(key)}`,
+        type: 'content',
+        subtype: 'content',
+        main: '',
+        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        authors: [],
+        parents: []
+      })
+    })
+
+    await t.test('profile', async t => {
+      const { exec, spawn } = createEnv()
+
+      let { stdout } = await exec('create profile --n=n --d=d -y')
+      const key = decode(stdout.trim())
+
+      const ps = await spawn(`update ${encode(key)}`)
+      await match(ps.stdout, 'Name')
+      ps.stdin.write('\n') // keep value
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('beep\n')
+      ;({ stdout } = await exec(`read ${encode(key)}`))
+      const meta = JSON.parse(stdout)
+      t.deepEqual(meta, {
+        name: 'n',
+        description: 'beep',
+        url: `dat://${encode(key)}`,
+        type: 'profile',
+        subtype: 'profile',
+        main: '',
+        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        follows: [],
+        contents: []
+      })
     })
   })
 
