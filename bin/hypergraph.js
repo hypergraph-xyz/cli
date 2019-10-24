@@ -6,8 +6,9 @@ process.title = 'hypergraph'
 require('../lib/fs-promises')
 const minimist = require('minimist')
 const UserError = require('../lib/user-error')
-const { version } = require('../package.json')
+const pkg = require('../package.json')
 const hypergraph = require('..')
+const updateNotifier = require('update-notifier')
 
 const help = `
   Usage
@@ -57,9 +58,11 @@ if (argv.help) {
 }
 
 if (argv.version) {
-  console.log(version)
+  console.log(pkg.version)
   process.exit(0)
 }
+
+updateNotifier({ pkg }).notify()
 
 hypergraph(argv).catch(err => {
   // istanbul ignore else
