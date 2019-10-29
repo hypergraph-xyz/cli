@@ -95,3 +95,13 @@ collaborative infrastructure, we recommend you look at our
 applications if it adheres to the specifications outlined in that
 repository.
 
+## How to release
+
+1. `npm version <VERSION>`
+1. `git push --tags && git push`
+1. `npm publish`
+1. Create a matching GitHub release
+1. Write release notes
+1. Run `npm run build` and upload the binaries from the `build/` folder
+1. Publish the release
+1. Tell your Hypergraph friends about it
