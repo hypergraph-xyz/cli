@@ -4,7 +4,7 @@
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
     "scripts": {
-        "test": "prettier-standard '**/*.js' && standard && tap --timeout=0 test.js"
+        "test": "prettier-standard '**/*.js' && standard && tap --timeout=0 --test-ignore=util.js"
     },
     "repository": {
         "type": "git",
@@ -39,7 +39,7 @@
     "devDependencies": {
         "prettier-standard": "^15.0.1",
         "standard": "^14.3.1",
-        "stream-match": "^1.0.0",
+        "stream-match": "^1.1.0",
         "tap": "^14.7.1"
     }
 }
