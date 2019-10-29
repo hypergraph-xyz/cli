@@ -58,12 +58,14 @@ actions.read = {
   handler: async (p2p, { hash, key }) => {
     const metadata = await p2p.get(hash)
     if (key) {
-      console.log(JSON.stringify(metadata[key]))
+      console.log(JSON.stringify(format(key, metadata[key])))
     } else {
-      console.log(JSON.stringify(metadata, null, 2))
+      console.log(JSON.stringify(metadata, format, 2))
     }
   }
 }
+
+const format = (key, value) => (key === 'url' ? `dat://${value}` : value)
 
 actions.update = {
   title: 'Update metadata',
