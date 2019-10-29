@@ -2,7 +2,6 @@
 
 [![NPM](https://nodei.co/npm/@hypergraph-xyz/cli.png)](https://npmjs.org/package/@hypergraph-xyz/cli)
 
-[![Build Status](https://travis-ci.com/hypergraph-xyz/cli.svg?branch=master)](https://travis-ci.com/hypergraph-xyz/cli)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Code Style Prettier Standard](https://img.shields.io/badge/format-prettier_standard-ff69b4.svg)](https://github.com/sheerun/prettier-standard)
 
@@ -26,6 +25,38 @@ to download the installer. If you are using a package manager, you can
 install `node`.
 
 ## Usage
+
+```bash
+$ hypergraph --help
+
+  Usage
+    $ hypergraph <action> <input>
+
+  Actions
+    create <type>              Create a module
+    read   <hash> [key]        Read a module's metadata
+    update <hash> [key value]  Update a module's metadata
+    open   <hash>              Open a module's folder
+    path   <hash>              Print module path
+    list   <type>              List writable modules
+
+  Options
+    --env, -e                  Dotfiles path (default ~/.p2pcommons)
+    --help, -h                 Display help text
+    --version, -v              Display version
+    --title, -t                A content module's title
+    --name, -n                 A profile module's name
+    --description, -d          Module description
+    --yes, -y                  Confirm license for module creation
+
+  Module types
+    - content                  A content module
+    - profile                  A user profile module
+
+  Examples
+    $ hypergraph               [interactive mode]
+
+```
 
 This tool *directly* allows you to start using public collaborative
 infrastructure.
