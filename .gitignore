@@ -64,3 +64,6 @@ typings/
 .?#.*#
 .*~
 .*#
+
+# build
+build/hypergraph-*

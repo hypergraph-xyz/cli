@@ -4,6 +4,7 @@
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
     "scripts": {
+        "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
         "test": "prettier-standard '**/*.js' && standard && tap --timeout=0 --test-ignore=util.js"
     },
     "repository": {
@@ -37,12 +38,13 @@
         "hypergraph": "./bin/hypergraph.js"
     },
     "devDependencies": {
-        "@babel/core": "^7.6.4",
-        "babelify": "^10.0.0",
-        "browserify": "^16.5.0",
+        "pkg": "^4.4.0",
         "prettier-standard": "^15.0.1",
         "standard": "^14.3.1",
         "stream-match": "^1.1.0",
         "tap": "^14.7.1"
+    },
+    "pkg": {
+        "name": "hypergraph"
     }
 }
