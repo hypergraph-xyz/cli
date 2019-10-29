@@ -241,35 +241,34 @@ test('read', async t => {
 })
 
 test('update', async t => {
-  await t.test('update', async t => {
-    await t.test('prompt', async t => {
-      const { exec, spawn } = createEnv()
+  await t.test('prompt', async t => {
+    const { exec, spawn } = createEnv()
 
-      await exec('create content --title=t --description=d -y')
-      await exec('create profile --name=n --description=d -y')
+    await exec('create content --title=t --description=d -y')
+    await exec('create profile --name=n --description=d -y')
 
-      const ps = await spawn('update')
-      await match(ps.stdout, 'Select module')
-      ps.stdin.write('\n')
-      await match(ps.stdout, 'Title')
-      ps.stdin.write('\n') // keep value
-      await match(ps.stdout, 'Description')
-      ps.stdin.write('beep\n')
-      const code = await onExit(ps)
-      t.equal(code, 0)
-    })
+    const ps = await spawn('update')
+    await match(ps.stdout, 'Select module')
+    ps.stdin.write('\n')
+    await match(ps.stdout, 'Title')
+    ps.stdin.write('\n') // keep value
+    await match(ps.stdout, 'Description')
+    ps.stdin.write('beep\n')
+    ps.stdin.end()
+    const code = await onExit(ps)
+    t.equal(code, 0)
+  })
 
-    await t.test('no modules', async t => {
-      const { exec } = createEnv()
-      let threw = false
-      try {
-        await exec('update')
-      } catch (err) {
-        threw = true
-        t.match(err.message, /No modules/)
-      }
-      t.ok(threw)
-    })
+  await t.test('no modules', async t => {
+    const { exec } = createEnv()
+    let threw = false
+    try {
+      await exec('update')
+    } catch (err) {
+      threw = true
+      t.match(err.message, /No writable modules/)
+    }
+    t.ok(threw)
   })
 
   await t.test('update <hash>', async t => {

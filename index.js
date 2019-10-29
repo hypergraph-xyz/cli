@@ -71,20 +71,16 @@ actions.update = {
     {
       name: 'hash',
       resolve: async p2p => {
-        const res = await Promise.all([p2p.listContent(), p2p.listProfiles()])
-        const choices = [...res[0], ...res[1]]
-          .filter(mod => mod.isWritable)
-          .map(({ rawJSON }) => ({
-            title: rawJSON.title || rawJSON.name,
-            value: rawJSON.url
-          }))
-        if (!choices.length) {
-          throw new UserError('No modules')
-        }
+        const mods = await p2p.list()
+        const writable = mods.filter(({ isWritable }) => isWritable)
+        if (!writable.length) throw new UserError('No writable modules')
         return prompt({
           type: 'select',
           message: 'Select module',
-          choices
+          choices: writable.map(({ rawJSON }) => ({
+            title: rawJSON.title || rawJSON.name,
+            value: rawJSON.url
+          }))
         })
       }
     },
@@ -183,18 +179,15 @@ function askType () {
 }
 
 async function askModules (p2p) {
-  const res = await Promise.all([p2p.listContent(), p2p.listProfiles()])
-  const choices = [...res[0], ...res[1]].map(({ rawJSON }) => ({
-    title: rawJSON.title || rawJSON.name,
-    value: rawJSON.url
-  }))
-  if (!choices.length) {
-    throw new UserError('No modules')
-  }
+  const mods = await p2p.list()
+  if (!mods.length) throw new UserError('No modules')
   return prompt({
     type: 'select',
     message: 'Select module',
-    choices
+    choices: mods.map(({ rawJSON }) => ({
+      title: rawJSON.title || rawJSON.name,
+      value: rawJSON.url
+    }))
   })
 }
 
