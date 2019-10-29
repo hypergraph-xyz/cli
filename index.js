@@ -80,7 +80,7 @@ actions.update = {
           type: 'select',
           message: 'Select module',
           choices: writable.map(({ rawJSON }) => ({
-            title: rawJSON.title || rawJSON.name,
+            title: rawJSON.title,
             value: rawJSON.url
           }))
         })
@@ -164,7 +164,7 @@ actions.list = {
     }[type]
     const dbItems = await p2p[fn]()
     for (const { rawJSON } of dbItems) {
-      console.log(rawJSON.title || rawJSON.name)
+      console.log(rawJSON.title)
     }
   }
 }
@@ -187,7 +187,7 @@ async function askModules (p2p) {
     type: 'select',
     message: 'Select module',
     choices: mods.map(({ rawJSON }) => ({
-      title: rawJSON.title || rawJSON.name,
+      title: rawJSON.title,
       value: rawJSON.url
     }))
   })
