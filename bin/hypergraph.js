@@ -28,6 +28,7 @@ const help = `
     --version, -v              Display version
     --title, -t                A content module's title
     --name, -n                 A profile module's name
+    --subtype, -s              A content module's subtype
     --description, -d          Module description
     --yes, -y                  Confirm license for module creation
   
@@ -47,7 +48,8 @@ const argv = minimist(process.argv.slice(2), {
     title: 't',
     name: 'n',
     description: 'd',
-    yes: 'y'
+    yes: 'y',
+    subtype: 's'
   },
   string: ['env', 'title', 'name', 'description']
 })

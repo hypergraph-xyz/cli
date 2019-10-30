@@ -11,13 +11,14 @@ const { encode } = require('dat-encoding')
 const readdirp = require('readdirp')
 const validate = require('./lib/validate')
 const UserError = require('./lib/user-error')
+const subtypes = require('./lib/subtypes')
 
 const actions = {}
 
 actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
-  handler: async (p2p, { type, title, name, description, yes }) => {
+  handler: async (p2p, { type, title, name, description, subtype, yes }) => {
     if (type === 'content' && !title) {
       title = await prompt({
         type: 'text',
@@ -37,6 +38,7 @@ actions.create = {
         message: 'Description'
       })
     }
+    if (type === 'content' && !subtype) subtype = await askSubtype()
 
     if (!yes) {
       const confirmed = await prompt({
@@ -47,7 +49,8 @@ actions.create = {
       if (!confirmed) throw new UserError('License not confirmed')
     }
 
-    const { url } = await p2p.init({ type, title, name, description })
+    console.log({ type, title, name, description, subtype })
+    const { url } = await p2p.init({ type, title, name, description, subtype })
     console.log(url)
   }
 }
@@ -113,6 +116,8 @@ actions.update = {
               value: entry.path
             }))
           })
+        } else if (key === 'subtype') {
+          metadata.subtype = await askSubtype(metadata.subtype)
         } else {
           metadata[key] = await prompt({
             type: 'text',
@@ -177,6 +182,16 @@ function askType () {
       { title: 'Content', value: 'content' },
       { title: 'Profile', value: 'profile' }
     ]
+  })
+}
+
+function askSubtype (current) {
+  const idx = subtypes.indexOf(current)
+  return prompt({
+    type: 'select',
+    message: 'Select subtype',
+    choices: subtypes.map(subtype => ({ title: subtype, value: subtype })),
+    initial: idx === -1 ? 0 : idx
   })
 }
 
