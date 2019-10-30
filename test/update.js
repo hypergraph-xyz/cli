@@ -20,6 +20,7 @@ test('prompt', async t => {
   ps.stdin.write('\n') // keep value
   await match(ps.stdout, 'Description')
   ps.stdin.write('beep\n')
+  await match(ps.stdout, 'No main')
   ps.stdin.end()
   const code = await onExit(ps)
   t.equal(code, 0)

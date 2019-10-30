@@ -104,7 +104,10 @@ actions.update = {
               directoryFilter: ['.dat']
             }
           )
-          if (!entries.length) continue
+          if (!entries.length) {
+            console.log('No main file to set available')
+            continue
+          }
           metadata.main = await prompt({
             type: 'select',
             message: 'Main',
