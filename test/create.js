@@ -107,7 +107,7 @@ test('create profile', async t => {
 test('create <type> --title --description', async t => {
   await t.test('creates files', async t => {
     const { exec, env } = createEnv()
-    const { stdout } = await exec('create content --t=t --d=d -y')
+    const { stdout } = await exec('create content -t=t -d=d -y')
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
     await fs.stat(`${env}/${hash}/dat.json`)

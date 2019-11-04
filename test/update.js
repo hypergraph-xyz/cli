@@ -42,7 +42,7 @@ test('update <hash>', async t => {
   await t.test('content', async t => {
     const { exec, spawn } = createEnv()
 
-    let { stdout } = await exec('create content --t=t --d=d -y')
+    let { stdout } = await exec('create content -t=t -d=d -y')
     const key = decode(stdout.trim())
 
     const ps = await spawn(`update ${encode(key)}`)
@@ -68,7 +68,7 @@ test('update <hash>', async t => {
   await t.test('profile', async t => {
     const { exec, spawn } = createEnv()
 
-    let { stdout } = await exec('create profile --n=n --d=d -y')
+    let { stdout } = await exec('create profile -n=n -d=d -y')
     const key = decode(stdout.trim())
 
     const ps = await spawn(`update ${encode(key)}`)
@@ -95,7 +95,7 @@ test('update <hash>', async t => {
 test('prompt main', async t => {
   const { exec, spawn, env } = createEnv()
 
-  let { stdout } = await exec('create content --t=t --d=d -y')
+  let { stdout } = await exec('create content -t=t -d=d -y')
   const key = decode(stdout.trim())
   await fs.writeFile(`${env}/${encode(key)}/file.txt`, 'hi')
 
@@ -129,7 +129,7 @@ test('update <hash> <key> <value>', async t => {
   await t.test('updates main', async t => {
     const { exec } = createEnv()
 
-    let { stdout } = await exec('create content --t=t --d=d -y')
+    let { stdout } = await exec('create content -t=t -d=d -y')
     const key = decode(stdout.trim())
 
     await exec(`update ${encode(key)} main main`)
@@ -151,7 +151,7 @@ test('update <hash> <key> <value>', async t => {
   await t.test('updates title', async t => {
     const { exec } = createEnv()
 
-    let { stdout } = await exec('create content --t=t --d=d -y')
+    let { stdout } = await exec('create content -t=t -d=d -y')
     const key = decode(stdout.trim())
 
     await exec(`update ${encode(key)} title beep`)
@@ -173,7 +173,7 @@ test('update <hash> <key> <value>', async t => {
   await t.test('invalid key', async t => {
     const { exec } = createEnv()
 
-    const { stdout } = await exec('create content --t=t --d=d -y')
+    const { stdout } = await exec('create content -t=t -d=d -y')
     const key = decode(stdout.trim())
 
     let threw = false
@@ -189,7 +189,7 @@ test('update <hash> <key> <value>', async t => {
   await t.test('clear value', async t => {
     const { exec } = createEnv()
 
-    let { stdout } = await exec('create content --t=t --d=d -y')
+    let { stdout } = await exec('create content -t=t -d=d -y')
     const key = decode(stdout.trim())
 
     await exec(`update ${encode(key)} main`)
@@ -211,7 +211,7 @@ test('update <hash> <key> <value>', async t => {
   await t.test('requires title', async t => {
     const { exec } = createEnv()
 
-    const { stdout } = await exec('create content --t=t --d=d -y')
+    const { stdout } = await exec('create content -t=t -d=d -y')
     const key = decode(stdout.trim())
 
     let threw = false
@@ -227,7 +227,7 @@ test('update <hash> <key> <value>', async t => {
   await t.test('requires name', async t => {
     const { exec } = createEnv()
 
-    const { stdout } = await exec('create profile --n=n --d=d -y')
+    const { stdout } = await exec('create profile -n=n -d=d -y')
     const key = decode(stdout.trim())
 
     let threw = false

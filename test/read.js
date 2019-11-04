@@ -35,7 +35,7 @@ test('no modules', async t => {
 test('read <hash>', async t => {
   const { exec } = createEnv()
 
-  let { stdout } = await exec('create content --t=t --d=d -y')
+  let { stdout } = await exec('create content -t=t -d=d -y')
   const key = decode(stdout.trim())
 
   ;({ stdout } = await exec(`read ${encode(key)}`))
@@ -56,7 +56,7 @@ test('read <hash>', async t => {
 test('read <hash> <key>', async t => {
   const { exec } = createEnv()
 
-  let { stdout } = await exec('create content --t=t --d=d -y')
+  let { stdout } = await exec('create content -t=t -d=d -y')
   const hash = stdout.trim()
 
   ;({ stdout } = await exec(`read ${hash} title`))
