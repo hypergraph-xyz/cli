@@ -45,7 +45,7 @@ test('read <hash>', async t => {
     description: 'd',
     url: `dat://${encode(key)}`,
     type: 'content',
-    subtype: 'content',
+    subtype: '',
     main: '',
     license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
     authors: [],

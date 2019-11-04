@@ -93,11 +93,13 @@ actions.update = {
     { name: 'value' }
   ],
   handler: async (p2p, { env, hash, key, value }) => {
-    const metadata = await p2p.get(hash)
+    const metadata = { url: hash }
 
     if (key) {
       metadata[key] = value || ''
     } else {
+      const current = await p2p.get(hash)
+      
       for (const key of p2p.allowedKeyUpdatesWithTitleRename(metadata.type)) {
         if (key === 'main') {
           const entries = await readdirp.promise(
@@ -123,14 +125,16 @@ actions.update = {
           metadata[key] = await prompt({
             type: 'text',
             message: capitalize(key),
-            initial: metadata[key],
+            initial: current[key],
             validate: validate[key]
           })
         }
       }
     }
 
+    console.log('set', metadata)
     await p2p.set(metadata)
+    console.log('after')
   }
 }
 

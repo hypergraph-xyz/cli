@@ -57,7 +57,7 @@ test('update <hash>', async t => {
       description: 'beep',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -76,6 +76,8 @@ test('update <hash>', async t => {
     ps.stdin.write('\n') // keep value
     await match(ps.stdout, 'Description')
     ps.stdin.write('beep\n')
+    const code = await onExit(ps)
+    t.equal(code, 0)
     ;({ stdout } = await exec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
@@ -83,7 +85,7 @@ test('update <hash>', async t => {
       description: 'beep',
       url: `dat://${encode(key)}`,
       type: 'profile',
-      subtype: 'profile',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       follows: [],
@@ -117,7 +119,7 @@ test('prompt main', async t => {
     description: 'beep',
     url: `dat://${encode(key)}`,
     type: 'content',
-    subtype: 'content',
+    subtype: '',
     main: 'file.txt',
     license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
     authors: [],
@@ -140,7 +142,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: 'main',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -162,7 +164,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -200,7 +202,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
