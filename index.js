@@ -31,7 +31,7 @@ actions.create = {
         validate: validate.name
       })
     }
-    if (!description) {
+    if (description === undefined) {
       description = await prompt({
         type: 'text',
         message: 'Description'
