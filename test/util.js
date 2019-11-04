@@ -8,7 +8,9 @@ exports.createEnv = () => {
   const path = `${__dirname}/../bin/hypergraph.js`
   const env = `${tmpdir()}/${Date.now()}-${Math.random()}`
   const spawn = args =>
-    childProcess.spawn(path, [...args.split(' '), `--env=${env}`])
+    childProcess.spawn(path, [...args.split(' '), `--env=${env}`], {
+      shell: true
+    })
   const exec = args =>
     promisify(childProcess.exec)(`${path} ${args} --env=${env}`)
   return { env, spawn, exec }
