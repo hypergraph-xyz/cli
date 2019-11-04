@@ -145,6 +145,7 @@ actions.open = {
 
 actions.path = {
   title: 'Print module path',
+  unlisted: true,
   input: [
     {
       name: 'hash',
@@ -162,6 +163,7 @@ actions.path = {
 
 actions.list = {
   title: 'List writable modules',
+  unlisted: true,
   input: [{ name: 'type', resolve: askType }],
   handler: async (p2p, { type }) => {
     const fn = {
@@ -205,10 +207,12 @@ const hypergraph = async argv => {
     actionName = await prompt({
       type: 'select',
       message: 'Pick an action',
-      choices: Object.entries(actions).map(([value, { title }]) => ({
-        title,
-        value
-      }))
+      choices: Object.entries(actions)
+        .filter(([, { unlisted }]) => !unlisted)
+        .map(([value, { title }]) => ({
+          title,
+          value
+        }))
     })
   }
 
