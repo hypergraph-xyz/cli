@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
-        "test": "prettier-standard '**/*.js' && standard && tap --timeout=0 --test-ignore=util.js"
+        "test": "prettier-standard '**/*.js' && standard && tap --test-ignore=util.js"
     },
     "repository": {
         "type": "git",
