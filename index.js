@@ -11,6 +11,7 @@ const { encode } = require('dat-encoding')
 const readdirp = require('readdirp')
 const validate = require('./lib/validate')
 const UserError = require('./lib/user-error')
+const kleur = require('kleur')
 
 const actions = {}
 
@@ -42,7 +43,9 @@ actions.create = {
       const confirmed = await prompt({
         type: 'confirm',
         message:
-          'License: https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+          'License: https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        // the default gray wasn't always readable
+        noOption: kleur.reset('(y/N)')
       })
       if (!confirmed) throw new UserError('License not confirmed')
     }
