@@ -182,7 +182,7 @@ test('update <hash> <key> <value>', async t => {
     try {
       await exec(`update ${encode(key)} beep boop`)
     } catch (err) {
-      t.ok(err.stderr.includes('update keys'))
+      t.ok(err.stderr.includes('Invalid key'))
       threw = true
     }
     t.ok(threw)

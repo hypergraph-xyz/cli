@@ -9,6 +9,7 @@ const UserError = require('../lib/user-error')
 const pkg = require('../package.json')
 const hypergraph = require('..')
 const updateNotifier = require('update-notifier')
+const { errors: { ValidationError, InvalidKeyError } } = require('../lib/p2p')
 
 const help = `
   Usage
@@ -66,7 +67,11 @@ updateNotifier({ pkg }).notify()
 
 hypergraph(argv).catch(err => {
   // istanbul ignore else
-  if (err instanceof UserError) {
+  if (
+    err instanceof UserError ||
+    err instanceof ValidationError ||
+    err instanceof InvalidKeyError
+  ) {
     if (err.message) console.error(err.message)
   } else {
     console.error(err)
