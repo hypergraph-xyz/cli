@@ -99,8 +99,8 @@ actions.update = {
       metadata[key] = value || ''
     } else {
       const current = await p2p.get(hash)
-      
-      for (const key of p2p.allowedKeyUpdatesWithTitleRename(metadata.type)) {
+
+      for (const key of p2p.allowedKeyUpdatesWithTitleRename(current.type)) {
         if (key === 'main') {
           const entries = await readdirp.promise(
             `${env}/${encode(metadata.url)}/`,
@@ -132,9 +132,7 @@ actions.update = {
       }
     }
 
-    console.log('set', metadata)
     await p2p.set(metadata)
-    console.log('after')
   }
 }
 
