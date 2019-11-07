@@ -256,3 +256,4 @@ const hypergraph = async argv => {
 }
 
 module.exports = hypergraph
+module.exports.actions = actions

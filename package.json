@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
-    "test": "prettier-standard '**/*.js' && standard && tap --timeout=60 --test-ignore=util.js"
+    "test": "prettier-standard '**/*.js' && standard && tap --timeout=60 --test-ignore=util.js",
+    "postinstall": "./bin/autocomplete.js"
   },
   "repository": {
     "type": "git",
