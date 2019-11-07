@@ -32,9 +32,9 @@ test('no modules', async t => {
 
 test('update <hash>', async t => {
   await t.test('content', async t => {
-    const { exec, spawn } = createEnv()
+    const { exec, spawn, env } = createEnv()
 
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
+    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
     const key = decode(stdout.trim())
 
     const ps = await spawn(`update ${encode(key)}`)
@@ -46,12 +46,13 @@ test('update <hash>', async t => {
     ps.stdin.write('\n')
     const code = await onExit(ps)
     t.equal(code, 0)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
+    const meta = JSON.parse(
+      await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
+    )
     t.deepEqual(meta, {
       title: 't',
       description: 'beep',
-      url: `dat://${encode(key)}`,
+      url: encode(key),
       type: 'content',
       subtype: 'Q17737',
       main: '',
@@ -62,9 +63,9 @@ test('update <hash>', async t => {
   })
 
   await t.test('profile', async t => {
-    const { exec, spawn } = createEnv()
+    const { exec, spawn, env } = createEnv()
 
-    let { stdout } = await exec('create profile -n=n -d=d -y')
+    const { stdout } = await exec('create profile -n=n -d=d -y')
     const key = decode(stdout.trim())
 
     const ps = await spawn(`update ${encode(key)}`)
@@ -74,12 +75,13 @@ test('update <hash>', async t => {
     ps.stdin.write('beep\n')
     const code = await onExit(ps)
     t.equal(code, 0)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
+    const meta = JSON.parse(
+      await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
+    )
     t.deepEqual(meta, {
-      name: 'n',
+      title: 'n',
       description: 'beep',
-      url: `dat://${encode(key)}`,
+      url: encode(key),
       type: 'profile',
       subtype: '',
       main: '',
@@ -93,7 +95,7 @@ test('update <hash>', async t => {
 test('prompt main', async t => {
   const { exec, spawn, env } = createEnv()
 
-  let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
+  const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
   const key = decode(stdout.trim())
   await fs.writeFile(`${env}/${encode(key)}/file.txt`, 'hi')
 
@@ -109,12 +111,13 @@ test('prompt main', async t => {
   ps.stdin.write('\n')
   const code = await onExit(ps)
   t.equal(code, 0)
-  ;({ stdout } = await exec(`read ${encode(key)}`))
-  const meta = JSON.parse(stdout)
+  const meta = JSON.parse(
+    await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
+  )
   t.deepEqual(meta, {
     title: 't',
     description: 'beep',
-    url: `dat://${encode(key)}`,
+    url: encode(key),
     type: 'content',
     subtype: 'Q17737',
     main: 'file.txt',
@@ -126,18 +129,19 @@ test('prompt main', async t => {
 
 test('update <hash> <key> <value>', async t => {
   await t.test('updates main', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
+    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
     const key = decode(stdout.trim())
 
     await exec(`update ${encode(key)} main main`)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
+    const meta = JSON.parse(
+      await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
+    )
     t.deepEqual(meta, {
       title: 't',
       description: 'd',
-      url: `dat://${encode(key)}`,
+      url: encode(key),
       type: 'content',
       subtype: 'Q17737',
       main: 'main',
@@ -148,18 +152,19 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('updates title', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
+    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
     const key = decode(stdout.trim())
 
     await exec(`update ${encode(key)} title beep`)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
+    const meta = JSON.parse(
+      await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
+    )
     t.deepEqual(meta, {
       title: 'beep',
       description: 'd',
-      url: `dat://${encode(key)}`,
+      url: encode(key),
       type: 'content',
       subtype: 'Q17737',
       main: '',
@@ -186,18 +191,19 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('clear value', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
+    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
     const key = decode(stdout.trim())
 
     await exec(`update ${encode(key)} main`)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
+    const meta = JSON.parse(
+      await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
+    )
     t.deepEqual(meta, {
       title: 't',
       description: 'd',
-      url: `dat://${encode(key)}`,
+      url: encode(key),
       type: 'content',
       subtype: 'Q17737',
       main: '',
