@@ -8,8 +8,8 @@ const { createEnv, onExit } = require('./util')
 test('prompt', async t => {
   const { exec, spawn } = createEnv()
 
-  await exec('create content --t=t --d=d -s=Q17737 -y')
-  await exec('create profile --n=n --d=d -y')
+  await exec('create content -t=t -d=d -s=Q17737 -y')
+  await exec('create profile -n=n -d=d -y')
 
   const ps = spawn('read')
   await match(ps.stdout, 'Select module')
