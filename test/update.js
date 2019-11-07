@@ -221,7 +221,7 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} title`)
     } catch (err) {
       threw = true
-      t.match(err.message, /Title required/)
+      t.match(err.message, /Invalid title/)
     }
     t.ok(threw)
   })
@@ -237,7 +237,7 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} name`)
     } catch (err) {
       threw = true
-      t.match(err.message, /Name required/)
+      t.match(err.message, /Invalid name/)
     }
     t.ok(threw)
   })
@@ -253,7 +253,7 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} name beep`)
     } catch (err) {
       threw = true
-      t.match(err.message, /update keys/)
+      t.match(err.message, /Invalid key: name/)
     }
     t.ok(threw)
   })
@@ -269,12 +269,12 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} title beep`)
     } catch (err) {
       threw = true
-      t.match(err.message, /update keys/)
+      t.match(err.message, /Invalid key: title/)
     }
     t.ok(threw)
   })
 
-  await t.test('no adding new key', async t => {
+  await t.test('no adding new key to content', async t => {
     const { exec } = createEnv()
 
     const { stdout } = await exec('create content -t=t -d=d -y')
@@ -285,7 +285,23 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} foo bar`)
     } catch (err) {
       threw = true
-      t.match(err.message, /update keys/)
+      t.match(err.message, /Invalid key: foo/)
+    }
+    t.ok(threw)
+  })
+
+  await t.test('no adding new key to profile', async t => {
+    const { exec } = createEnv()
+
+    const { stdout } = await exec('create profile -n=n -d=d -y')
+    const key = decode(stdout.trim())
+
+    let threw = false
+    try {
+      await exec(`update ${encode(key)} foo bar`)
+    } catch (err) {
+      threw = true
+      t.match(err.message, /Invalid key: foo/)
     }
     t.ok(threw)
   })
