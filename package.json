@@ -6,7 +6,8 @@
   "scripts": {
     "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
     "test": "prettier-standard '**/*.js' && standard && tap --timeout=60 --test-ignore=util.js",
-    "postinstall": "./bin/autocomplete.js"
+    "postinstall": "./bin/autocomplete.js",
+    "release": "np"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
     "hypergraph": "./bin/hypergraph.js"
   },
   "devDependencies": {
+    "np": "^5.1.2",
     "pkg": "^4.4.0",
     "prettier-standard": "^15.0.1",
     "standard": "^14.3.1",
@@ -48,5 +50,8 @@
   },
   "pkg": {
     "name": "hypergraph"
+  },
+  "np": {
+    "yarn": false
   }
 }
