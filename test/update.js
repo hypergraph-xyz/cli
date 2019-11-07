@@ -57,7 +57,7 @@ test('update <hash>', async t => {
       description: 'beep',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -76,6 +76,8 @@ test('update <hash>', async t => {
     ps.stdin.write('\n') // keep value
     await match(ps.stdout, 'Description')
     ps.stdin.write('beep\n')
+    const code = await onExit(ps)
+    t.equal(code, 0)
     ;({ stdout } = await exec(`read ${encode(key)}`))
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
@@ -83,7 +85,7 @@ test('update <hash>', async t => {
       description: 'beep',
       url: `dat://${encode(key)}`,
       type: 'profile',
-      subtype: 'profile',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       follows: [],
@@ -117,7 +119,7 @@ test('prompt main', async t => {
     description: 'beep',
     url: `dat://${encode(key)}`,
     type: 'content',
-    subtype: 'content',
+    subtype: '',
     main: 'file.txt',
     license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
     authors: [],
@@ -140,7 +142,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: 'main',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -162,7 +164,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -180,7 +182,7 @@ test('update <hash> <key> <value>', async t => {
     try {
       await exec(`update ${encode(key)} beep boop`)
     } catch (err) {
-      t.ok(err.stderr.includes('update keys'))
+      t.ok(err.stderr.includes('Invalid key'))
       threw = true
     }
     t.ok(threw)
@@ -200,7 +202,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: `dat://${encode(key)}`,
       type: 'content',
-      subtype: 'content',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -219,7 +221,7 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} title`)
     } catch (err) {
       threw = true
-      t.match(err.message, /Title required/)
+      t.match(err.message, /Invalid title/)
     }
     t.ok(threw)
   })
@@ -235,7 +237,7 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} name`)
     } catch (err) {
       threw = true
-      t.match(err.message, /Name required/)
+      t.match(err.message, /Invalid name/)
     }
     t.ok(threw)
   })
@@ -251,7 +253,7 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} name beep`)
     } catch (err) {
       threw = true
-      t.match(err.message, /update keys/)
+      t.match(err.message, /Invalid key: name/)
     }
     t.ok(threw)
   })
@@ -267,12 +269,12 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} title beep`)
     } catch (err) {
       threw = true
-      t.match(err.message, /update keys/)
+      t.match(err.message, /Invalid key: title/)
     }
     t.ok(threw)
   })
 
-  await t.test('no adding new key', async t => {
+  await t.test('no adding new key to content', async t => {
     const { exec } = createEnv()
 
     const { stdout } = await exec('create content -t=t -d=d -y')
@@ -283,7 +285,23 @@ test('update <hash> <key> <value>', async t => {
       await exec(`update ${encode(key)} foo bar`)
     } catch (err) {
       threw = true
-      t.match(err.message, /update keys/)
+      t.match(err.message, /Invalid key: foo/)
+    }
+    t.ok(threw)
+  })
+
+  await t.test('no adding new key to profile', async t => {
+    const { exec } = createEnv()
+
+    const { stdout } = await exec('create profile -n=n -d=d -y')
+    const key = decode(stdout.trim())
+
+    let threw = false
+    try {
+      await exec(`update ${encode(key)} foo bar`)
+    } catch (err) {
+      threw = true
+      t.match(err.message, /Invalid key: foo/)
     }
     t.ok(threw)
   })

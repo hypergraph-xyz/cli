@@ -93,12 +93,19 @@ actions.update = {
     { name: 'value' }
   ],
   handler: async (p2p, { env, hash, key, value }) => {
-    const metadata = await p2p.get(hash)
+    const update = { url: hash }
 
     if (key) {
-      metadata[key] = value || ''
+      update[key] = value || ''
     } else {
-      for (const key of p2p.allowedKeyUpdatesWithTitleRename(metadata.type)) {
+      const metadata = await p2p.get(hash)
+      const keys = [
+        metadata.type === 'content' ? 'title' : 'name',
+        'description',
+        'main'
+      ]
+
+      for (const key of keys) {
         if (key === 'main') {
           const entries = await readdirp.promise(
             `${env}/${encode(metadata.url)}/`,
@@ -111,7 +118,7 @@ actions.update = {
             console.log('No main file to set available')
             continue
           }
-          metadata.main = await prompt({
+          update.main = await prompt({
             type: 'select',
             message: 'Main',
             choices: entries.map(entry => ({
@@ -120,7 +127,7 @@ actions.update = {
             }))
           })
         } else {
-          metadata[key] = await prompt({
+          update[key] = await prompt({
             type: 'text',
             message: capitalize(key),
             initial: metadata[key],
@@ -130,7 +137,7 @@ actions.update = {
       }
     }
 
-    await p2p.set(metadata)
+    await p2p.set(update)
   }
 }
 
