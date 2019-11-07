@@ -32,4 +32,13 @@ exports.createEnv = () => {
   return { env, spawn, exec }
 }
 
-exports.onExit = ps => new Promise(resolve => ps.on('exit', resolve))
+exports.onExit = ps =>
+  new Promise((resolve, reject) => {
+    ps.on('exit', (code, signal) => {
+      if (typeof code === 'number') {
+        resolve(code)
+      } else {
+        reject(new Error(signal))
+      }
+    })
+  })
