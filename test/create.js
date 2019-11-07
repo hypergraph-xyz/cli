@@ -18,7 +18,6 @@ test('prompt', async t => {
   ps.stdin.write('description\n')
   await match(ps.stdout, 'License')
   ps.stdin.write('y')
-  ps.stdin.end()
   const code = await onExit(ps)
   t.equal(code, 0)
 })
