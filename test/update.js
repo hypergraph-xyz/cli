@@ -4,14 +4,20 @@ require('../lib/fs-promises')
 const { test } = require('tap')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
-const { encode, decode } = require('dat-encoding')
+const { encode } = require('dat-encoding')
 const { createEnv, onExit } = require('./util')
+const P2PCommons = require('@p2pcommons/sdk-js')
 
 test('prompt', async t => {
-  const { exec, spawn } = createEnv()
+  const { spawn, env } = createEnv()
 
-  await exec('create content --title=t --description=d -s=Q17737 -y')
-  await exec('create profile --name=n --description=d -y')
+  const p2p = new P2PCommons({ baseDir: env })
+  await p2p.ready()
+  await Promise.all([
+    p2p.init({ type: 'content', title: 't', description: 'd' }),
+    p2p.init({ type: 'profile', title: 'n', description: 'd' })
+  ])
+  await p2p.destroy()
 
   const ps = await spawn('update')
   await match(ps.stdout, 'Select module')
@@ -32,10 +38,16 @@ test('no modules', async t => {
 
 test('update <hash>', async t => {
   await t.test('content', async t => {
-    const { exec, spawn, env } = createEnv()
+    const { spawn, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     const ps = await spawn(`update ${encode(key)}`)
     await match(ps.stdout, 'Title')
@@ -46,6 +58,7 @@ test('update <hash>', async t => {
     ps.stdin.write('\n')
     const code = await onExit(ps)
     t.equal(code, 0)
+
     const meta = JSON.parse(
       await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
     )
@@ -63,10 +76,16 @@ test('update <hash>', async t => {
   })
 
   await t.test('profile', async t => {
-    const { exec, spawn, env } = createEnv()
+    const { spawn, env } = createEnv()
 
-    const { stdout } = await exec('create profile -n=n -d=d -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'profile',
+      title: 'n',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     const ps = await spawn(`update ${encode(key)}`)
     await match(ps.stdout, 'Name')
@@ -75,6 +94,7 @@ test('update <hash>', async t => {
     ps.stdin.write('beep\n')
     const code = await onExit(ps)
     t.equal(code, 0)
+
     const meta = JSON.parse(
       await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
     )
@@ -93,10 +113,17 @@ test('update <hash>', async t => {
 })
 
 test('prompt main', async t => {
-  const { exec, spawn, env } = createEnv()
+  const { spawn, env } = createEnv()
 
-  const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-  const key = decode(stdout.trim())
+  const p2p = new P2PCommons({ baseDir: env })
+  await p2p.ready()
+  const { url: key } = await p2p.init({
+    type: 'content',
+    title: 't',
+    description: 'd'
+  })
+  await p2p.destroy()
+
   await fs.writeFile(`${env}/${encode(key)}/file.txt`, 'hi')
 
   const ps = await spawn(`update ${encode(key)}`)
@@ -104,13 +131,13 @@ test('prompt main', async t => {
   ps.stdin.write('\n') // keep value
   await match(ps.stdout, 'Description')
   ps.stdin.write('beep\n')
-  await match(ps.stdout, 'Main')
   await match(ps.stdout, 'file.txt')
   ps.stdin.write('\n')
   await match(ps.stdout, 'subtype')
   ps.stdin.write('\n')
   const code = await onExit(ps)
   t.equal(code, 0)
+
   const meta = JSON.parse(
     await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
   )
@@ -131,8 +158,14 @@ test('update <hash> <key> <value>', async t => {
   await t.test('updates main', async t => {
     const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     await exec(`update ${encode(key)} main main`)
     const meta = JSON.parse(
@@ -143,7 +176,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: encode(key),
       type: 'content',
-      subtype: 'Q17737',
+      subtype: '',
       main: 'main',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -154,8 +187,14 @@ test('update <hash> <key> <value>', async t => {
   await t.test('updates title', async t => {
     const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     await exec(`update ${encode(key)} title beep`)
     const meta = JSON.parse(
@@ -166,7 +205,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: encode(key),
       type: 'content',
-      subtype: 'Q17737',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -175,10 +214,16 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('invalid key', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     let threw = false
     try {
@@ -193,10 +238,17 @@ test('update <hash> <key> <value>', async t => {
   await t.test('clear value', async t => {
     const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     await exec(`update ${encode(key)} main`)
+
     const meta = JSON.parse(
       await fs.readFile(`${env}/${encode(key)}/dat.json`, 'utf8')
     )
@@ -205,7 +257,7 @@ test('update <hash> <key> <value>', async t => {
       description: 'd',
       url: encode(key),
       type: 'content',
-      subtype: 'Q17737',
+      subtype: '',
       main: '',
       license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
@@ -214,10 +266,16 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('requires title', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     let threw = false
     try {
@@ -230,10 +288,16 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('requires name', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create profile -n=n -d=d -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'profile',
+      title: 'n',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     let threw = false
     try {
@@ -246,10 +310,16 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('no name update for content', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     let threw = false
     try {
@@ -262,10 +332,16 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('no title update for profile', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create profile -n=n -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'profile',
+      title: 'n',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     let threw = false
     try {
@@ -278,10 +354,16 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('no adding new key to content', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     let threw = false
     try {
@@ -294,10 +376,16 @@ test('update <hash> <key> <value>', async t => {
   })
 
   await t.test('no adding new key to profile', async t => {
-    const { exec } = createEnv()
+    const { exec, env } = createEnv()
 
-    const { stdout } = await exec('create profile -n=n -d=d -y')
-    const key = decode(stdout.trim())
+    const p2p = new P2PCommons({ baseDir: env })
+    await p2p.ready()
+    const { url: key } = await p2p.init({
+      type: 'profile',
+      title: 'n',
+      description: 'd'
+    })
+    await p2p.destroy()
 
     let threw = false
     try {
