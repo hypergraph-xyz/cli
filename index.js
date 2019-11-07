@@ -11,6 +11,7 @@ const { encode } = require('dat-encoding')
 const readdirp = require('readdirp')
 const validate = require('./lib/validate')
 const UserError = require('./lib/user-error')
+const subtypes = require('./lib/subtypes')
 const kleur = require('kleur')
 
 const actions = {}
@@ -18,7 +19,7 @@ const actions = {}
 actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
-  handler: async (p2p, { type, title, name, description, yes }) => {
+  handler: async (p2p, { type, title, name, description, subtype, yes }) => {
     if (type === 'content' && !title) {
       title = await prompt({
         type: 'text',
@@ -38,6 +39,7 @@ actions.create = {
         message: 'Description'
       })
     }
+    if (type === 'content' && !subtype) subtype = await askSubtype()
 
     if (!yes) {
       const confirmed = await prompt({
@@ -50,7 +52,7 @@ actions.create = {
       if (!confirmed) throw new UserError('License not confirmed')
     }
 
-    const { url } = await p2p.init({ type, title, name, description })
+    const { url } = await p2p.init({ type, title, name, description, subtype })
     console.log(url)
   }
 }
@@ -104,6 +106,7 @@ actions.update = {
         'description',
         'main'
       ]
+      if (metadata.type === 'content') keys.push('subtype')
 
       for (const key of keys) {
         if (key === 'main') {
@@ -126,6 +129,8 @@ actions.update = {
               value: entry.path
             }))
           })
+        } else if (key === 'subtype') {
+          update.subtype = await askSubtype(metadata.subtype)
         } else {
           update[key] = await prompt({
             type: 'text',
@@ -192,6 +197,17 @@ function askType () {
       { title: 'Content', value: 'content' },
       { title: 'Profile', value: 'profile' }
     ]
+  })
+}
+
+function askSubtype (currentId) {
+  const entries = Object.entries(subtypes)
+  const idx = entries.findIndex(([id]) => id === currentId)
+  return prompt({
+    type: 'select',
+    message: 'Select subtype',
+    choices: entries.map(([id, name]) => ({ title: name, value: id })),
+    initial: idx === -1 ? 0 : idx
   })
 }
 

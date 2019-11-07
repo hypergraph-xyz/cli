@@ -16,6 +16,8 @@ test('prompt', async t => {
   ps.stdin.write('title\n')
   await match(ps.stdout, 'Description')
   ps.stdin.write('description\n')
+  await match(ps.stdout, 'subtype')
+  ps.stdin.write('\n')
   await match(ps.stdout, 'License')
   ps.stdin.write('y')
   const code = await onExit(ps)
@@ -33,6 +35,8 @@ test('requires title', async t => {
   ps.stdin.write('title\n')
   await match(ps.stdout, 'Description')
   ps.stdin.write('description\n')
+  await match(ps.stdout, 'subtype')
+  ps.stdin.write('\n')
   const code = await onExit(ps)
   t.equal(code, 0)
 })
@@ -62,6 +66,8 @@ test('requires license confirmation', async t => {
   ps.stdin.write('title\n')
   await match(ps.stdout, 'Description')
   ps.stdin.write('description\n')
+  await match(ps.stdout, 'subtype')
+  ps.stdin.write('\n')
   await match(ps.stdout, 'License')
   ps.stdin.write('\n')
   const code = await onExit(ps)
@@ -77,6 +83,8 @@ test('license confirmation can be skipped', async t => {
   ps.stdin.write('title\n')
   await match(ps.stdout, 'Description')
   ps.stdin.write('description\n')
+  await match(ps.stdout, 'subtype')
+  ps.stdin.write('\n')
   const code = await onExit(ps)
   t.equal(code, 0)
 })
@@ -88,6 +96,8 @@ test('create content', async t => {
   ps.stdin.write('title\n')
   await match(ps.stdout, 'Description')
   ps.stdin.write('description\n')
+  await match(ps.stdout, 'subtype')
+  ps.stdin.write('\n')
   const code = await onExit(ps)
   t.equal(code, 0)
 })
@@ -103,10 +113,10 @@ test('create profile', async t => {
   t.equal(code, 0)
 })
 
-test('create <type> --title --description', async t => {
+test('create <type> --title --description --subtype', async t => {
   await t.test('creates files', async t => {
     const { exec, env } = createEnv()
-    const { stdout } = await exec('create content -t=t -d=d -y')
+    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
     await fs.stat(`${env}/${hash}/dat.json`)
@@ -115,21 +125,21 @@ test('create <type> --title --description', async t => {
 
   await t.test('requires title', async t => {
     const { spawn } = createEnv()
-    const ps = spawn('create content --description=d -y')
+    const ps = spawn('create content --description=d -s=Q17737 -y')
     await match(ps.stdout, 'Title')
     ps.kill()
   })
 
   await t.test('requires name', async t => {
     const { spawn } = createEnv()
-    const ps = spawn('create profile --description=d -y')
+    const ps = spawn('create profile --description=d -s=Q17737 -y')
     await match(ps.stdout, 'Name')
     ps.kill()
   })
 
   await t.test('description can be empty', async t => {
     const { exec } = createEnv()
-    await exec('create content -y -t=t -d')
-    await exec('create content -y -t=t -d=""')
+    await exec('create content -y -t=t -d -s=Q17737')
+    await exec('create content -y -t=t -d="" -s=Q17737')
   })
 })

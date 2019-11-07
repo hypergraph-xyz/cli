@@ -9,7 +9,7 @@ test('list content', async t => {
   const contentTitle = String(Math.random())
   const profileName = String(Math.random())
 
-  await exec(`create content -t=${contentTitle} -d=d -y`)
+  await exec(`create content -t=${contentTitle} -d=d -s=Q17737 -y`)
   await exec(`create profile -n=${profileName} -d=d -y`)
 
   const { stdout } = await exec('list content')
@@ -23,7 +23,7 @@ test('list profile', async t => {
   const contentTitle = String(Math.random())
   const profileName = String(Math.random())
 
-  await exec(`create content -t=${contentTitle} -d=d -y`)
+  await exec(`create content -t=${contentTitle} -d=d -s=Q17737 -y`)
   await exec(`create profile -n=${profileName} -d=d -y`)
 
   const { stdout } = await exec('list profile')

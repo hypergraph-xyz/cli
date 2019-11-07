@@ -47,6 +47,7 @@ $ hypergraph --help
     --version, -v              Display version
     --title, -t                A content module's title
     --name, -n                 A profile module's name
+    --subtype, -s              A content module's subtype
     --description, -d          Module description
     --yes, -y                  Confirm license for module creation
 
