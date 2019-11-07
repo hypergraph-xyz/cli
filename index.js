@@ -52,7 +52,6 @@ actions.create = {
       if (!confirmed) throw new UserError('License not confirmed')
     }
 
-    console.log({ type, title, name, description, subtype })
     const { url } = await p2p.init({ type, title, name, description, subtype })
     console.log(url)
   }
@@ -131,7 +130,7 @@ actions.update = {
             }))
           })
         } else if (key === 'subtype') {
-          metadata.subtype = await askSubtype(metadata.subtype)
+          update.subtype = await askSubtype(metadata.subtype)
         } else {
           update[key] = await prompt({
             type: 'text',
@@ -201,12 +200,13 @@ function askType () {
   })
 }
 
-function askSubtype (current) {
-  const idx = subtypes.indexOf(current)
+function askSubtype (currentId) {
+  const entries = Object.entries(subtypes)
+  const idx = entries.findIndex(([id]) => id === currentId)
   return prompt({
     type: 'select',
     message: 'Select subtype',
-    choices: subtypes.map(subtype => ({ title: subtype, value: subtype })),
+    choices: entries.map(([id, name]) => ({ title: name, value: id })),
     initial: idx === -1 ? 0 : idx
   })
 }
