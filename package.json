@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
     "test": "prettier-standard '**/*.js' && standard && tap --timeout=60 --test-ignore=util.js",
-    "postinstall": "./bin/autocomplete.js",
+    "postinstall": "node ./bin/autocomplete.js",
     "release": "np"
   },
   "repository": {
