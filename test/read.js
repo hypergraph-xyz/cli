@@ -8,8 +8,8 @@ const { createEnv, onExit } = require('./util')
 test('prompt', async t => {
   const { exec, spawn } = createEnv()
 
-  await exec('create content --title=t --description=d -y')
-  await exec('create profile --name=n --description=d -y')
+  await exec('create content --t=t --d=d -s=Q17737 -y')
+  await exec('create profile --n=n --d=d -y')
 
   const ps = spawn('read')
   await match(ps.stdout, 'Select module')
@@ -34,7 +34,7 @@ test('no modules', async t => {
 test('read <hash>', async t => {
   const { exec } = createEnv()
 
-  let { stdout } = await exec('create content -t=t -d=d -y')
+  let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
   const key = decode(stdout.trim())
 
   ;({ stdout } = await exec(`read ${encode(key)}`))
@@ -44,7 +44,7 @@ test('read <hash>', async t => {
     description: 'd',
     url: `dat://${encode(key)}`,
     type: 'content',
-    subtype: '',
+    subtype: 'Q17737',
     main: '',
     license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
     authors: [],
@@ -55,7 +55,7 @@ test('read <hash>', async t => {
 test('read <hash> <key>', async t => {
   const { exec } = createEnv()
 
-  let { stdout } = await exec('create content -t=t -d=d -y')
+  let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
   const hash = stdout.trim()
 
   ;({ stdout } = await exec(`read ${hash} title`))
