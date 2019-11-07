@@ -1,51 +1,52 @@
 {
-    "name": "@hypergraph-xyz/cli",
-    "version": "0.2.7",
-    "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
-    "main": "index.js",
-    "scripts": {
-        "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
-        "test": "prettier-standard '**/*.js' && standard && tap --timeout=60 --test-ignore=util.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/hypergraph-xyz/cli.git"
-    },
-    "keywords": [
-        "cli",
-        "p2p",
-        "research",
-        "communication"
-    ],
-    "author": "Liberate Science",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/hypergraph-xyz/cli/issues"
-    },
-    "homepage": "https://github.com/hypergraph-xyz/cli#readme",
-    "dependencies": {
-        "@p2pcommons/sdk-js": "^0.2.4",
-        "capitalize": "^2.0.0",
-        "dat-encoding": "^5.0.1",
-        "fs.promises": "^0.1.2",
-        "kleur": "^3.0.3",
-        "minimist": "^1.2.0",
-        "open": "^7.0.0",
-        "prompts": "^2.1.0",
-        "readdirp": "^3.2.0",
-        "update-notifier": "^3.0.1"
-    },
-    "bin": {
-        "hypergraph": "./bin/hypergraph.js"
-    },
-    "devDependencies": {
-        "pkg": "^4.4.0",
-        "prettier-standard": "^15.0.1",
-        "standard": "^14.3.1",
-        "stream-match": "^1.1.0",
-        "tap": "^14.7.1"
-    },
-    "pkg": {
-        "name": "hypergraph"
-    }
+  "name": "@hypergraph-xyz/cli",
+  "version": "0.2.9",
+  "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
+  "main": "index.js",
+  "scripts": {
+    "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
+    "test": "prettier-standard '**/*.js' && standard && tap --timeout=60 --test-ignore=util.js",
+    "postinstall": "./bin/autocomplete.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hypergraph-xyz/cli.git"
+  },
+  "keywords": [
+    "cli",
+    "p2p",
+    "research",
+    "communication"
+  ],
+  "author": "Liberate Science",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hypergraph-xyz/cli/issues"
+  },
+  "homepage": "https://github.com/hypergraph-xyz/cli#readme",
+  "dependencies": {
+    "@p2pcommons/sdk-js": "^0.2.7",
+    "capitalize": "^2.0.0",
+    "dat-encoding": "^5.0.1",
+    "fs.promises": "^0.1.2",
+    "kleur": "^3.0.3",
+    "minimist": "^1.2.0",
+    "open": "^7.0.0",
+    "prompts": "^2.1.0",
+    "readdirp": "^3.2.0",
+    "update-notifier": "^3.0.1"
+  },
+  "bin": {
+    "hypergraph": "./bin/hypergraph.js"
+  },
+  "devDependencies": {
+    "pkg": "^4.4.0",
+    "prettier-standard": "^15.0.1",
+    "standard": "^14.3.1",
+    "stream-match": "^1.1.0",
+    "tap": "^14.7.1"
+  },
+  "pkg": {
+    "name": "hypergraph"
+  }
 }
