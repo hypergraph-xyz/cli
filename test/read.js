@@ -8,7 +8,7 @@ const P2PCommons = require('@p2pcommons/sdk-js')
 
 test('with modules', async t => {
   const { spawn, exec, env } = createEnv()
-  
+
   const p2p = new P2PCommons({ baseDir: env })
   await p2p.ready()
   const [{ url: key }] = await Promise.all([
