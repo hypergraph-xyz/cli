@@ -18,7 +18,7 @@ test('with modules', async t => {
     p2p.init({ type: 'profile', title: 'n', description: 'd' })
   ])
   await p2p.destroy()
-  
+
   await t.test('prompt', async t => {
     const ps = await spawn('update')
     await match(ps.stdout, 'Select module')
@@ -36,7 +36,7 @@ test('with modules', async t => {
       ps.stdin.write('\n')
       const code = await onExit(ps)
       t.equal(code, 0)
-  
+
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
       )
@@ -52,7 +52,7 @@ test('with modules', async t => {
         parents: []
       })
     })
-  
+
     await t.test('profile', async t => {
       const ps = await spawn(`update ${encode(profileKey)}`)
       await match(ps.stdout, 'Name')
@@ -61,7 +61,7 @@ test('with modules', async t => {
       ps.stdin.write('beep\n')
       const code = await onExit(ps)
       t.equal(code, 0)
-  
+
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(profileKey)}/dat.json`, 'utf8')
       )
@@ -81,7 +81,7 @@ test('with modules', async t => {
 
   await t.test('prompt main', async t => {
     await fs.writeFile(`${env}/${encode(contentKey)}/file.txt`, 'hi')
-  
+
     const ps = await spawn(`update ${encode(contentKey)}`)
     await match(ps.stdout, 'Title')
     ps.stdin.write('\n') // keep value
@@ -93,7 +93,7 @@ test('with modules', async t => {
     ps.stdin.write('\n')
     const code = await onExit(ps)
     t.equal(code, 0)
-  
+
     const meta = JSON.parse(
       await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
     )
@@ -118,7 +118,7 @@ test('with modules', async t => {
       )
       t.equal(meta.main, 'main')
     })
-  
+
     await t.test('updates title', async t => {
       await exec(`update ${encode(contentKey)} title beep`)
       const meta = JSON.parse(
@@ -126,7 +126,7 @@ test('with modules', async t => {
       )
       t.equal(meta.title, 'beep')
     })
-  
+
     await t.test('invalid key', async t => {
       let threw = false
       try {
@@ -137,16 +137,16 @@ test('with modules', async t => {
       }
       t.ok(threw)
     })
-  
+
     await t.test('clear value', async t => {
       await exec(`update ${encode(contentKey)} main`)
-  
+
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
       )
       t.equal(meta.main, '')
     })
-  
+
     await t.test('requires title', async t => {
       let threw = false
       try {
@@ -157,7 +157,7 @@ test('with modules', async t => {
       }
       t.ok(threw)
     })
-  
+
     await t.test('requires name', async t => {
       let threw = false
       try {
@@ -168,7 +168,7 @@ test('with modules', async t => {
       }
       t.ok(threw)
     })
-  
+
     await t.test('no name update for content', async t => {
       let threw = false
       try {
@@ -179,7 +179,7 @@ test('with modules', async t => {
       }
       t.ok(threw)
     })
-  
+
     await t.test('no title update for profile', async t => {
       let threw = false
       try {
@@ -190,7 +190,7 @@ test('with modules', async t => {
       }
       t.ok(threw)
     })
-  
+
     await t.test('no adding new key to content', async t => {
       let threw = false
       try {
@@ -201,7 +201,7 @@ test('with modules', async t => {
       }
       t.ok(threw)
     })
-  
+
     await t.test('no adding new key to profile', async t => {
       let threw = false
       try {
