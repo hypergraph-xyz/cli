@@ -1,11 +1,11 @@
 {
     "name": "@hypergraph-xyz/cli",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
     "main": "index.js",
     "scripts": {
         "build": "pkg -c build/pkg.json bin/hypergraph.js --out-path=build",
-        "test": "prettier-standard '**/*.js' && standard && tap --timeout=0 --test-ignore=util.js"
+        "test": "prettier-standard '**/*.js' && standard && tap --timeout=60 --test-ignore=util.js"
     },
     "repository": {
         "type": "git",
@@ -24,10 +24,11 @@
     },
     "homepage": "https://github.com/hypergraph-xyz/cli#readme",
     "dependencies": {
-        "@p2pcommons/sdk-js": "^0.2.4",
+        "@p2pcommons/sdk-js": "^0.2.7",
         "capitalize": "^2.0.0",
         "dat-encoding": "^5.0.1",
         "fs.promises": "^0.1.2",
+        "kleur": "^3.0.3",
         "minimist": "^1.2.0",
         "open": "^7.0.0",
         "prompts": "^2.1.0",

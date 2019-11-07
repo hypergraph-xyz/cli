@@ -69,7 +69,7 @@ test('requires license confirmation', async t => {
   t.equal(code, 1)
 })
 
-test('license confirmation ca be skipped', async t => {
+test('license confirmation can be skipped', async t => {
   const { spawn } = createEnv()
   const ps = spawn('create -y')
   await match(ps.stdout, 'Profile')
@@ -107,7 +107,7 @@ test('create profile', async t => {
 test('create <type> --title --description', async t => {
   await t.test('creates files', async t => {
     const { exec, env } = createEnv()
-    const { stdout } = await exec('create content --t=t --d=d -y')
+    const { stdout } = await exec('create content -t=t -d=d -y')
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
     await fs.stat(`${env}/${hash}/dat.json`)
@@ -126,5 +126,11 @@ test('create <type> --title --description', async t => {
     const ps = spawn('create profile --description=d -y')
     await match(ps.stdout, 'Name')
     ps.kill()
+  })
+
+  await t.test('description can be empty', async t => {
+    const { exec } = createEnv()
+    await exec('create content -y -t=t -d')
+    await exec('create content -y -t=t -d=""')
   })
 })

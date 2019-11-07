@@ -35,7 +35,7 @@ test('no modules', async t => {
 test('read <hash>', async t => {
   const { exec } = createEnv()
 
-  let { stdout } = await exec('create content --t=t --d=d -y')
+  let { stdout } = await exec('create content -t=t -d=d -y')
   const key = decode(stdout.trim())
 
   ;({ stdout } = await exec(`read ${encode(key)}`))
@@ -45,7 +45,7 @@ test('read <hash>', async t => {
     description: 'd',
     url: `dat://${encode(key)}`,
     type: 'content',
-    subtype: 'content',
+    subtype: '',
     main: '',
     license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
     authors: [],
@@ -56,7 +56,7 @@ test('read <hash>', async t => {
 test('read <hash> <key>', async t => {
   const { exec } = createEnv()
 
-  let { stdout } = await exec('create content --t=t --d=d -y')
+  let { stdout } = await exec('create content -t=t -d=d -y')
   const hash = stdout.trim()
 
   ;({ stdout } = await exec(`read ${hash} title`))

@@ -12,6 +12,7 @@ const readdirp = require('readdirp')
 const validate = require('./lib/validate')
 const UserError = require('./lib/user-error')
 const subtypes = require('./lib/subtypes')
+const kleur = require('kleur')
 
 const actions = {}
 
@@ -32,7 +33,7 @@ actions.create = {
         validate: validate.name
       })
     }
-    if (!description) {
+    if (description === undefined) {
       description = await prompt({
         type: 'text',
         message: 'Description'
@@ -44,7 +45,9 @@ actions.create = {
       const confirmed = await prompt({
         type: 'confirm',
         message:
-          'License: https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+          'License: https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        // the default gray wasn't always readable
+        noOption: kleur.reset('(y/N)')
       })
       if (!confirmed) throw new UserError('License not confirmed')
     }
@@ -93,12 +96,20 @@ actions.update = {
     { name: 'value' }
   ],
   handler: async (p2p, { env, hash, key, value }) => {
-    const metadata = await p2p.get(hash)
+    const update = { url: hash }
 
     if (key) {
-      metadata[key] = value || ''
+      update[key] = value || ''
     } else {
-      for (const key of p2p.allowedKeyUpdatesWithTitleRename(metadata.type)) {
+      const metadata = await p2p.get(hash)
+      const keys = [
+        metadata.type === 'content' ? 'title' : 'name',
+        'description',
+        'main'
+      ]
+      if (metadata.type === 'content') keys.push('subtype')
+
+      for (const key of keys) {
         if (key === 'main') {
           const entries = await readdirp.promise(
             `${env}/${encode(metadata.url)}/`,
@@ -107,8 +118,11 @@ actions.update = {
               directoryFilter: ['.dat']
             }
           )
-          if (!entries.length) continue
-          metadata.main = await prompt({
+          if (!entries.length) {
+            console.log('No main file to set available')
+            continue
+          }
+          update.main = await prompt({
             type: 'select',
             message: 'Main',
             choices: entries.map(entry => ({
@@ -119,7 +133,7 @@ actions.update = {
         } else if (key === 'subtype') {
           metadata.subtype = await askSubtype(metadata.subtype)
         } else {
-          metadata[key] = await prompt({
+          update[key] = await prompt({
             type: 'text',
             message: capitalize(key),
             initial: metadata[key],
@@ -129,7 +143,7 @@ actions.update = {
       }
     }
 
-    await p2p.set(metadata)
+    await p2p.set(update)
   }
 }
 
@@ -144,6 +158,7 @@ actions.open = {
 
 actions.path = {
   title: 'Print module path',
+  unlisted: true,
   input: [
     {
       name: 'hash',
@@ -161,6 +176,7 @@ actions.path = {
 
 actions.list = {
   title: 'List writable modules',
+  unlisted: true,
   input: [{ name: 'type', resolve: askType }],
   handler: async (p2p, { type }) => {
     const fn = {
@@ -214,10 +230,12 @@ const hypergraph = async argv => {
     actionName = await prompt({
       type: 'select',
       message: 'Pick an action',
-      choices: Object.entries(actions).map(([value, { title }]) => ({
-        title,
-        value
-      }))
+      choices: Object.entries(actions)
+        .filter(([, { unlisted }]) => !unlisted)
+        .map(([value, { title }]) => ({
+          title,
+          value
+        }))
     })
   }
 
