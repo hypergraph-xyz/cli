@@ -9,7 +9,7 @@ const kleur = require('kleur')
 
 const actionNames = Object.keys(actions).join(' ')
 
-const darwin = `
+const bash = `
 # Completion for @hypergraph-xyz/cli
 _hypergraph () {
   local cur
@@ -26,18 +26,29 @@ complete -F _hypergraph hypergraph
 `
 
 const main = async () => {
-  if (platform() !== 'darwin') return
+  if (!['darwin', 'linux'].includes(platform())) return
 
-  const profile = await fs.readFile(`${process.env.HOME}/.profile`, 'utf8')
-  if (profile.includes(darwin)) {
+  const file = {
+    darwin: '.profile',
+    linux: '.bashrc'
+  }[platform()]
+  let profile
+  try {
+    profile = await fs.readFile(`${process.env.HOME}/${file}`, 'utf8')
+  } catch (err) {
+    console.error(kleur.gray('No profile file found.'))
+    return
+  }
+
+  if (profile.includes(bash)) {
     console.log(kleur.green('Hypergraph auto complete correctly set up!'))
   } else {
     console.log(
       kleur.yellow(
-        'Add this to your ~/.profile then reload to enable Hypergraph action auto completion:'
+        `Add this to your ~/${file} then reload to enable Hypergraph action auto completion:`
       )
     )
-    console.log(kleur.gray(darwin))
+    console.log(kleur.gray(bash))
   }
 }
 
