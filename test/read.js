@@ -2,21 +2,50 @@
 
 const { test } = require('tap')
 const match = require('stream-match')
-const { encode, decode } = require('dat-encoding')
+const { encode } = require('dat-encoding')
 const { createEnv, onExit } = require('./util')
+const P2PCommons = require('@p2pcommons/sdk-js')
 
-test('prompt', async t => {
-  const { exec, spawn } = createEnv()
+test('with modules', async t => {
+  const { spawn, exec, env } = createEnv()
+  
+  const p2p = new P2PCommons({ baseDir: env })
+  await p2p.ready()
+  const [{ url: key }] = await Promise.all([
+    p2p.init({ type: 'content', title: 't', description: 'd' }),
+    p2p.init({ type: 'profile', title: 'n', description: 'd' })
+  ])
+  await p2p.destroy()
 
-  await exec('create content -t=t -d=d -s=Q17737 -y')
-  await exec('create profile -n=n -d=d -y')
+  await t.test('prompt', async t => {
+    const ps = spawn('read')
+    await match(ps.stdout, 'Select module')
+    ps.stdin.write('\n')
+    await match(ps.stdout, 'dat://')
+    const code = await onExit(ps)
+    t.equal(code, 0)
+  })
 
-  const ps = spawn('read')
-  await match(ps.stdout, 'Select module')
-  ps.stdin.write('\n')
-  await match(ps.stdout, 'dat://')
-  const code = await onExit(ps)
-  t.equal(code, 0)
+  await t.test('read <hash>', async t => {
+    const { stdout } = await exec(`read ${encode(key)}`)
+    const meta = JSON.parse(stdout)
+    t.deepEqual(meta, {
+      title: 't',
+      description: 'd',
+      url: `dat://${encode(key)}`,
+      type: 'content',
+      subtype: '',
+      main: '',
+      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+      authors: [],
+      parents: []
+    })
+  })
+
+  await t.test('read <hash> <key>', async t => {
+    const { stdout } = await exec(`read ${encode(key)} title`)
+    t.equal(stdout.trim(), '"t"')
+  })
 })
 
 test('no modules', async t => {
@@ -29,35 +58,4 @@ test('no modules', async t => {
     t.match(err.message, /No modules/)
   }
   t.ok(threw)
-})
-
-test('read <hash>', async t => {
-  const { exec } = createEnv()
-
-  let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-  const key = decode(stdout.trim())
-
-  ;({ stdout } = await exec(`read ${encode(key)}`))
-  const meta = JSON.parse(stdout)
-  t.deepEqual(meta, {
-    title: 't',
-    description: 'd',
-    url: `dat://${encode(key)}`,
-    type: 'content',
-    subtype: 'Q17737',
-    main: '',
-    license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-    authors: [],
-    parents: []
-  })
-})
-
-test('read <hash> <key>', async t => {
-  const { exec } = createEnv()
-
-  let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-  const hash = stdout.trim()
-
-  ;({ stdout } = await exec(`read ${hash} title`))
-  t.equal(stdout.trim(), '"t"')
 })

@@ -21,9 +21,7 @@ test('list', async t => {
   let { stdout } = await exec('list content')
   t.ok(stdout.includes(contentTitle))
   t.notOk(stdout.includes(profileName))
-
   ;({ stdout } = await exec('list profile'))
   t.notOk(stdout.includes(contentTitle))
   t.ok(stdout.includes(profileName))
 })
-
