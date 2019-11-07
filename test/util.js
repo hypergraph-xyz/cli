@@ -4,7 +4,7 @@ const childProcess = require('child_process')
 const { tmpdir } = require('os')
 const { promisify } = require('util')
 
-const { DEBUG } = process.env
+const DEBUG = process.env.DEBUG || process.env.CI
 
 exports.createEnv = () => {
   const path = `${__dirname}/../bin/hypergraph.js`
