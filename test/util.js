@@ -15,6 +15,9 @@ exports.createEnv = () => {
 
     const ps = childProcess.spawn(path, [...args.split(' '), `--env=${env}`])
 
+    ps.stdoutDebug = ''
+    ps.stdout.on('data', d => (ps.stdoutDebug += d))
+
     // istanbul ignore next
     if (DEBUG) {
       ps.stdout.on('data', d => console.log(d.toString()))
@@ -39,7 +42,7 @@ exports.onExit = ps =>
       if (typeof code === 'number') {
         resolve(code)
       } else {
-        reject(new Error(signal))
+        reject(new Error(`${signal}\n${ps.stdoutDebug}`))
       }
     })
   })
