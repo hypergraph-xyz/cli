@@ -15,7 +15,6 @@ test('prompt', async t => {
   await match(ps.stdout, 'Select module')
   ps.stdin.write('\n')
   await match(ps.stdout, 'dat://')
-  ps.stdin.end()
   const code = await onExit(ps)
   t.equal(code, 0)
 })

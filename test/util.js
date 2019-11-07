@@ -34,6 +34,7 @@ exports.createEnv = () => {
 
 exports.onExit = ps =>
   new Promise((resolve, reject) => {
+    ps.stdin.end()
     ps.on('exit', (code, signal) => {
       if (typeof code === 'number') {
         resolve(code)
