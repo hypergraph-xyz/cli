@@ -4,12 +4,14 @@ const childProcess = require('child_process')
 const { tmpdir } = require('os')
 const { promisify } = require('util')
 const { randomBytes } = require('crypto')
+const fs = require('fs')
 
 const DEBUG = process.env.DEBUG || process.env.CI
 
 exports.createEnv = () => {
   const path = `${__dirname}/../bin/hypergraph.js`
   const env = `${tmpdir()}/${Date.now()}-${randomBytes(16).toString('hex')}`
+  fs.mkdirSync(env)
   const spawn = args => {
     // istanbul ignore next
     if (DEBUG) console.log(`spawn ${args}`)
