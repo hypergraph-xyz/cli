@@ -205,7 +205,7 @@ function askSubtype (currentId) {
   const entries = Object.entries(subtypes)
   const idx = entries.findIndex(([id]) => id === currentId)
   return prompt({
-    type: 'select',
+    type: 'autocomplete',
     message: 'Select subtype',
     choices: entries.map(([id, name]) => ({ title: name, value: id })),
     initial: idx === -1 ? 0 : idx
