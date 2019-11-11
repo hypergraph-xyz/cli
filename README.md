@@ -1,5 +1,5 @@
 # Hypergraph CLI
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 
 [![NPM](https://nodei.co/npm/@hypergraph-xyz/cli.png)](https://npmjs.org/package/@hypergraph-xyz/cli)
 
@@ -114,6 +114,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/nehamoopen"><img src="https://avatars3.githubusercontent.com/u/37183829?v=4" width="100px;" alt="nehamoopen"/><br /><sub><b>nehamoopen</b></sub></a><br /><a href="#ideas-nehamoopen" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://twitter.com/juliangruber/"><img src="https://avatars2.githubusercontent.com/u/10247?v=4" width="100px;" alt="Julian Gruber"/><br /><sub><b>Julian Gruber</b></sub></a><br /><a href="#maintenance-juliangruber" title="Maintenance">🚧</a> <a href="https://github.com/hypergraph-xyz/cli/commits?author=juliangruber" title="Code">💻</a> <a href="https://github.com/hypergraph-xyz/cli/commits?author=juliangruber" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
