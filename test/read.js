@@ -1,5 +1,6 @@
 'use strict'
 
+require('../lib/fs-promises')
 const { test } = require('tap')
 const match = require('stream-match')
 const { encode } = require('dat-encoding')

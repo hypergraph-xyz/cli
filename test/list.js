@@ -1,5 +1,6 @@
 'use strict'
 
+require('../lib/fs-promises')
 const { test } = require('tap')
 const { createEnv } = require('./util')
 const P2PCommons = require('@p2pcommons/sdk-js')
