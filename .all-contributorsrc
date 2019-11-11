@@ -1,0 +1,23 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "nehamoopen",
+      "name": "nehamoopen",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/37183829?v=4",
+      "profile": "https://github.com/nehamoopen",
+      "contributions": [
+        "ideas"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "cli",
+  "projectOwner": "hypergraph-xyz",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
