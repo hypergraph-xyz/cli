@@ -149,10 +149,11 @@ actions.update = {
 actions.open = {
   title: 'Open module folder',
   input: [{ name: 'hash', resolve: askModules }],
-  handler: async (_, { hash, env }) => {
+  handler:
     // istanbul ignore next
-    await open(`${env}/${encode(hash)}`)
-  }
+    async (_, { hash, env }) => {
+      await open(`${env}/${encode(hash)}`)
+    }
 }
 
 actions.path = {
