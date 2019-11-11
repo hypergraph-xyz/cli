@@ -4,18 +4,215 @@ require('../lib/fs-promises')
 const { test } = require('tap')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
-const { encode, decode } = require('dat-encoding')
+const { encode } = require('dat-encoding')
 const { createEnv, onExit } = require('./util')
+const P2PCommons = require('@p2pcommons/sdk-js')
 
-test('prompt', async t => {
-  const { exec, spawn } = createEnv()
+test('with modules', async t => {
+  const { spawn, exec, env } = createEnv()
 
-  await exec('create content --title=t --description=d -s=Q17737 -y')
-  await exec('create profile --name=n --description=d -y')
+  const p2p = new P2PCommons({ baseDir: env })
+  await p2p.ready()
+  const [{ url: contentKey }, { url: profileKey }] = await Promise.all([
+    p2p.init({ type: 'content', title: 't', description: 'd' }),
+    p2p.init({ type: 'profile', title: 'n', description: 'd' })
+  ])
+  await p2p.destroy()
 
-  const ps = await spawn('update')
-  await match(ps.stdout, 'Select module')
-  ps.kill()
+  await t.test('prompt', async t => {
+    const ps = await spawn('update')
+    await match(ps.stdout, 'Select module')
+    ps.kill()
+  })
+
+  await t.test('update <hash>', async t => {
+    await t.test('content', async t => {
+      const ps = await spawn(`update ${encode(contentKey)}`)
+      await match(ps.stdout, 'Title')
+      ps.stdin.write('\n') // keep value
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('beep\n')
+      await match(ps.stdout, 'subtype')
+      ps.stdin.write('\n')
+      const code = await onExit(ps)
+      t.equal(code, 0)
+
+      const meta = JSON.parse(
+        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+      )
+      t.deepEqual(meta, {
+        title: 't',
+        description: 'beep',
+        url: encode(contentKey),
+        type: 'content',
+        subtype: 'Q17737',
+        main: '',
+        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        authors: [],
+        parents: []
+      })
+    })
+
+    await t.test('profile', async t => {
+      const ps = await spawn(`update ${encode(profileKey)}`)
+      await match(ps.stdout, 'Name')
+      ps.stdin.write('\n') // keep value
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('beep\n')
+      const code = await onExit(ps)
+      t.equal(code, 0)
+
+      const meta = JSON.parse(
+        await fs.readFile(`${env}/${encode(profileKey)}/dat.json`, 'utf8')
+      )
+      t.deepEqual(meta, {
+        title: 'n',
+        description: 'beep',
+        url: encode(profileKey),
+        type: 'profile',
+        subtype: '',
+        main: '',
+        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+        follows: [],
+        contents: []
+      })
+    })
+  })
+
+  await t.test('prompt main', async t => {
+    await fs.writeFile(`${env}/${encode(contentKey)}/file.txt`, 'hi')
+
+    const ps = await spawn(`update ${encode(contentKey)}`)
+    await match(ps.stdout, 'Title')
+    ps.stdin.write('\n') // keep value
+    await match(ps.stdout, 'Description')
+    ps.stdin.write('beep\n')
+    await match(ps.stdout, 'file.txt')
+    ps.stdin.write('\n')
+    await match(ps.stdout, 'subtype')
+    ps.stdin.write('\n')
+    const code = await onExit(ps)
+    t.equal(code, 0)
+
+    const meta = JSON.parse(
+      await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+    )
+    t.deepEqual(meta, {
+      title: 't',
+      description: 'beep',
+      url: encode(contentKey),
+      type: 'content',
+      subtype: 'Q17737',
+      main: 'file.txt',
+      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+      authors: [],
+      parents: []
+    })
+  })
+
+  await t.test('update <hash> <key> <value>', async t => {
+    await t.test('updates main', async t => {
+      await exec(`update ${encode(contentKey)} main main`)
+      const meta = JSON.parse(
+        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+      )
+      t.equal(meta.main, 'main')
+    })
+
+    await t.test('updates title', async t => {
+      await exec(`update ${encode(contentKey)} title beep`)
+      const meta = JSON.parse(
+        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+      )
+      t.equal(meta.title, 'beep')
+    })
+
+    await t.test('invalid key', async t => {
+      let threw = false
+      try {
+        await exec(`update ${encode(contentKey)} beep boop`)
+      } catch (err) {
+        t.ok(err.stderr.includes('Invalid key'))
+        threw = true
+      }
+      t.ok(threw)
+    })
+
+    await t.test('clear value', async t => {
+      await exec(`update ${encode(contentKey)} main`)
+
+      const meta = JSON.parse(
+        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+      )
+      t.equal(meta.main, '')
+    })
+
+    await t.test('requires title', async t => {
+      let threw = false
+      try {
+        await exec(`update ${encode(contentKey)} title`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Invalid title/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('requires name', async t => {
+      let threw = false
+      try {
+        await exec(`update ${encode(profileKey)} name`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Invalid name/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('no name update for content', async t => {
+      let threw = false
+      try {
+        await exec(`update ${encode(contentKey)} name beep`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Invalid key: name/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('no title update for profile', async t => {
+      let threw = false
+      try {
+        await exec(`update ${encode(profileKey)} title beep`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Invalid key: title/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('no adding new key to content', async t => {
+      let threw = false
+      try {
+        await exec(`update ${encode(contentKey)} foo bar`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Invalid key: foo/)
+      }
+      t.ok(threw)
+    })
+
+    await t.test('no adding new key to profile', async t => {
+      let threw = false
+      try {
+        await exec(`update ${encode(profileKey)} foo bar`)
+      } catch (err) {
+        threw = true
+        t.match(err.message, /Invalid key: foo/)
+      }
+      t.ok(threw)
+    })
+  })
 })
 
 test('no modules', async t => {
@@ -28,278 +225,4 @@ test('no modules', async t => {
     t.match(err.message, /No writable modules/)
   }
   t.ok(threw)
-})
-
-test('update <hash>', async t => {
-  await t.test('content', async t => {
-    const { exec, spawn } = createEnv()
-
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    const ps = await spawn(`update ${encode(key)}`)
-    await match(ps.stdout, 'Title')
-    ps.stdin.write('\n') // keep value
-    await match(ps.stdout, 'Description')
-    ps.stdin.write('beep\n')
-    await match(ps.stdout, 'subtype')
-    ps.stdin.write('\n')
-    const code = await onExit(ps)
-    t.equal(code, 0)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 't',
-      description: 'beep',
-      url: `dat://${encode(key)}`,
-      type: 'content',
-      subtype: 'Q17737',
-      main: '',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
-    })
-  })
-
-  await t.test('profile', async t => {
-    const { exec, spawn } = createEnv()
-
-    let { stdout } = await exec('create profile -n=n -d=d -y')
-    const key = decode(stdout.trim())
-
-    const ps = await spawn(`update ${encode(key)}`)
-    await match(ps.stdout, 'Name')
-    ps.stdin.write('\n') // keep value
-    await match(ps.stdout, 'Description')
-    ps.stdin.write('beep\n')
-    const code = await onExit(ps)
-    t.equal(code, 0)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      name: 'n',
-      description: 'beep',
-      url: `dat://${encode(key)}`,
-      type: 'profile',
-      subtype: '',
-      main: '',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      follows: [],
-      contents: []
-    })
-  })
-})
-
-test('prompt main', async t => {
-  const { exec, spawn, env } = createEnv()
-
-  let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-  const key = decode(stdout.trim())
-  await fs.writeFile(`${env}/${encode(key)}/file.txt`, 'hi')
-
-  const ps = await spawn(`update ${encode(key)}`)
-  await match(ps.stdout, 'Title')
-  ps.stdin.write('\n') // keep value
-  await match(ps.stdout, 'Description')
-  ps.stdin.write('beep\n')
-  await match(ps.stdout, 'Main')
-  await match(ps.stdout, 'file.txt')
-  ps.stdin.write('\n')
-  await match(ps.stdout, 'subtype')
-  ps.stdin.write('\n')
-  const code = await onExit(ps)
-  t.equal(code, 0)
-  ;({ stdout } = await exec(`read ${encode(key)}`))
-  const meta = JSON.parse(stdout)
-  t.deepEqual(meta, {
-    title: 't',
-    description: 'beep',
-    url: `dat://${encode(key)}`,
-    type: 'content',
-    subtype: 'Q17737',
-    main: 'file.txt',
-    license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-    authors: [],
-    parents: []
-  })
-})
-
-test('update <hash> <key> <value>', async t => {
-  await t.test('updates main', async t => {
-    const { exec } = createEnv()
-
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    await exec(`update ${encode(key)} main main`)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 't',
-      description: 'd',
-      url: `dat://${encode(key)}`,
-      type: 'content',
-      subtype: 'Q17737',
-      main: 'main',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
-    })
-  })
-
-  await t.test('updates title', async t => {
-    const { exec } = createEnv()
-
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    await exec(`update ${encode(key)} title beep`)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 'beep',
-      description: 'd',
-      url: `dat://${encode(key)}`,
-      type: 'content',
-      subtype: 'Q17737',
-      main: '',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
-    })
-  })
-
-  await t.test('invalid key', async t => {
-    const { exec } = createEnv()
-
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    let threw = false
-    try {
-      await exec(`update ${encode(key)} beep boop`)
-    } catch (err) {
-      t.ok(err.stderr.includes('Invalid key'))
-      threw = true
-    }
-    t.ok(threw)
-  })
-
-  await t.test('clear value', async t => {
-    const { exec } = createEnv()
-
-    let { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    await exec(`update ${encode(key)} main`)
-    ;({ stdout } = await exec(`read ${encode(key)}`))
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 't',
-      description: 'd',
-      url: `dat://${encode(key)}`,
-      type: 'content',
-      subtype: 'Q17737',
-      main: '',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
-    })
-  })
-
-  await t.test('requires title', async t => {
-    const { exec } = createEnv()
-
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    let threw = false
-    try {
-      await exec(`update ${encode(key)} title`)
-    } catch (err) {
-      threw = true
-      t.match(err.message, /Invalid title/)
-    }
-    t.ok(threw)
-  })
-
-  await t.test('requires name', async t => {
-    const { exec } = createEnv()
-
-    const { stdout } = await exec('create profile -n=n -d=d -y')
-    const key = decode(stdout.trim())
-
-    let threw = false
-    try {
-      await exec(`update ${encode(key)} name`)
-    } catch (err) {
-      threw = true
-      t.match(err.message, /Invalid name/)
-    }
-    t.ok(threw)
-  })
-
-  await t.test('no name update for content', async t => {
-    const { exec } = createEnv()
-
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    let threw = false
-    try {
-      await exec(`update ${encode(key)} name beep`)
-    } catch (err) {
-      threw = true
-      t.match(err.message, /Invalid key: name/)
-    }
-    t.ok(threw)
-  })
-
-  await t.test('no title update for profile', async t => {
-    const { exec } = createEnv()
-
-    const { stdout } = await exec('create profile -n=n -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    let threw = false
-    try {
-      await exec(`update ${encode(key)} title beep`)
-    } catch (err) {
-      threw = true
-      t.match(err.message, /Invalid key: title/)
-    }
-    t.ok(threw)
-  })
-
-  await t.test('no adding new key to content', async t => {
-    const { exec } = createEnv()
-
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
-    const key = decode(stdout.trim())
-
-    let threw = false
-    try {
-      await exec(`update ${encode(key)} foo bar`)
-    } catch (err) {
-      threw = true
-      t.match(err.message, /Invalid key: foo/)
-    }
-    t.ok(threw)
-  })
-
-  await t.test('no adding new key to profile', async t => {
-    const { exec } = createEnv()
-
-    const { stdout } = await exec('create profile -n=n -d=d -y')
-    const key = decode(stdout.trim())
-
-    let threw = false
-    try {
-      await exec(`update ${encode(key)} foo bar`)
-    } catch (err) {
-      threw = true
-      t.match(err.message, /Invalid key: foo/)
-    }
-    t.ok(threw)
-  })
 })

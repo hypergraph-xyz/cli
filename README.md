@@ -99,11 +99,7 @@ repository.
 
 ## How to release
 
-1. `npm version <VERSION>`
-1. `git push --tags && git push`
-1. `npm publish`
-1. Create a matching GitHub release
-1. Write release notes
+1. `npm run release` will guide you through the node module process and create a GitHub release
 1. Run `npm run build` and upload the binaries from the `build/` folder
-1. Publish the release
+1. Publish the GitHub release
 1. Tell your Hypergraph friends about it
