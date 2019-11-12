@@ -2,7 +2,7 @@
 'use strict'
 
 const prompt = require('./lib/prompt')
-const { resolve } = require('path')
+const { resolve, join } = require('path')
 const capitalize = require('capitalize')
 const open = require('open')
 const { homedir } = require('os')
@@ -198,7 +198,7 @@ actions.path = {
     }
   ],
   handler: async (_, { hash, env }) => {
-    console.log(`${env}/${encode(hash)}`)
+    console.log(join(env, encode(hash)))
   }
 }
 
