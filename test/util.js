@@ -16,7 +16,7 @@ exports.createEnv = () => {
     // istanbul ignore next
     if (DEBUG) console.log(`spawn ${args}`)
 
-    const ps = childProcess.spawn(path, [...args.split(' '), `--env=${env}`], {
+    const ps = childProcess.spawn('node', [path, ...args.split(' '), `--env=${env}`], {
       shell: true
     })
 
