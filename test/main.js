@@ -26,13 +26,12 @@ test('main', async t => {
 
     const p2p = new P2PCommons({ baseDir: env })
     await p2p.ready()
-    // https://github.com/p2pcommons/sdk-js/issues/36
-    const { url } = await p2p.init({
+    await p2p.init({
       type: 'content',
       title: 't',
-      description: 'd'
+      description: 'd',
+      main: 'file'
     })
-    await p2p.set({ url, main: 'file' })
     await p2p.destroy()
 
     const ps = spawn('main')
