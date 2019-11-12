@@ -17,6 +17,7 @@ exports.createEnv = () => {
     if (DEBUG) console.log(`spawn ${args}`)
 
     let cmd = path
+
     // istanbul ignore next
     if (platform() === 'win32') {
       cmd = 'node'
@@ -41,6 +42,7 @@ exports.createEnv = () => {
     if (DEBUG) console.log(`exec ${args}`)
 
     let cmd = path
+
     // istanbul ignore next
     if (platform() === 'win32') {
       cmd = 'node'
