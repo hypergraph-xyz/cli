@@ -1,7 +1,7 @@
 'use strict'
 
 const childProcess = require('child_process')
-const { tmpdir } = require('os')
+const { tmpdir, platform } = require('os')
 const { promisify } = require('util')
 const { randomBytes } = require('crypto')
 const fs = require('fs')
@@ -16,7 +16,15 @@ exports.createEnv = () => {
     // istanbul ignore next
     if (DEBUG) console.log(`spawn ${args}`)
 
-    const ps = childProcess.spawn(path, [...args.split(' '), `--env=${env}`])
+    let cmd = path
+
+    // istanbul ignore next
+    if (platform() === 'win32') {
+      cmd = 'node'
+      args = `${path} ${args}`
+    }
+
+    const ps = childProcess.spawn(cmd, [...args.split(' '), `--env=${env}`])
 
     ps.stdoutDebug = ''
     ps.stdout.on('data', d => (ps.stdoutDebug += d))
@@ -33,7 +41,15 @@ exports.createEnv = () => {
     // istanbul ignore next
     if (DEBUG) console.log(`exec ${args}`)
 
-    return promisify(childProcess.exec)(`${path} ${args} --env=${env}`)
+    let cmd = path
+
+    // istanbul ignore next
+    if (platform() === 'win32') {
+      cmd = 'node'
+      args = `${path} ${args}`
+    }
+
+    return promisify(childProcess.exec)(`${cmd} ${args} --env=${env}`)
   }
   return { env, spawn, exec }
 }
