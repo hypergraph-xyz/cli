@@ -45,7 +45,7 @@
     "pkg": "^4.4.0",
     "prettier-standard": "^15.0.1",
     "standard": "^14.3.1",
-    "stream-match": "^1.1.0",
+    "stream-match": "^1.1.1",
     "tap": "^14.7.1"
   },
   "pkg": {
