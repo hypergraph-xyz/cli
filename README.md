@@ -1,8 +1,8 @@
 # Hypergraph CLI
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors)
 
 [![NPM](https://nodei.co/npm/@hypergraph-xyz/cli.png)](https://npmjs.org/package/@hypergraph-xyz/cli)
 
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Code Style Prettier Standard](https://img.shields.io/badge/format-prettier_standard-ff69b4.svg)](https://github.com/sheerun/prettier-standard)
 [![Greenkeeper badge](https://badges.greenkeeper.io/hypergraph-xyz/cli.svg)](https://greenkeeper.io/)
