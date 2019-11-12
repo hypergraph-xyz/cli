@@ -33,7 +33,7 @@ exports.createEnv = () => {
     // istanbul ignore next
     if (DEBUG) console.log(`exec ${args}`)
 
-    return promisify(childProcess.exec)(`${path} ${args} --env=${env}`)
+    return promisify(childProcess.exec)(`node ${path} ${args} --env=${env}`)
   }
   return { env, spawn, exec }
 }
