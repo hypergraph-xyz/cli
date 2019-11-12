@@ -149,10 +149,39 @@ actions.update = {
 actions.open = {
   title: 'Open module folder',
   input: [{ name: 'hash', resolve: askModules }],
-  handler: async (_, { hash, env }) => {
+  handler:
     // istanbul ignore next
-    await open(`${env}/${encode(hash)}`)
-  }
+    async (_, { hash, env }) => {
+      await open(`${env}/${encode(hash)}`)
+    }
+}
+
+actions.main = {
+  title: 'Open main file',
+  input: [
+    {
+      name: 'hash',
+      resolve: async p2p => {
+        const mods = await p2p.list()
+        const withMain = mods.filter(({ rawJSON }) => rawJSON.main)
+        if (!withMain.length) throw new UserError('No modules with main files')
+        return prompt({
+          type: 'select',
+          message: 'Select module',
+          choices: withMain.map(({ rawJSON }) => ({
+            title: rawJSON.title,
+            value: rawJSON.url
+          }))
+        })
+      }
+    }
+  ],
+  handler:
+    // istanbul ignore next
+    async (p2p, { hash, env }) => {
+      const mod = await p2p.get(hash)
+      await open(`${env}/${encode(hash)}/${mod.main}`)
+    }
 }
 
 actions.path = {
@@ -204,7 +233,7 @@ function askSubtype (currentId) {
   const entries = Object.entries(subtypes)
   const idx = entries.findIndex(([id]) => id === currentId)
   return prompt({
-    type: 'select',
+    type: 'autocomplete',
     message: 'Select subtype',
     choices: entries.map(([id, name]) => ({ title: name, value: id })),
     initial: idx === -1 ? 0 : idx

@@ -1,4 +1,5 @@
 # Hypergraph CLI
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors)
 
 [![NPM](https://nodei.co/npm/@hypergraph-xyz/cli.png)](https://npmjs.org/package/@hypergraph-xyz/cli)
 
@@ -38,6 +39,7 @@ $ hypergraph --help
     read   <hash> [key]        Read a module's metadata
     update <hash> [key value]  Update a module's metadata
     open   <hash>              Open a module's folder
+    main   <hash>              Open a module's main file
     path   <hash>              Print module path
     list   <type>              List writable modules
 
@@ -103,3 +105,21 @@ repository.
 1. Run `npm run build` and upload the binaries from the `build/` folder
 1. Publish the GitHub release
 1. Tell your Hypergraph friends about it
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table>
+  <tr>
+    <td align="center"><a href="http://twitter.com/juliangruber/"><img src="https://avatars2.githubusercontent.com/u/10247?v=4" width="100px;" alt="Julian Gruber"/><br /><sub><b>Julian Gruber</b></sub></a><br /><a href="#maintenance-juliangruber" title="Maintenance">🚧</a> <a href="https://github.com/hypergraph-xyz/cli/commits?author=juliangruber" title="Code">💻</a> <a href="https://github.com/hypergraph-xyz/cli/commits?author=juliangruber" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/nehamoopen"><img src="https://avatars3.githubusercontent.com/u/37183829?v=4" width="100px;" alt="nehamoopen"/><br /><sub><b>nehamoopen</b></sub></a><br /><a href="#ideas-nehamoopen" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://chjh.nl"><img src="https://avatars0.githubusercontent.com/u/2946344?v=4" width="100px;" alt="Chris Hartgerink"/><br /><sub><b>Chris Hartgerink</b></sub></a><br /><a href="#ideas-chartgerink" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/hypergraph-xyz/cli/commits?author=chartgerink" title="Tests">⚠️</a> <a href="https://github.com/hypergraph-xyz/cli/commits?author=chartgerink" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
