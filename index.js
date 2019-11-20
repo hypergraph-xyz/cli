@@ -61,11 +61,11 @@ actions.read = {
   title: 'Read metadata',
   input: [{ name: 'hash', resolve: askModules }, { name: 'key' }],
   handler: async (p2p, { hash, key }) => {
-    const metadata = await p2p.get(hash)
+    const { rawJSON } = await p2p.get(hash)
     if (key) {
-      console.log(JSON.stringify(format(key, metadata[key])))
+      console.log(JSON.stringify(format(key, rawJSON[key])))
     } else {
-      console.log(JSON.stringify(metadata, format, 2))
+      console.log(JSON.stringify(rawJSON, format, 2))
     }
   }
 }
@@ -79,7 +79,7 @@ actions.update = {
       name: 'hash',
       resolve: async p2p => {
         const mods = await p2p.list()
-        const writable = mods.filter(({ isWritable }) => isWritable)
+        const writable = mods.filter(mod => mod.metadata.isWritable)
         if (!writable.length) throw new UserError('No writable modules')
         return prompt({
           type: 'select',
@@ -100,18 +100,18 @@ actions.update = {
     if (key) {
       update[key] = value || ''
     } else {
-      const metadata = await p2p.get(hash)
+      const { rawJSON } = await p2p.get(hash)
       const keys = [
-        metadata.type === 'content' ? 'title' : 'name',
+        rawJSON.type === 'content' ? 'title' : 'name',
         'description',
         'main'
       ]
-      if (metadata.type === 'content') keys.push('subtype')
+      if (rawJSON.type === 'content') keys.push('subtype')
 
       for (const key of keys) {
         if (key === 'main') {
           const entries = await readdirp.promise(
-            `${env}/${encode(metadata.url)}/`,
+            `${env}/${encode(rawJSON.url)}/`,
             {
               fileFilter: ['!dat.json', '!.*'],
               directoryFilter: ['.dat']
@@ -130,12 +130,12 @@ actions.update = {
             }))
           })
         } else if (key === 'subtype') {
-          update.subtype = await askSubtype(metadata.subtype)
+          update.subtype = await askSubtype(rawJSON.subtype)
         } else {
           update[key] = await prompt({
             type: 'text',
             message: capitalize(key),
-            initial: metadata[key],
+            initial: rawJSON[key],
             validate: validate[key]
           })
         }
@@ -271,7 +271,7 @@ const hypergraph = async argv => {
   const env = argv.env
     ? resolve(argv.env)
     : /* istanbul ignore next */ `${homedir()}/.p2pcommons`
-  const p2p = new P2P({ baseDir: env })
+  const p2p = new P2P({ baseDir: env, disableSwarm: process.env.CI })
   await p2p.ready()
 
   const action = actions[actionName]

@@ -9,9 +9,12 @@ const P2PCommons = require('@p2pcommons/sdk-js')
 test('open', async t => {
   const { spawn, env } = createEnv()
 
-  const p2p = new P2PCommons({ baseDir: env })
+  const p2p = new P2PCommons({
+    baseDir: env,
+    disableSwarm: true
+  })
   await p2p.ready()
-  await p2p.init({ type: 'content', title: 't', description: 'd' })
+  await p2p.init({ type: 'content', title: 't' })
   await p2p.destroy()
 
   const ps = spawn('open')

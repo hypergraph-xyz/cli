@@ -3,7 +3,7 @@
 require('../lib/fs-promises')
 const { test } = require('tap')
 const { createEnv } = require('./util')
-const P2PCommons = require('@p2pcommons/sdk-js')
+const P2PCommons = require('../lib/p2p')
 
 test('list', async t => {
   const { exec, env } = createEnv()
@@ -11,11 +11,11 @@ test('list', async t => {
   const contentTitle = String(Math.random())
   const profileName = String(Math.random())
 
-  const p2p = new P2PCommons({ baseDir: env })
+  const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
   await p2p.ready()
   await Promise.all([
-    p2p.init({ type: 'content', title: contentTitle, description: 'd' }),
-    p2p.init({ type: 'profile', title: profileName, description: 'd' })
+    p2p.init({ type: 'content', title: contentTitle }),
+    p2p.init({ type: 'profile', name: profileName })
   ])
   await p2p.destroy()
 

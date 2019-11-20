@@ -24,7 +24,10 @@ test('main', async t => {
   await t.test('with modules', async t => {
     const { spawn, env } = createEnv()
 
-    const p2p = new P2PCommons({ baseDir: env })
+    const p2p = new P2PCommons({
+      baseDir: env,
+      disableSwarm: true
+    })
     await p2p.ready()
     await p2p.init({
       type: 'content',

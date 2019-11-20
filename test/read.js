@@ -10,11 +10,14 @@ const P2PCommons = require('@p2pcommons/sdk-js')
 test('with modules', async t => {
   const { spawn, exec, env } = createEnv()
 
-  const p2p = new P2PCommons({ baseDir: env })
+  const p2p = new P2PCommons({
+    baseDir: env,
+    disableSwarm: true
+  })
   await p2p.ready()
   const [{ url: key }] = await Promise.all([
-    p2p.init({ type: 'content', title: 't', description: 'd' }),
-    p2p.init({ type: 'profile', title: 'n', description: 'd' })
+    p2p.init({ type: 'content', title: 't' }),
+    p2p.init({ type: 'profile', title: 'n' })
   ])
   await p2p.destroy()
 
@@ -32,12 +35,19 @@ test('with modules', async t => {
     const meta = JSON.parse(stdout)
     t.deepEqual(meta, {
       title: 't',
-      description: 'd',
+      description: '',
       url: `dat://${encode(key)}`,
+      links: {
+        license: [
+          {
+            href: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+          }
+        ],
+        spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+      },
       type: 'content',
       subtype: '',
       main: '',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
       authors: [],
       parents: []
     })

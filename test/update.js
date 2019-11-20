@@ -11,7 +11,10 @@ const P2PCommons = require('@p2pcommons/sdk-js')
 test('with modules', async t => {
   const { spawn, exec, env } = createEnv()
 
-  const p2p = new P2PCommons({ baseDir: env })
+  const p2p = new P2PCommons({
+    baseDir: env,
+    disableSwarm: true
+  })
   await p2p.ready()
   const [{ url: contentKey }, { url: profileKey }] = await Promise.all([
     p2p.init({ type: 'content', title: 't', description: 'd' }),
@@ -44,12 +47,22 @@ test('with modules', async t => {
         title: 't',
         description: 'beep',
         url: encode(contentKey),
-        type: 'content',
-        subtype: 'Q17737',
-        main: '',
-        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-        authors: [],
-        parents: []
+        links: {
+          license: [
+            {
+              href:
+                'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+            }
+          ],
+          spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+        },
+        p2pcommons: {
+          type: 'content',
+          subtype: 'Q17737',
+          main: '',
+          authors: [],
+          parents: []
+        }
       })
     })
 
@@ -69,12 +82,22 @@ test('with modules', async t => {
         title: 'n',
         description: 'beep',
         url: encode(profileKey),
-        type: 'profile',
-        subtype: '',
-        main: '',
-        license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-        follows: [],
-        contents: []
+        links: {
+          license: [
+            {
+              href:
+                'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+            }
+          ],
+          spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+        },
+        p2pcommons: {
+          type: 'profile',
+          subtype: '',
+          main: '',
+          follows: [],
+          contents: []
+        }
       })
     })
   })
@@ -101,12 +124,21 @@ test('with modules', async t => {
       title: 't',
       description: 'beep',
       url: encode(contentKey),
-      type: 'content',
-      subtype: 'Q17737',
-      main: 'file.txt',
-      license: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-      authors: [],
-      parents: []
+      links: {
+        license: [
+          {
+            href: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+          }
+        ],
+        spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+      },
+      p2pcommons: {
+        type: 'content',
+        subtype: 'Q17737',
+        main: 'file.txt',
+        authors: [],
+        parents: []
+      }
     })
   })
 
@@ -116,7 +148,7 @@ test('with modules', async t => {
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
       )
-      t.equal(meta.main, 'main')
+      t.equal(meta.p2pcommons.main, 'main')
     })
 
     await t.test('updates title', async t => {
@@ -144,7 +176,7 @@ test('with modules', async t => {
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
       )
-      t.equal(meta.main, '')
+      t.equal(meta.p2pcommons.main, '')
     })
 
     await t.test('requires title', async t => {

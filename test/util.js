@@ -24,7 +24,12 @@ exports.createEnv = () => {
       args = `${path} ${args}`
     }
 
-    const ps = childProcess.spawn(cmd, [...args.split(' '), `--env=${env}`])
+    const ps = childProcess.spawn(cmd, [...args.split(' '), `--env=${env}`], {
+      env: {
+        ...process.env,
+        CI: true
+      }
+    })
 
     ps.stdoutDebug = ''
     ps.stdout.on('data', d => (ps.stdoutDebug += d))
@@ -49,7 +54,12 @@ exports.createEnv = () => {
       args = `${path} ${args}`
     }
 
-    return promisify(childProcess.exec)(`${cmd} ${args} --env=${env}`)
+    return promisify(childProcess.exec)(`${cmd} ${args} --env=${env}`, {
+      env: {
+        ...process.env,
+        CI: true
+      }
+    })
   }
   return { env, spawn, exec }
 }
