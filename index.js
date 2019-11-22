@@ -52,7 +52,9 @@ actions.create = {
       if (!confirmed) throw new UserError('License not confirmed')
     }
 
-    const { url } = await p2p.init({ type, title, name, description, subtype })
+    const {
+      rawJSON: { url }
+    } = await p2p.init({ type, title, name, description, subtype })
     console.log(url)
   }
 }

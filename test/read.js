@@ -15,7 +15,11 @@ test('with modules', async t => {
     disableSwarm: true
   })
   await p2p.ready()
-  const [{ url: key }] = await Promise.all([
+  const [
+    {
+      rawJSON: { url: key }
+    }
+  ] = await Promise.all([
     p2p.init({ type: 'content', title: 't' }),
     p2p.init({ type: 'profile', title: 'n' })
   ])

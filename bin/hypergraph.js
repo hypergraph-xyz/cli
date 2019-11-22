@@ -73,8 +73,7 @@ updateNotifier({ pkg }).notify()
 hypergraph(argv).catch(err => {
   // istanbul ignore else
   if (err instanceof ValidationError) {
-    const [, key] = /\[(.+)\]/.exec(err.args[1])
-    console.error(`Invalid ${key}`)
+    console.error(`Invalid ${err.key}`)
   } else if (err instanceof UserError || err instanceof InvalidKeyError) {
     if (err.message) console.error(err.message)
   } else {
