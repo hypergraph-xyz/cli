@@ -17,7 +17,9 @@ test('with modules', async t => {
   await p2p.ready()
   const [
     {
-      rawJSON: { url: key }
+      rawJSON: { url: contentKey }
+    }, {
+      rawJSON: { url: profileKey }
     }
   ] = await Promise.all([
     p2p.init({ type: 'content', title: 't' }),
@@ -35,30 +37,55 @@ test('with modules', async t => {
   })
 
   await t.test('read <hash>', async t => {
-    const { stdout } = await exec(`read ${encode(key)}`)
-    const meta = JSON.parse(stdout)
-    t.deepEqual(meta, {
-      title: 't',
-      description: '',
-      url: `dat://${encode(key)}`,
-      links: {
-        license: [
-          {
-            href: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
-          }
-        ],
-        spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
-      },
-      type: 'content',
-      subtype: '',
-      main: '',
-      authors: [],
-      parents: []
+    await t.test('content', async t => {
+      const { stdout } = await exec(`read ${encode(contentKey)}`)
+      const meta = JSON.parse(stdout)
+      t.deepEqual(meta, {
+        title: 't',
+        description: '',
+        url: `dat://${encode(contentKey)}`,
+        links: {
+          license: [
+            {
+              href: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+            }
+          ],
+          spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+        },
+        type: 'content',
+        subtype: '',
+        main: '',
+        authors: [],
+        parents: []
+      })
+    })
+    
+    await t.test('profile', async t => {
+      const { stdout } = await exec(`read ${encode(profileKey)}`)
+      const meta = JSON.parse(stdout)
+      t.deepEqual(meta, {
+        title: 'n',
+        description: '',
+        url: `dat://${encode(profileKey)}`,
+        links: {
+          license: [
+            {
+              href: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+            }
+          ],
+          spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+        },
+        type: 'profile',
+        subtype: '',
+        main: '',
+        follows: [],
+        contents: []
+      })
     })
   })
 
   await t.test('read <hash> <key>', async t => {
-    const { stdout } = await exec(`read ${encode(key)} title`)
+    const { stdout } = await exec(`read ${encode(contentKey)} title`)
     t.equal(stdout.trim(), '"t"')
   })
 })

@@ -6,7 +6,7 @@ const { resolve, join } = require('path')
 const capitalize = require('capitalize')
 const open = require('open')
 const { homedir } = require('os')
-const P2P = require('./lib/p2p')
+const P2P = require('@p2pcommons/sdk-js')
 const { encode } = require('dat-encoding')
 const readdirp = require('readdirp')
 const validate = require('./lib/validate')
@@ -20,25 +20,26 @@ actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
   handler: async (p2p, { type, title, name, description, subtype, yes }) => {
-    if (type === 'content' && !title) {
+    if (type === 'profile') {
+      title = name
+    }
+
+    if (!title) {
+      const titleName = { content: 'Title', profile: 'Name' }[type]
       title = await prompt({
         type: 'text',
-        message: 'Title',
-        validate: validate.title
-      })
-    } else if (type === 'profile' && !name) {
-      name = await prompt({
-        type: 'text',
-        message: 'Name',
-        validate: validate.name
+        message: titleName,
+        validate: validate[titleName.toLowerCase()]
       })
     }
+
     if (description === undefined) {
       description = await prompt({
         type: 'text',
         message: 'Description'
       })
     }
+
     if (type === 'content' && !subtype) subtype = await askSubtype()
 
     if (!yes) {
@@ -54,7 +55,7 @@ actions.create = {
 
     const {
       rawJSON: { url }
-    } = await p2p.init({ type, title, name, description, subtype })
+    } = await p2p.init({ type, title, description, subtype })
     console.log(url)
   }
 }
