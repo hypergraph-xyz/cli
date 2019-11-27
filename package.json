@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "np": "^5.1.2",
-    "prettier-standard": "^15.0.1",
+    "prettier-standard": "^16.0.0",
     "standard": "^14.3.1",
     "stream-match": "^1.1.1",
     "tap": "^14.7.1"
