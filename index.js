@@ -59,21 +59,6 @@ actions.create = {
   }
 }
 
-actions.read = {
-  title: 'Read metadata',
-  input: [{ name: 'hash', resolve: askModules }, { name: 'key' }],
-  handler: async (p2p, { hash, key }) => {
-    const { rawJSON } = await p2p.get(hash)
-    if (key) {
-      console.log(JSON.stringify(format(key, rawJSON[key])))
-    } else {
-      console.log(JSON.stringify(rawJSON, format, 2))
-    }
-  }
-}
-
-const format = (key, value) => (key === 'url' ? `dat://${value}` : value)
-
 actions.update = {
   title: 'Update metadata',
   input: [

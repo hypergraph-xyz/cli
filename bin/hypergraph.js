@@ -19,7 +19,6 @@ const help = `
 
   Actions
     create <type>              Create a module
-    read   <hash> [key]        Read a module's metadata
     update <hash> [key value]  Update a module's metadata
     open   <hash>              Open a module's folder
     main   <hash>              Open a module's main file
