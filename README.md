@@ -33,12 +33,13 @@ $ hypergraph --help
     $ hypergraph <action> <input>
 
   Actions
-    create <type>              Create a module
-    update <hash> [key value]  Update a module's metadata
-    open   <hash>              Open a module's folder
-    main   <hash>              Open a module's main file
-    path   <hash>              Print module path
-    list   <type>              List writable modules
+    create   <type>               Create a module
+    update   <hash> [key value]   Update a module's metadata
+    open     <hash>               Open a module's folder
+    main     <hash>               Open a module's main file
+    path     <hash>               Print module path
+    list     <type>               List writable modules
+    register <content> <profile>  Register content to a profile
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
