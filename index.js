@@ -234,7 +234,7 @@ actions.edit = {
       main = 'main.html'
       await p2p.set({ url: mod.rawJSON.url, main })
     }
-    const editor = new Editor(`${env}/${main}`)
+    const editor = new Editor(`${env}/${encode(hash)}/${main}`)
     editor.open()
     ora('Press CTRL+C when done editing.').start()
   }
