@@ -13,7 +13,7 @@ const validate = require('./lib/validate')
 const UserError = require('./lib/user-error')
 const subtypes = require('./lib/subtypes')
 const kleur = require('kleur')
-const execa = require('execa')
+const Editor = require('@hypergraph-xyz/editor')
 
 const actions = {}
 
@@ -233,11 +233,9 @@ actions.edit = {
       main = 'main.html'
       await p2p.set({ url: mod.rawJSON.url, main })
     }
-    execa('hypergraph-edit', [`${env}/${main}`], {
-      preferLocal: true,
-      detached: true,
-      stdio: 'ignore'
-    }).unref()
+    const editor = new Editor(`${env}/${main}`)
+    editor.open()
+    console.log(`Press CTRL+C when done editing...`)
   }
 }
 
