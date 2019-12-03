@@ -219,9 +219,11 @@ actions.edit = {
         return prompt({
           type: 'select',
           message: 'Select writable module',
+          warn: 'Only HTML is currently supported',
           choices: writable.map(({ rawJSON }) => ({
             title: rawJSON.title,
-            value: rawJSON.url
+            value: rawJSON.url,
+            disabled: rawJSON.main && !/\.html?$/.test(rawJSON.main)
           }))
         })
       }
