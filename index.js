@@ -13,8 +13,7 @@ const validate = require('./lib/validate')
 const UserError = require('./lib/user-error')
 const subtypes = require('./lib/subtypes')
 const kleur = require('kleur')
-const { spawn } = require('child_process')
-const npmRunPath = require('npm-run-path')
+const execa = require('execa')
 
 const actions = {}
 
@@ -234,8 +233,8 @@ actions.edit = {
       main = 'main.html'
       await p2p.set({ url: mod.rawJSON.url, main })
     }
-    spawn('hypergraph-edit', [`${env}/${main}`], {
-      env: npmRunPath.env(),
+    execa('hypergraph-edit', [`${env}/${main}`], {
+      preferLocal: true,
       detached: true,
       stdio: 'ignore'
     }).unref()
