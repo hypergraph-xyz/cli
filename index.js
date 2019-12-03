@@ -270,14 +270,11 @@ actions.register = {
     ])
     await p2p.register(contentKey, profileKey)
     console.log(
-      `${kleur.green('✔')} ${kleur.cyan().bold(profile.rawJSON.name)} (${
-        profile.rawJSON.url
-      })`
-    )
-    console.log(
-      `${kleur.green('✔')} ${kleur.cyan().bold(content.rawJSON.title)} (${
-        content.rawJSON.url
-      })`
+      `${kleur.green('✔')} ${kleur
+        .cyan()
+        .bold(content.rawJSON.title)} registered to ${kleur
+        .cyan()
+        .bold(profile.rawJSON.name)}`
     )
   }
 }
