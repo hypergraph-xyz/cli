@@ -14,6 +14,7 @@ const UserError = require('./lib/user-error')
 const subtypes = require('./lib/subtypes')
 const kleur = require('kleur')
 const { spawn } = require('child_process')
+const npmRunPath = require('npm-run-path')
 
 const actions = {}
 
@@ -233,8 +234,8 @@ actions.edit = {
       main = 'main.html'
       await p2p.set({ url: mod.rawJSON.url, main })
     }
-    const edit = `${__dirname}/node_modules/.bin/hypergraph-edit`
-    spawn('node', [edit, `${env}/${main}`], {
+    spawn('hypergraph-edit', [`${env}/${main}`], {
+      env: npmRunPath.env(),
       detached: true,
       stdio: 'ignore'
     }).unref()
