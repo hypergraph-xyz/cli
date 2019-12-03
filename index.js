@@ -14,6 +14,7 @@ const UserError = require('./lib/user-error')
 const subtypes = require('./lib/subtypes')
 const kleur = require('kleur')
 const Editor = require('@hypergraph-xyz/editor')
+const ora = require('ora')
 
 const actions = {}
 
@@ -235,7 +236,7 @@ actions.edit = {
     }
     const editor = new Editor(`${env}/${main}`)
     editor.open()
-    console.log(`Press CTRL+C when done editing...`)
+    ora('Press CTRL+C when done editing.').start()
   }
 }
 
