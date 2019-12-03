@@ -13,6 +13,7 @@ const validate = require('./lib/validate')
 const UserError = require('./lib/user-error')
 const subtypes = require('./lib/subtypes')
 const kleur = require('kleur')
+const { spawn } = require('child_process')
 
 const actions = {}
 
@@ -202,6 +203,41 @@ actions.list = {
     for (const { rawJSON } of dbItems) {
       console.log(rawJSON.title)
     }
+  }
+}
+
+actions.edit = {
+  title: 'Edit main file',
+  unlisted: true,
+  input: [
+    {
+      name: 'hash',
+      resolve: async p2p => {
+        const mods = await p2p.list()
+        const writable = mods.filter(mod => mod.metadata.isWritable)
+        return prompt({
+          type: 'select',
+          message: 'Select writable module',
+          choices: writable.map(({ rawJSON }) => ({
+            title: rawJSON.title,
+            value: rawJSON.url
+          }))
+        })
+      }
+    }
+  ],
+  handler: async (p2p, { hash, env }) => {
+    const mod = await p2p.get(hash)
+    let main = mod.rawJSON.main
+    if (!main) {
+      main = 'main.html'
+      await p2p.set({ url: mod.rawJSON.url, main })
+    }
+    const edit = `${__dirname}/node_modules/.bin/hypergraph-edit`
+    spawn('node', [edit, `${env}/${main}`], {
+      detached: true,
+      stdio: 'ignore'
+    }).unref()
   }
 }
 
