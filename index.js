@@ -59,6 +59,13 @@ actions.create = {
       }
     }
 
+    if (type === 'content') {
+      const profiles = await p2p.listProfiles()
+      if (!profiles.find(profile => profile.metadata.isWritable)) {
+        throw new UserError('Create a profile first')
+      }
+    }
+
     const {
       rawJSON: { url }
     } = await p2p.init({ type, title, name, description, subtype })
