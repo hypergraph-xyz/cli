@@ -59,16 +59,21 @@ actions.create = {
       }
     }
 
+    let authors
     if (type === 'content') {
       const profiles = await p2p.listProfiles()
       if (!profiles.find(profile => profile.metadata.isWritable)) {
         throw new UserError('Create a profile first')
       }
+      authors = [profiles[0].rawJSON.url]
     }
 
     const {
       rawJSON: { url }
     } = await p2p.init({ type, title, name, description, subtype })
+    if (authors) {
+      await p2p.set({ url, authors })
+    }
     console.log(url)
   }
 }
@@ -90,7 +95,11 @@ actions.read = {
 
     if (mod.rawJSON.type === 'content') {
       if (mod.rawJSON.authors.length) {
-        console.log(kleur.italic(mod.rawJSON.authors.join(',')))
+        const authors = await Promise.all(
+          mod.rawJSON.authors.map(hash => p2p.get(hash))
+        )
+        const authorNames = authors.map(author => author.rawJSON.name)
+        console.log(kleur.italic(authorNames.join(',')))
       } else {
         console.log(kleur.italic('Anonymous'))
       }

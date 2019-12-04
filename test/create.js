@@ -6,6 +6,7 @@ const match = require('stream-match')
 const { promises: fs } = require('fs')
 const { encode } = require('dat-encoding')
 const { createEnv, onExit } = require('./util')
+const P2PCommons = require('../lib/p2p')
 
 test('prompt', async t => {
   const { spawn, exec } = createEnv()
@@ -94,7 +95,7 @@ test('license confirmation can be skipped', async t => {
 })
 
 test('create content', async t => {
-  const { spawn, exec } = createEnv()
+  const { spawn, exec, env } = createEnv()
   await exec('create profile -y -n=n -d')
   const ps = spawn('create content -y')
   await match(ps.stdout, 'Title')
@@ -105,6 +106,12 @@ test('create content', async t => {
   ps.stdin.write('\n')
   const code = await onExit(ps)
   t.equal(code, 0)
+
+  const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+  await p2p.ready()
+  const [mod] = await p2p.listContent()
+  await p2p.destroy()
+  t.equal(mod.rawJSON.authors.length, 1)
 })
 
 test('no content without profile allowed', async t => {
