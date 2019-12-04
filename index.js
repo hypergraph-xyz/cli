@@ -52,6 +52,13 @@ actions.create = {
       if (!confirmed) throw new UserError('License not confirmed')
     }
 
+    if (type === 'profile') {
+      const profiles = await p2p.listProfiles()
+      if (profiles.find(profile => profile.metadata.isWritable)) {
+        throw new UserError('A local profile already exists')
+      }
+    }
+
     const {
       rawJSON: { url }
     } = await p2p.init({ type, title, name, description, subtype })

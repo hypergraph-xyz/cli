@@ -113,6 +113,19 @@ test('create profile', async t => {
   t.equal(code, 0)
 })
 
+test('only one profile allowed', async t => {
+  const { exec } = createEnv()
+  await exec('create profile -y -n=n -d')
+  let threw = false
+  try {
+    await exec('create profile -y -n=n -d')
+  } catch (err) {
+    threw = true
+    t.match(err.stderr, /A local profile already exists/)
+  }
+  t.ok(threw)
+})
+
 test('create <type> --title --description --subtype', async t => {
   await t.test('creates files', async t => {
     const { exec, env } = createEnv()
