@@ -207,6 +207,8 @@ actions.list = {
   }
 }
 
+const htmlRegex = /\.html?$/
+
 actions.edit = {
   title: 'Edit main file',
   unlisted: true,
@@ -223,7 +225,7 @@ actions.edit = {
           choices: writable.map(({ rawJSON }) => ({
             title: rawJSON.title,
             value: rawJSON.url,
-            disabled: rawJSON.main && !/\.html?$/.test(rawJSON.main)
+            disabled: rawJSON.main && !htmlRegex.test(rawJSON.main)
           }))
         })
       }
@@ -232,7 +234,11 @@ actions.edit = {
   handler: async (p2p, { hash, env }) => {
     const mod = await p2p.get(hash)
     let main = mod.rawJSON.main
-    if (!main) {
+    if (main) {
+      if (!htmlRegex.test(main)) {
+        throw new UserError('Only HTML is currently supported')
+      }
+    } else {
       main = 'main.html'
       await p2p.set({ url: mod.rawJSON.url, main })
     }
