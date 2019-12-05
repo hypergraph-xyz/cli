@@ -211,7 +211,6 @@ const htmlRegex = /\.html?$/
 
 actions.edit = {
   title: 'Edit main file',
-  unlisted: true,
   input: [
     {
       name: 'hash',
