@@ -6,9 +6,11 @@ const match = require('stream-match')
 const { promises: fs } = require('fs')
 const { encode } = require('dat-encoding')
 const { createEnv, onExit } = require('./util')
+const P2PCommons = require('../lib/p2p')
 
 test('prompt', async t => {
-  const { spawn } = createEnv()
+  const { spawn, exec } = createEnv()
+  await exec('create profile -y -n=n -d')
   const ps = spawn('create')
   await match(ps.stdout, 'Profile')
   ps.stdin.write('\n')
@@ -25,7 +27,8 @@ test('prompt', async t => {
 })
 
 test('requires title', async t => {
-  const { spawn } = createEnv()
+  const { spawn, exec } = createEnv()
+  await exec('create profile -y -n=n -d')
   const ps = spawn('create -y')
   await match(ps.stdout, 'Profile')
   ps.stdin.write('\n')
@@ -58,7 +61,8 @@ test('requires name', async t => {
 })
 
 test('requires license confirmation', async t => {
-  const { spawn } = createEnv()
+  const { spawn, exec } = createEnv()
+  await exec('create profile -y -n=n -d')
   const ps = spawn('create')
   await match(ps.stdout, 'Profile')
   ps.stdin.write('\n')
@@ -75,7 +79,8 @@ test('requires license confirmation', async t => {
 })
 
 test('license confirmation can be skipped', async t => {
-  const { spawn } = createEnv()
+  const { spawn, exec } = createEnv()
+  await exec('create profile -y -n=n -d')
   const ps = spawn('create -y')
   await match(ps.stdout, 'Profile')
   ps.stdin.write('\n')
@@ -90,7 +95,8 @@ test('license confirmation can be skipped', async t => {
 })
 
 test('create content', async t => {
-  const { spawn } = createEnv()
+  const { spawn, exec, env } = createEnv()
+  await exec('create profile -y -n=n -d')
   const ps = spawn('create content -y')
   await match(ps.stdout, 'Title')
   ps.stdin.write('title\n')
@@ -100,6 +106,24 @@ test('create content', async t => {
   ps.stdin.write('\n')
   const code = await onExit(ps)
   t.equal(code, 0)
+
+  const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+  await p2p.ready()
+  const [mod] = await p2p.listContent()
+  await p2p.destroy()
+  t.equal(mod.rawJSON.authors.length, 1)
+})
+
+test('no content without profile allowed', async t => {
+  const { exec } = createEnv()
+  let threw = false
+  try {
+    await exec('create content -y -t=t -d -s=Q17737')
+  } catch (err) {
+    threw = true
+    t.match(err.stderr, /Create a profile first/)
+  }
+  t.ok(threw)
 })
 
 test('create profile', async t => {
@@ -113,9 +137,23 @@ test('create profile', async t => {
   t.equal(code, 0)
 })
 
+test('only one profile allowed', async t => {
+  const { exec } = createEnv()
+  await exec('create profile -y -n=n -d')
+  let threw = false
+  try {
+    await exec('create profile -y -n=n -d')
+  } catch (err) {
+    threw = true
+    t.match(err.stderr, /A local profile already exists/)
+  }
+  t.ok(threw)
+})
+
 test('create <type> --title --description --subtype', async t => {
   await t.test('creates files', async t => {
     const { exec, env } = createEnv()
+    await exec('create profile -y -n=n -d')
     const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
@@ -124,7 +162,8 @@ test('create <type> --title --description --subtype', async t => {
   })
 
   await t.test('requires title', async t => {
-    const { spawn } = createEnv()
+    const { spawn, exec } = createEnv()
+    await exec('create profile -y -n=n -d')
     const ps = spawn('create content --description=d -s=Q17737 -y')
     await match(ps.stdout, 'Title')
     ps.kill()
@@ -139,6 +178,7 @@ test('create <type> --title --description --subtype', async t => {
 
   await t.test('description can be empty', async t => {
     const { exec } = createEnv()
+    await exec('create profile -y -n=n -d')
     await exec('create content -y -t=t -d -s=Q17737')
     await exec('create content -y -t=t -d="" -s=Q17737')
   })
