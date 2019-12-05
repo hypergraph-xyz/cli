@@ -39,6 +39,7 @@ $ hypergraph --help
     main   <hash>              Open a module's main file
     path   <hash>              Print module path
     list   <type>              List writable modules
+    edit   <hash>              Edit main file
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
