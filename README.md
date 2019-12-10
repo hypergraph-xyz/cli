@@ -23,7 +23,7 @@ install this first. Some additional instructions follow.
 
 ### Windows
 
-Directly download the NodeJS installer, or install the Chocolatey package manager.
+Directly download the NodeJS installer, or install it through the [Chocolatey](https://chocolatey.org/) package manager.
 
 ### Mac OS
 
