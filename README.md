@@ -30,8 +30,7 @@ Directly download the NodeJS installer, or install it through the [Chocolatey](h
 [Install Homebrew](https://brew.sh/) and install NodeJS and the Hypergraph dependencies from the Terminal
 
 ```zsh
-brew install node
-brew install libtool autoconf automake
+brew install node libtool autoconf automake
 ```
 
 ### Linux
