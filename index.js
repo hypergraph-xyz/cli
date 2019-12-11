@@ -402,7 +402,9 @@ const hypergraph = async argv => {
   }
 
   await action.handler(p2p, { ...argv, ...input, env })
+  const spinner = ora('Synchronizing network').start()
   await p2p.destroy()
+  spinner.stop()
 }
 
 module.exports = hypergraph
