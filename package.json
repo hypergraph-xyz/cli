@@ -27,7 +27,7 @@
   "dependencies": {
     "@geut/hyperdrive-promise": "^1.0.0",
     "@hypergraph-xyz/editor": "^1.1.0",
-    "@p2pcommons/sdk-js": "github:p2pcommons/sdk-js#dpaez/fixed-deps",
+    "@p2pcommons/sdk-js": "^0.3.3",
     "capitalize": "^2.0.0",
     "dat-encoding": "^5.0.1",
     "delegates": "^1.0.0",
