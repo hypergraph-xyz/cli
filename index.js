@@ -405,12 +405,13 @@ actions.register = {
       p2p.get(profileKey)
     ])
     await p2p.register(contentKey, profileKey)
+
     console.log(
-      `${kleur.green('✔')} ${kleur
-        .cyan()
-        .bold(content.rawJSON.title)} registered to ${kleur
-        .cyan()
-        .bold(profile.rawJSON.name)}`
+      kleur.green('✔'),
+      kleur.cyan().bold(content.rawJSON.title),
+      `(version ${kleur.bold(content.metadata.version)})`,
+      'registered to',
+      kleur.cyan().bold(profile.rawJSON.name)
     )
   }
 }
