@@ -70,13 +70,15 @@ actions.create = {
       authors = [profiles[0].rawJSON.url]
     }
 
-    const {
-      rawJSON: { url }
-    } = await p2p.init({ type, title, name, description, subtype })
-    if (authors) {
-      await p2p.set({ url, authors })
-    }
-    console.log(url)
+    const { rawJSON } = await p2p.init({
+      type,
+      title,
+      name,
+      description,
+      subtype,
+      authors
+    })
+    console.log(rawJSON.url)
   }
 }
 
