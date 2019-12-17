@@ -14,6 +14,8 @@ const UserError = require('./lib/user-error')
 const subtypes = require('./lib/subtypes')
 const kleur = require('kleur')
 const { promises: fs } = require('fs')
+const Editor = require('@hypergraph-xyz/editor')
+const ora = require('ora')
 
 const actions = {}
 
@@ -69,13 +71,15 @@ actions.create = {
       authors = [profiles[0].rawJSON.url]
     }
 
-    const {
-      rawJSON: { url }
-    } = await p2p.init({ type, title, name, description, subtype })
-    if (authors) {
-      await p2p.set({ url, authors })
-    }
-    console.log(url)
+    const { rawJSON } = await p2p.init({
+      type,
+      title,
+      name,
+      description,
+      subtype,
+      authors
+    })
+    console.log(rawJSON.url)
   }
 }
 
@@ -295,6 +299,49 @@ actions.list = {
   }
 }
 
+const htmlRegex = /\.html?$/
+
+actions.edit = {
+  title: 'Edit main file',
+  input: [
+    {
+      name: 'hash',
+      resolve: async p2p => {
+        const mods = await p2p.list()
+        if (!mods.length) throw new UserError('No modules')
+        const writable = mods.filter(mod => mod.metadata.isWritable)
+        return prompt({
+          type: 'select',
+          message: 'Select writable module',
+          warn: 'Only HTML is currently supported',
+          choices: writable.map(({ rawJSON }) => ({
+            title: rawJSON.title,
+            value: rawJSON.url,
+            disabled: rawJSON.main && !htmlRegex.test(rawJSON.main)
+          }))
+        })
+      }
+    }
+  ],
+  handler:
+    // istanbul ignore next
+    async (p2p, { hash, env }) => {
+      const mod = await p2p.get(hash)
+      let main = mod.rawJSON.main
+      if (main) {
+        if (!htmlRegex.test(main)) {
+          throw new UserError('Only HTML is currently supported')
+        }
+      } else {
+        main = 'main.html'
+        await p2p.set({ url: mod.rawJSON.url, main })
+      }
+      const editor = new Editor(`${env}/${encode(hash)}/${main}`)
+      editor.open()
+      ora('Press CTRL+C when done editing.').start()
+    }
+}
+
 actions.register = {
   title: 'Register content to a profile',
   input: [
@@ -431,7 +478,9 @@ const hypergraph = async argv => {
   }
 
   await action.handler(p2p, { ...argv, ...input, env })
+  const spinner = ora('Synchronizing network').start()
   await p2p.destroy()
+  spinner.stop()
 }
 
 module.exports = hypergraph

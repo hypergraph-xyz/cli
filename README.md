@@ -5,8 +5,7 @@
 [![Code Style Prettier Standard](https://img.shields.io/badge/format-prettier_standard-ff69b4.svg)](https://github.com/sheerun/prettier-standard)
 [![Greenkeeper badge](https://badges.greenkeeper.io/hypergraph-xyz/cli.svg)](https://greenkeeper.io/)
 
-Command Line Interface (CLI) for a Public Collaborative Project (PCP)
-infrastructure.
+Command Line Interface (CLI) utilising the [peer-to-peer commons](https://p2pcommons.com).
 
 This environment was developed initially for use in scholarly
 communication but can be applied outside as well. Anything that can
@@ -19,10 +18,29 @@ benefit from a step-by-step approach with provenance pretty much
 npm install -g @hypergraph-xyz/cli
 ```
 
-If you do not have [NodeJS](https://nodejs.org/en/) installed, please
-install this first. If you are running Windows/Mac OS X it is easiest
-to download the installer. If you are using a package manager, you can
-install `node`.
+If you do not have [NodeJS](https://nodejs.org/) installed, please
+install this first. Some additional instructions follow.
+
+### Windows
+
+Directly download the NodeJS installer, or install it through the [Chocolatey](https://chocolatey.org/) package manager.
+
+### Mac OS
+
+[Install Homebrew](https://brew.sh/) and install NodeJS and the Hypergraph dependencies from the Terminal
+
+```zsh
+brew install node libtool autoconf automake
+```
+
+### Linux
+
+Using your package manager, install NodeJS.
+
+```bash
+apt install nodejs
+```
+
 
 ## Usage
 
@@ -40,6 +58,7 @@ $ hypergraph --help
     main     <hash>               Open a module's main file
     path     <hash>               Print module path
     list     <type>               List writable modules
+    edit     <hash>               Edit main file
     register <content> <profile>  Register content to a profile
 
   Options

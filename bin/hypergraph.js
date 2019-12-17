@@ -26,6 +26,7 @@ const help = `
     main     <hash>               Open a module's main file
     path     <hash>               Print module path
     list     <type>               List writable modules
+    edit     <hash>               Edit main file
     register <content> <profile>  Register content to a profile
 
   Options
