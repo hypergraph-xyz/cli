@@ -120,7 +120,7 @@ actions.read = {
     }
 
     console.log()
-    console.log(kleur.underline(`dat://${mod.rawJSON.url}`))
+    console.log(kleur.underline(mod.rawJSON.url))
     if (mod.rawJSON.type === 'content') {
       if (mod.rawJSON.parents.length) {
         console.log(kleur.bold('Parents:'))
