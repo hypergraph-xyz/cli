@@ -4,7 +4,7 @@
   "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
   "main": "index.js",
   "scripts": {
-    "test": "prettier-standard '**/*.js' && standard && tap --timeout=90 --test-ignore=util.js",
+    "test": "prettier-standard && standard && tap --timeout=90 --test-ignore=util.js",
     "postinstall": "node ./bin/autocomplete.js",
     "release": "np"
   },
@@ -27,7 +27,7 @@
   "dependencies": {
     "@geut/hyperdrive-promise": "^1.0.0",
     "@hypergraph-xyz/editor": "^1.1.0",
-    "@p2pcommons/sdk-js": "^0.3.3",
+    "@p2pcommons/sdk-js": "^0.3.4",
     "capitalize": "^2.0.0",
     "dat-encoding": "^5.0.1",
     "delegates": "^1.0.0",

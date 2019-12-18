@@ -53,7 +53,7 @@ test('with modules', async t => {
       t.deepEqual(meta, {
         title: 't',
         description: 'beep',
-        url: encode(contentKey),
+        url: `dat://${encode(contentKey)}`,
         links: {
           license: [
             {
@@ -88,7 +88,7 @@ test('with modules', async t => {
       t.deepEqual(meta, {
         title: 'n',
         description: 'beep',
-        url: encode(profileKey),
+        url: `dat://${encode(profileKey)}`,
         links: {
           license: [
             {
@@ -130,7 +130,7 @@ test('with modules', async t => {
     t.deepEqual(meta, {
       title: 't',
       description: 'beep',
-      url: encode(contentKey),
+      url: `dat://${encode(contentKey)}`,
       links: {
         license: [
           {

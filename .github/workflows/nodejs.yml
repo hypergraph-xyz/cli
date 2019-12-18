@@ -8,16 +8,16 @@ jobs:
         node-version: [8.x, 10.x, 12.x]
         os: [ubuntu-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Use latest npm
-      run: npm install -g npm@latest
-    - name: npm install, build, and test
-      run: |
-        npm ci
-        npm test
-      env:
-        CI: true
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Use latest npm
+        run: npm install -g npm@latest
+      - name: npm install, build, and test
+        run: |
+          npm ci
+          npm test
+        env:
+          CI: true

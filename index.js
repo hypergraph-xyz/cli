@@ -23,6 +23,18 @@ actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
   handler: async (p2p, { type, title, name, description, subtype, yes }) => {
+    if (type === 'content') {
+      const profiles = await p2p.listProfiles()
+      if (!profiles.find(profile => profile.metadata.isWritable)) {
+        console.error(kleur.yellow('! Please create your profile first'))
+        await actions.create.handler(p2p, { type: 'profile', yes })
+        console.error(
+          kleur.bold().green('✔'),
+          kleur.green('Profile created! Now creating content')
+        )
+      }
+    }
+
     if (type === 'content' && !title) {
       title = await prompt({
         type: 'text',
@@ -65,9 +77,6 @@ actions.create = {
     let authors
     if (type === 'content') {
       const profiles = await p2p.listProfiles()
-      if (!profiles.find(profile => profile.metadata.isWritable)) {
-        throw new UserError('Create a profile first')
-      }
       authors = [profiles[0].rawJSON.url]
     }
 

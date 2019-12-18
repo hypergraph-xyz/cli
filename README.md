@@ -41,7 +41,6 @@ Using your package manager, install NodeJS.
 apt install nodejs
 ```
 
-
 ## Usage
 
 ```bash
@@ -80,11 +79,11 @@ $ hypergraph --help
 
 ```
 
-This tool *directly* allows you to start using public collaborative
+This tool _directly_ allows you to start using public collaborative
 infrastructure.
 
 After installation, the `hypergraph` command is exported to your command
-line. 
+line.
 
 We follow a simple format for the commands. However, we realize this
 isn't easy to remember at first so you can also invoke interactive
@@ -98,7 +97,7 @@ hypergraph <action> <input> <arguments>
 ```
 
 You will always be provided with an interactive set of options if you
-omit an action, input, or argument(s) (if relevant). 
+omit an action, input, or argument(s) (if relevant).
 
 Help is provided under `hypergraph --help` and the maintainers will do
 their best to answer your questions in the issues.
@@ -106,7 +105,7 @@ their best to answer your questions in the issues.
 ## Contributing
 
 Please note we adhere to a [Code of Conduct](./CODE_OF_CONDUCT.md) and
-any contributions not in line with it (*tl;dr* be an empathetic,
+any contributions not in line with it (_tl;dr_ be an empathetic,
 considerate person) will not be accepted. Please notify
 [@chartgerink](mailto:chris@libscie.org) if anything happens.
 
