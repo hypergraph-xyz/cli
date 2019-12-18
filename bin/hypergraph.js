@@ -12,20 +12,22 @@ const updateNotifier = require('update-notifier')
 const {
   errors: { ValidationError, InvalidKeyError }
 } = require('../lib/p2p')
+const kleur = require('kleur')
 
 const help = `
   Usage
     $ hypergraph <action> <input>
 
   Actions
-    create <type>              Create a module
-    read   <hash> [key]        Read a module's metadata
-    update <hash> [key value]  Update a module's metadata
-    open   <hash>              Open a module's folder
-    main   <hash>              Open a module's main file
-    path   <hash>              Print module path
-    list   <type>              List writable modules
-    edit   <hash>              Edit main file
+    create   <type>               Create a module
+    read     <hash> [key]         Read a module's metadata
+    update   <hash> [key value]   Update a module's metadata
+    open     <hash>               Open a module's folder
+    main     <hash>               Open a module's main file
+    path     <hash>               Print module path
+    list     <type>               List writable modules
+    edit     <hash>               Edit main file
+    register <content> <profile>  Register content to a profile
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
@@ -54,7 +56,8 @@ const argv = minimist(process.argv.slice(2), {
     name: 'n',
     description: 'd',
     yes: 'y',
-    subtype: 's'
+    subtype: 's',
+    register: 'r'
   },
   string: ['env', 'title', 'name', 'description']
 })
@@ -74,9 +77,11 @@ updateNotifier({ pkg }).notify()
 hypergraph(argv).catch(err => {
   // istanbul ignore else
   if (err instanceof ValidationError) {
-    console.error(`Invalid ${err.key}`)
+    console.error(`${kleur.red('✖')} Invalid ${err.key}`)
   } else if (err instanceof UserError || err instanceof InvalidKeyError) {
-    if (err.message) console.error(err.message)
+    if (err.message) {
+      console.error(`${kleur.red('✖')} ${err.message}`)
+    }
   } else {
     console.error(err)
   }
