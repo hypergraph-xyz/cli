@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/hypergraph-xyz/cli#readme",
   "dependencies": {
-    "@geut/hyperdrive-promise": "^1.0.0",
+    "@geut/hyperdrive-promise": "^2.0.0",
     "@hypergraph-xyz/editor": "^1.1.0",
     "@p2pcommons/sdk-js": "^0.3.4",
     "capitalize": "^2.0.0",
