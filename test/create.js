@@ -157,7 +157,7 @@ test('create <type> --title --description --subtype', async t => {
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
     await fs.stat(`${env}/${hash}/dat.json`)
-    await fs.stat(`${env}/${hash}/.dat`)
+    await fs.stat(`${env}/.dat`)
   })
 
   await t.test('requires title', async t => {
