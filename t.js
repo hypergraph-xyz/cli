@@ -44,5 +44,4 @@ const main = async () => {
   // console.log('all good')
 }
 
-//test(main)
 main().catch(err => console.error(err))
