@@ -28,7 +28,7 @@ test('with modules', async t => {
     p2p.init({ type: 'profile', title: 'n' })
   ])
   await p2p.destroy()
-  await fs.writeFile(`${env}/${contentKey.slice(6)}/m`, '')
+  await fs.writeFile(`${env}/${contentKey.slice('dat://'.length)}/m`, '')
 
   await t.test('prompt', async t => {
     const ps = spawn('register')
