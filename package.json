@@ -26,7 +26,7 @@
   "homepage": "https://github.com/hypergraph-xyz/cli#readme",
   "dependencies": {
     "@hypergraph-xyz/editor": "^1.1.0",
-    "@p2pcommons/sdk-js": "^0.4.0",
+    "@p2pcommons/sdk-js": "^0.4.1",
     "capitalize": "^2.0.0",
     "dat-encoding": "^5.0.1",
     "delegates": "^1.0.0",
