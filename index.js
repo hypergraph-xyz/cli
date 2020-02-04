@@ -23,6 +23,13 @@ actions.create = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: askType }],
   handler: async (p2p, { type, title, name, description, subtype, yes }) => {
+    if (type === 'profile') {
+      const profiles = await p2p.listProfiles()
+      if (profiles.find(profile => profile.metadata.isWritable)) {
+        throw new UserError('A local profile already exists')
+      }
+    }
+
     if (type === 'content') {
       const profiles = await p2p.listProfiles()
       if (!profiles.find(profile => profile.metadata.isWritable)) {
@@ -65,13 +72,6 @@ actions.create = {
         noOption: kleur.reset('(y/N)')
       })
       if (!confirmed) throw new UserError('License not confirmed')
-    }
-
-    if (type === 'profile') {
-      const profiles = await p2p.listProfiles()
-      if (profiles.find(profile => profile.metadata.isWritable)) {
-        throw new UserError('A local profile already exists')
-      }
     }
 
     let authors
