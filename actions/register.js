@@ -21,9 +21,7 @@ module.exports = {
             value: mod.rawJSON.url,
             disabled: false
           }
-          if (!mod.rawJSON.title) {
-            choice.disabled = true
-          } else if (!mod.rawJSON.main) {
+          if (!mod.rawJSON.title || !mod.rawJSON.main) {
             choice.disabled = true
           } else {
             try {
