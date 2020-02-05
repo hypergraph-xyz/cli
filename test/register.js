@@ -48,7 +48,7 @@ test('with modules', async t => {
   })
 })
 
-test('no modules', async t => {
+test('no content modules', async t => {
   const { exec } = createEnv()
   let threw = false
   try {
@@ -56,6 +56,25 @@ test('no modules', async t => {
   } catch (err) {
     threw = true
     t.match(err.message, /No content modules/)
+  }
+  t.ok(threw)
+})
+
+test('no profile modules', async t => {
+  const { exec, env } = createEnv()
+  const p2p = new P2PCommons({
+    baseDir: env,
+    disableSwarm: true
+  })
+  await p2p.ready()
+  await p2p.init({ type: 'content', title: 't' })
+  await p2p.destroy()
+  let threw = false
+  try {
+    await exec('register')
+  } catch (err) {
+    threw = true
+    t.match(err.message, /No profile modules/)
   }
   t.ok(threw)
 })
