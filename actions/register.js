@@ -14,6 +14,10 @@ module.exports = {
       resolve: async (p2p, { env }) => {
         const mods = await p2p.listContent()
         if (!mods.length) throw new UserError('No content modules')
+
+        const profileMods = await p2p.listProfiles()
+        if (!profileMods.length) throw new UserError('No profile modules')
+
         const choices = []
         for (const mod of mods) {
           const choice = {
@@ -51,7 +55,6 @@ module.exports = {
       name: 'profileKey',
       resolve: async p2p => {
         const mods = await p2p.listProfiles()
-        if (!mods.length) throw new UserError('No profile modules')
         return prompt({
           type: 'select',
           message: 'Select profile module',
