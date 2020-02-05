@@ -35,6 +35,10 @@ module.exports = {
           }
           choices.push(choice)
         }
+        choices.sort((a, b) =>
+          a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1
+        )
+
         return prompt({
           type: 'select',
           message: 'Select content module',
