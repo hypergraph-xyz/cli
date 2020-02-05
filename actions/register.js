@@ -39,8 +39,9 @@ module.exports = {
           }
           choices.push(choice)
         }
-        choices.sort((a, b) =>
-          a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1
+        choices.sort(
+          /* istanbul ignore next */
+          (a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1)
         )
 
         return prompt({
