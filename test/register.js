@@ -25,7 +25,8 @@ test('with modules', async t => {
     }
   ] = await Promise.all([
     p2p.init({ type: 'content', title: 't', main: 'm' }),
-    p2p.init({ type: 'profile', title: 'n' })
+    p2p.init({ type: 'profile', title: 'n' }),
+    p2p.init({ type: 'content', title: 'no main' })
   ])
   await p2p.destroy()
   await fs.writeFile(`${env}/${contentKey.slice('dat://'.length)}/m`, '')
