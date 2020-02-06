@@ -151,12 +151,17 @@ test('parent content', async t => {
   const { env, spawn } = createEnv()
   const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
   await p2p.ready()
-  const {
-    rawJSON: { url: contentKey }
-  } = await p2p.init({ type: 'content', title: 'Content' })
-  const {
-    rawJSON: { url: profileKey }
-  } = await p2p.init({ type: 'profile', title: 'Name' })
+  const [
+    {
+      rawJSON: { url: contentKey }
+    },
+    {
+      rawJSON: { url: profileKey }
+    }
+  ] = await Promise.all([
+    p2p.init({ type: 'content', title: 'Content' }),
+    p2p.init({ type: 'profile', title: 'Name' })
+  ])
   await p2p.register(contentKey, profileKey)
   await p2p.destroy()
   const ps = spawn('create content -y -t=t -d -s=Q17737')
