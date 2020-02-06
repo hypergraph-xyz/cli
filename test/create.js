@@ -104,14 +104,12 @@ test('create content', async t => {
   ps.stdin.write('description\n')
   await match(ps.stdout, 'subtype')
   ps.stdin.write('\n')
+  const url = await match(ps.stdout, /dat:\/\/(.+)/)
   const code = await onExit(ps)
   t.equal(code, 0)
 
-  const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
-  await p2p.ready()
-  const [mod] = await p2p.listContent()
-  await p2p.destroy()
-  t.equal(mod.rawJSON.authors.length, 1)
+  const dat = require(`${env}/${url}/dat.json`)
+  t.equal(dat.p2pcommons.authors.length, 1)
 })
 
 test('no content without profile allowed', async t => {
