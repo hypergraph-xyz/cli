@@ -4,16 +4,12 @@ const { platform } = require('os')
 const { promisify } = require('util')
 
 test('autocomplete', async t => {
-  const path = `${__dirname}/../bin/autocomplete.js`
-  let cmd, args
+  let cmd = `${__dirname}/../bin/autocomplete.js`
+  let args = ''
 
   // istanbul ignore next
   if (platform() === 'win32') {
-    cmd = 'node'
-    args = `${path} ${args}`
-  } else {
-    cmd = path
-    args = ''
+    [cmd, args] = ['node', cmd]
   }
 
   await promisify(exec)(cmd, args)
