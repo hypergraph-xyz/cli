@@ -4,7 +4,7 @@
   "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
   "main": "index.js",
   "scripts": {
-    "test": "prettier-standard && standard && tap --timeout=240 --test-ignore=util.js",
+    "test": "prettier-standard && standard && tap --timeout=300 --test-ignore=util.js",
     "postinstall": "node ./bin/autocomplete.js",
     "release": "np"
   },
