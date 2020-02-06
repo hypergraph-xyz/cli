@@ -34,6 +34,7 @@ module.exports = {
 
     if (key) {
       update[key] = value || ''
+      if (key === 'parents') update[key] = update[key].split(',')
     } else {
       const { rawJSON } = await p2p.get(hash)
       const keys = [
@@ -41,7 +42,10 @@ module.exports = {
         'description',
         'main'
       ]
-      if (rawJSON.type === 'content') keys.push('subtype')
+      if (rawJSON.type === 'content') {
+        keys.push('subtype')
+        keys.push('parents')
+      }
 
       for (const key of keys) {
         if (key === 'main') {
@@ -66,6 +70,33 @@ module.exports = {
           })
         } else if (key === 'subtype') {
           update.subtype = await prompt.subType(rawJSON.subtype)
+        } else if (key === 'parents') {
+          const [content, profiles] = await Promise.all([
+            p2p.listContent(),
+            p2p.listProfiles()
+          ])
+          const choices = []
+          for (const mod of content) {
+            const registered = profiles.find(profile =>
+              profile.rawJSON.contents.find(
+                url => url.split('+')[0] === mod.rawJSON.url
+              )
+            )
+            if (registered) {
+              choices.push({
+                title: mod.rawJSON.title,
+                value: mod.rawJSON.url,
+                selected: rawJSON.parents.includes(mod.rawJSON.url)
+              })
+            }
+          }
+          if (choices.length) {
+            update.parents = await prompt({
+              type: 'multiselect',
+              message: 'Parents',
+              choices
+            })
+          }
         } else {
           update[key] = await prompt({
             type: 'text',
