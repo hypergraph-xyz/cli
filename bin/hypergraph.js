@@ -37,6 +37,7 @@ const help = `
     --name, -n                 A profile module's name
     --subtype, -s              A content module's subtype
     --description, -d          Module description
+    --parent, -p               Module parent(s)
     --yes, -y                  Confirm license for module creation
   
   Module types
@@ -57,9 +58,10 @@ const argv = minimist(process.argv.slice(2), {
     description: 'd',
     yes: 'y',
     subtype: 's',
-    register: 'r'
+    register: 'r',
+    parent: 'p'
   },
-  string: ['env', 'title', 'name', 'description']
+  string: ['env', 'title', 'name', 'description', 'parent']
 })
 
 if (argv.help) {

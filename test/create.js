@@ -6,7 +6,7 @@ const match = require('stream-match')
 const { promises: fs } = require('fs')
 const { encode } = require('dat-encoding')
 const { createEnv, onExit } = require('./util')
-const P2PCommons = require('../lib/p2p')
+const P2PCommons = require('@p2pcommons/sdk-js')
 
 test('prompt', async t => {
   const { spawn, exec } = createEnv()
@@ -149,11 +149,41 @@ test('only one profile allowed', async t => {
   t.ok(threw)
 })
 
-test('create <type> --title --description --subtype', async t => {
+test('parent content', async t => {
+  const { env, spawn } = createEnv()
+  const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+  await p2p.ready()
+  const {
+    rawJSON: { url: contentKey }
+  } = await p2p.init({ type: 'content', title: 'Content' })
+  const {
+    rawJSON: { url: profileKey }
+  } = await p2p.init({ type: 'profile', title: 'Name' })
+  await p2p.register(contentKey, profileKey)
+  await p2p.destroy()
+  const ps = spawn('create content -y -t=t -d -s=Q17737')
+  await match(ps.stdout, 'Select parent modules')
+  ps.stdin.write(' \n')
+  const createdKey = await match(ps.stdout, /dat:\/\/(.+)/)
+  const code = await onExit(ps)
+  t.equal(code, 0)
+  const dat = require(`${env}/${createdKey}/dat.json`)
+  t.deepEqual(dat.p2pcommons.parents, [contentKey])
+})
+
+test('create <type> --title --description --subtype --parent', async t => {
   await t.test('creates files', async t => {
     const { exec, env } = createEnv()
+    const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+    await p2p.ready()
+    const {
+      rawJSON: { url }
+    } = await p2p.init({ type: 'content', title: 'c' })
+    await p2p.destroy()
     await exec('create profile -y -n=n -d')
-    const { stdout } = await exec('create content -t=t -d=d -s=Q17737 -y')
+    const { stdout } = await exec(
+      `create content -t=t -d=d -s=Q17737 --parent=${url} -y`
+    )
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
     await fs.stat(`${env}/${hash}/dat.json`)
@@ -177,8 +207,30 @@ test('create <type> --title --description --subtype', async t => {
 
   await t.test('description can be empty', async t => {
     const { exec } = createEnv()
-    await exec('create profile -y -n=n -d')
+    await exec('create profile -y -n=n -d ')
     await exec('create content -y -t=t -d -s=Q17737')
     await exec('create content -y -t=t -d="" -s=Q17737')
+  })
+
+  await t.test('multiple parents', async t => {
+    const { exec, env } = createEnv()
+    const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+    await p2p.ready()
+    const [
+      {
+        rawJSON: { url: parent1 }
+      },
+      {
+        rawJSON: { url: parent2 }
+      }
+    ] = await Promise.all([
+      p2p.init({ type: 'content', title: 'c' }),
+      p2p.init({ type: 'content', title: 'c' }),
+      p2p.init({ type: 'profile', title: 'p' })
+    ])
+    await p2p.destroy()
+    await exec(
+      `create content -t=t -d=d -s=Q17737 --parent=${parent1} --parent=${parent2} -y`
+    )
   })
 })

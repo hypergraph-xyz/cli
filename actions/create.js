@@ -10,7 +10,10 @@ const licenseUrl = 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
 module.exports = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: prompt.type }],
-  handler: async (p2p, { type, title, name, description, subtype, yes }) => {
+  handler: async (
+    p2p,
+    { type, title, name, description, subtype, yes, parent }
+  ) => {
     if (type === 'profile') {
       const profiles = await p2p.listProfiles()
       if (profiles.find(profile => profile.metadata.isWritable)) {
@@ -49,7 +52,45 @@ module.exports = {
         message: 'Description'
       })
     }
-    if (type === 'content' && !subtype) subtype = await prompt.subType()
+
+    let parents = []
+    if (Array.isArray(parent)) {
+      parents = parent
+    } else if (typeof parent === 'string') {
+      parents = [parent]
+    }
+
+    if (type === 'content') {
+      if (!subtype) subtype = await prompt.subType()
+
+      if (!parents.length) {
+        const [content, profiles] = await Promise.all([
+          p2p.listContent(),
+          p2p.listProfiles()
+        ])
+        const choices = []
+        for (const mod of content) {
+          const registered = profiles.find(profile =>
+            profile.rawJSON.contents.find(
+              url => url.split('+')[0] === mod.rawJSON.url
+            )
+          )
+          if (registered) {
+            choices.push({
+              title: mod.rawJSON.title,
+              value: mod.rawJSON.url
+            })
+          }
+        }
+        if (choices.length) {
+          parents = await prompt({
+            type: 'multiselect',
+            message: 'Select parent modules',
+            choices
+          })
+        }
+      }
+    }
 
     if (!yes) {
       const confirmed = await prompt({
@@ -73,7 +114,8 @@ module.exports = {
       name,
       description,
       subtype,
-      authors
+      authors,
+      parents
     })
     console.log(rawJSON.url)
   }

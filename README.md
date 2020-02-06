@@ -68,6 +68,7 @@ $ hypergraph --help
     --name, -n                 A profile module's name
     --subtype, -s              A content module's subtype
     --description, -d          Module description
+    --parent, -p               Module parent(s)
     --yes, -y                  Confirm license for module creation
 
   Module types
