@@ -30,7 +30,6 @@
     "capitalize": "^2.0.0",
     "dat-encoding": "^5.0.1",
     "delegates": "^1.0.0",
-    "fs.promises": "^0.1.2",
     "kleur": "^3.0.3",
     "minimist": "^1.2.0",
     "open": "^7.0.0",
