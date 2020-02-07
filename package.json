@@ -42,7 +42,7 @@
     "hypergraph": "./bin/hypergraph.js"
   },
   "devDependencies": {
-    "np": "^5.1.2",
+    "np": "^6.0.0",
     "prettier-standard": "^16.0.0",
     "standard": "^14.3.1",
     "stream-match": "^1.2.1",
