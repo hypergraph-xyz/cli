@@ -37,11 +37,7 @@ test('requires title', async t => {
   await match(ps.stdout, 'Title required')
   ps.stdin.write('title\n')
   await match(ps.stdout, 'Description')
-  ps.stdin.write('description\n')
-  await match(ps.stdout, 'subtype')
-  ps.stdin.write('\n')
-  const code = await onExit(ps)
-  t.equal(code, 0)
+  ps.kill()
 })
 
 test('requires name', async t => {
@@ -55,9 +51,7 @@ test('requires name', async t => {
   await match(ps.stdout, 'Name required')
   ps.stdin.write('name\n')
   await match(ps.stdout, 'Description')
-  ps.stdin.write('description\n')
-  const code = await onExit(ps)
-  t.equal(code, 0)
+  ps.kill()
 })
 
 test('requires license confirmation', async t => {
