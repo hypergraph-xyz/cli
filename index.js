@@ -23,9 +23,7 @@ const hypergraph = async argv => {
     })
   }
 
-  const env = argv.env
-    ? resolve(argv.env)
-    : /* istanbul ignore next */ `${homedir()}/.p2pcommons`
+  const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
   const p2p = new P2P({ baseDir: env, disableSwarm: process.env.CI })
   await p2p.ready()
 

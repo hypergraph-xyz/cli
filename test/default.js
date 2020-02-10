@@ -19,6 +19,17 @@ test('--version', async t => {
   t.ok(stdout.includes(version))
 })
 
+test('--env', async t => {
+  await t.test('default value', async t => {
+    const { exec } = createEnv({ env: '' })
+    await exec('list content')
+  })
+  await t.test('custom value', async t => {
+    const { exec } = createEnv()
+    await exec('list content')
+  })
+})
+
 test('default', async t => {
   const { spawn } = createEnv()
   const ps = spawn('')
