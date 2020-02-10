@@ -2,13 +2,12 @@
 
 const childProcess = require('child_process')
 const { tmpdir, platform } = require('os')
-const { promisify } = require('util')
 const { randomBytes } = require('crypto')
 const fs = require('fs')
 
 const DEBUG = process.env.DEBUG || process.env.CI
 
-exports.createEnv = () => {
+const createEnv = () => {
   const path = `${__dirname}/../bin/hypergraph.js`
   const env = `${tmpdir()}/${Date.now()}-${randomBytes(16).toString('hex')}`
   fs.mkdirSync(env)
@@ -42,29 +41,24 @@ exports.createEnv = () => {
 
     return ps
   }
-  const exec = args => {
-    // istanbul ignore next
-    if (DEBUG) console.log(`exec ${args}`)
-
-    let cmd = path
-
-    // istanbul ignore next
-    if (platform() === 'win32') {
-      cmd = 'node'
-      args = `${path} ${args}`
+  const exec = async args => {
+    const ps = spawn(args)
+    let stdout = ''
+    let stderr = ''
+    ps.stdout.on('data', d => (stdout += d.toString()))
+    ps.stderr.on('data', d => (stderr += d.toString()))
+    const code = await onExit(ps)
+    if (code !== 0) {
+      const err = new Error(stderr)
+      err.stderr = stderr
+      throw err
     }
-
-    return promisify(childProcess.exec)(`${cmd} ${args} --env=${env}`, {
-      env: {
-        ...process.env,
-        CI: true
-      }
-    })
+    return { stdout, stderr }
   }
   return { env, spawn, exec }
 }
 
-exports.onExit = ps =>
+const onExit = ps =>
   new Promise((resolve, reject) => {
     ps.stdin.end()
     ps.on('exit', (code, signal) => {
@@ -75,3 +69,5 @@ exports.onExit = ps =>
       }
     })
   })
+
+module.exports = { createEnv, onExit }
