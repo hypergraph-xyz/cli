@@ -5,11 +5,11 @@ const { test } = require('tap')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
 const { encode } = require('dat-encoding')
-const { createEnv, onExit } = require('./util')
+const { createEnv } = require('./util')
 const P2PCommons = require('@p2pcommons/sdk-js')
 
 test('with modules', async t => {
-  const { spawn, exec, env } = createEnv()
+  const { execa, env } = createEnv()
 
   const p2p = new P2PCommons({
     baseDir: env,
@@ -30,22 +30,21 @@ test('with modules', async t => {
   await p2p.destroy()
 
   await t.test('prompt', async t => {
-    const ps = await spawn('update')
+    const ps = execa('update')
     await match(ps.stdout, 'Select module')
     ps.kill()
   })
 
   await t.test('update <hash>', async t => {
     await t.test('content', async t => {
-      const ps = await spawn(`update ${encode(contentKey)}`)
+      const ps = execa(`update ${encode(contentKey)}`)
       await match(ps.stdout, 'Title')
       ps.stdin.write('\n') // keep value
       await match(ps.stdout, 'Description')
       ps.stdin.write('beep\n')
       await match(ps.stdout, 'subtype')
       ps.stdin.write('\n')
-      const code = await onExit(ps)
-      t.equal(code, 0)
+      await ps
 
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
@@ -74,13 +73,12 @@ test('with modules', async t => {
     })
 
     await t.test('profile', async t => {
-      const ps = await spawn(`update ${encode(profileKey)}`)
+      const ps = execa(`update ${encode(profileKey)}`)
       await match(ps.stdout, 'Name')
       ps.stdin.write('\n') // keep value
       await match(ps.stdout, 'Description')
       ps.stdin.write('beep\n')
-      const code = await onExit(ps)
-      t.equal(code, 0)
+      await ps
 
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(profileKey)}/dat.json`, 'utf8')
@@ -112,7 +110,7 @@ test('with modules', async t => {
   await t.test('prompt main', async t => {
     await fs.writeFile(`${env}/${encode(contentKey)}/file.txt`, 'hi')
 
-    const ps = await spawn(`update ${encode(contentKey)}`)
+    const ps = execa(`update ${encode(contentKey)}`)
     await match(ps.stdout, 'Title')
     ps.stdin.write('\n') // keep value
     await match(ps.stdout, 'Description')
@@ -121,8 +119,7 @@ test('with modules', async t => {
     ps.stdin.write('\n')
     await match(ps.stdout, 'subtype')
     ps.stdin.write('\n')
-    const code = await onExit(ps)
-    t.equal(code, 0)
+    await ps
 
     const meta = JSON.parse(
       await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
@@ -151,7 +148,7 @@ test('with modules', async t => {
 
   await t.test('update <hash> <key> <value>', async t => {
     await t.test('updates main', async t => {
-      await exec(`update ${encode(contentKey)} main main`)
+      await execa(`update ${encode(contentKey)} main main`)
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
       )
@@ -159,7 +156,7 @@ test('with modules', async t => {
     })
 
     await t.test('updates title', async t => {
-      await exec(`update ${encode(contentKey)} title beep`)
+      await execa(`update ${encode(contentKey)} title beep`)
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
       )
@@ -169,7 +166,7 @@ test('with modules', async t => {
     await t.test('invalid key', async t => {
       let threw = false
       try {
-        await exec(`update ${encode(contentKey)} beep boop`)
+        await execa(`update ${encode(contentKey)} beep boop`)
       } catch (err) {
         t.ok(err.stderr.includes('Invalid key'))
         threw = true
@@ -178,7 +175,7 @@ test('with modules', async t => {
     })
 
     await t.test('clear value', async t => {
-      await exec(`update ${encode(contentKey)} main`)
+      await execa(`update ${encode(contentKey)} main`)
 
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
@@ -189,7 +186,7 @@ test('with modules', async t => {
     await t.test('requires title', async t => {
       let threw = false
       try {
-        await exec(`update ${encode(contentKey)} title`)
+        await execa(`update ${encode(contentKey)} title`)
       } catch (err) {
         threw = true
         t.match(err.message, /Invalid title/)
@@ -200,7 +197,7 @@ test('with modules', async t => {
     await t.test('requires name', async t => {
       let threw = false
       try {
-        await exec(`update ${encode(profileKey)} name`)
+        await execa(`update ${encode(profileKey)} name`)
       } catch (err) {
         threw = true
         t.match(err.message, /Invalid name/)
@@ -211,7 +208,7 @@ test('with modules', async t => {
     await t.test('no name update for content', async t => {
       let threw = false
       try {
-        await exec(`update ${encode(contentKey)} name beep`)
+        await execa(`update ${encode(contentKey)} name beep`)
       } catch (err) {
         threw = true
         t.match(err.message, /Invalid key: name/)
@@ -222,7 +219,7 @@ test('with modules', async t => {
     await t.test('no title update for profile', async t => {
       let threw = false
       try {
-        await exec(`update ${encode(profileKey)} title beep`)
+        await execa(`update ${encode(profileKey)} title beep`)
       } catch (err) {
         threw = true
         t.match(err.message, /Invalid key: title/)
@@ -233,7 +230,7 @@ test('with modules', async t => {
     await t.test('no adding new key to content', async t => {
       let threw = false
       try {
-        await exec(`update ${encode(contentKey)} foo bar`)
+        await execa(`update ${encode(contentKey)} foo bar`)
       } catch (err) {
         threw = true
         t.match(err.message, /Invalid key: foo/)
@@ -244,7 +241,7 @@ test('with modules', async t => {
     await t.test('no adding new key to profile', async t => {
       let threw = false
       try {
-        await exec(`update ${encode(profileKey)} foo bar`)
+        await execa(`update ${encode(profileKey)} foo bar`)
       } catch (err) {
         threw = true
         t.match(err.message, /Invalid key: foo/)
@@ -255,10 +252,10 @@ test('with modules', async t => {
 })
 
 test('no modules', async t => {
-  const { exec } = createEnv()
+  const { execa } = createEnv()
   let threw = false
   try {
-    await exec('update')
+    await execa('update')
   } catch (err) {
     threw = true
     t.match(err.message, /No writable modules/)

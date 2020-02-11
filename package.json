@@ -42,6 +42,7 @@
     "hypergraph": "./bin/hypergraph.js"
   },
   "devDependencies": {
+    "execa": "^4.0.0",
     "np": "^6.0.0",
     "prettier-standard": "^16.0.0",
     "standard": "^14.3.1",

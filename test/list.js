@@ -6,7 +6,7 @@ const { createEnv } = require('./util')
 const P2PCommons = require('../lib/p2p')
 
 test('list', async t => {
-  const { exec, env } = createEnv()
+  const { execa, env } = createEnv()
 
   const contentTitle = String(Math.random())
   const profileName = String(Math.random())
@@ -19,10 +19,10 @@ test('list', async t => {
   ])
   await p2p.destroy()
 
-  let { stdout } = await exec('list content')
+  let { stdout } = await execa('list content')
   t.ok(stdout.includes(contentTitle))
   t.notOk(stdout.includes(profileName))
-  ;({ stdout } = await exec('list profile'))
+  ;({ stdout } = await execa('list profile'))
   t.notOk(stdout.includes(contentTitle))
   t.ok(stdout.includes(profileName))
 })
