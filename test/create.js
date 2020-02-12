@@ -156,7 +156,7 @@ test('parent content', async t => {
     p2p.init({ type: 'content', title: 'Content' }),
     p2p.init({ type: 'profile', title: 'Name' })
   ])
-  await p2p.register(contentKey, profileKey)
+  await p2p.publish(contentKey, profileKey)
   await p2p.destroy()
   const ps = execa('create content -y -t=t -d -s=Q17737')
   await match(ps.stdout, 'Select parent modules')
