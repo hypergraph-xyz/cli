@@ -7,6 +7,7 @@ const P2P = require('./lib/p2p')
 const ora = require('ora')
 const actions = require('./actions')
 const prompt = require('./lib/prompt')
+const Config = require('./lib/config')
 
 const hypergraph = async argv => {
   let [actionName, ...rawInput] = argv._
@@ -24,6 +25,7 @@ const hypergraph = async argv => {
   }
   const action = actions[actionName]
   const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
+  const config = new Config(env)
 
   let p2p
   if (action.p2p !== false) {
@@ -36,7 +38,7 @@ const hypergraph = async argv => {
     input[name] = rawInput[idx] || (resolve && (await resolve(p2p, { env })))
   }
 
-  await action.handler({ p2p, ...argv, ...input, env })
+  await action.handler({ p2p, ...argv, ...input, env, config })
 
   if (action.p2p !== false) {
     const spinner = ora('Synchronizing network').start()

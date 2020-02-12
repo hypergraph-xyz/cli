@@ -60,6 +60,7 @@ $ hypergraph --help
     list     <type>               List writable modules
     edit     <hash>               Edit main file
     register <content> <profile>  Register content to a profile
+    config   <key> [value]        Change hypergraph configuration
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)

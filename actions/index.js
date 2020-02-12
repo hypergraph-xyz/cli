@@ -7,5 +7,6 @@ module.exports = {
   path: require('./path'),
   list: require('./list'),
   edit: require('./edit'),
-  register: require('./register')
+  register: require('./register'),
+  config: require('./config')
 }
