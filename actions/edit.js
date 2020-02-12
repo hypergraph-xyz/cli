@@ -32,7 +32,7 @@ module.exports = {
   ],
   handler:
     // istanbul ignore next
-    async (p2p, { hash, env }) => {
+    async ({ p2p, hash, env }) => {
       const mod = await p2p.get(hash)
       let main = mod.rawJSON.main
       if (main) {

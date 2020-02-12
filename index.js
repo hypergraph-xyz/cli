@@ -33,7 +33,7 @@ const hypergraph = async argv => {
     input[name] = rawInput[idx] || (resolve && (await resolve(p2p, { env })))
   }
 
-  await action.handler(p2p, { ...argv, ...input, env })
+  await action.handler({ p2p, ...argv, ...input, env })
   const spinner = ora('Synchronizing network').start()
   await p2p.destroy()
   spinner.stop()

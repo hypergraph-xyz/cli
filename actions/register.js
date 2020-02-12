@@ -69,7 +69,7 @@ module.exports = {
       }
     }
   ],
-  handler: async (p2p, { contentKey, profileKey }) => {
+  handler: async ({ p2p, contentKey, profileKey }) => {
     const [content, profile] = await Promise.all([
       p2p.get(contentKey),
       p2p.get(profileKey)

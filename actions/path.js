@@ -17,7 +17,7 @@ module.exports = {
         })
     }
   ],
-  handler: async (_, { hash, env }) => {
+  handler: async ({ hash, env }) => {
     console.log(join(env, encode(hash)))
   }
 }

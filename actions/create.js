@@ -10,10 +10,16 @@ const licenseUrl = 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
 module.exports = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: prompt.type }],
-  handler: async (
+  handler: async ({
     p2p,
-    { type, title, name, description, subtype, yes, parent }
-  ) => {
+    type,
+    title,
+    name,
+    description,
+    subtype,
+    yes,
+    parent
+  }) => {
     if (type === 'profile') {
       const profiles = await p2p.listProfiles()
       if (profiles.find(profile => profile.metadata.isWritable)) {

@@ -27,7 +27,7 @@ module.exports = {
   ],
   handler:
     // istanbul ignore next
-    async (p2p, { hash, env }) => {
+    async ({ p2p, hash, env }) => {
       const mod = await p2p.get(hash)
       await open(`${env}/${encode(hash)}/${mod.rawJSON.main}`)
     }
