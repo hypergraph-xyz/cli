@@ -32,6 +32,7 @@
     "delegates": "^1.0.0",
     "kleur": "^3.0.3",
     "minimist": "^1.2.0",
+    "node-fetch": "^2.6.0",
     "open": "^7.0.0",
     "ora": "^4.0.3",
     "prompts": "^2.1.0",
