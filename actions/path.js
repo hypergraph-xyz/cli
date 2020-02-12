@@ -7,6 +7,7 @@ const { encode } = require('dat-encoding')
 module.exports = {
   title: 'Print module path',
   unlisted: true,
+  p2p: false,
   input: [
     {
       name: 'hash',

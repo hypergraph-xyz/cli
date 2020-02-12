@@ -22,21 +22,27 @@ const hypergraph = async argv => {
         }))
     })
   }
-
-  const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
-  const p2p = new P2P({ baseDir: env, disableSwarm: process.env.CI })
-  await p2p.ready()
-
   const action = actions[actionName]
+  const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
+
+  let p2p
+  if (action.p2p !== false) {
+    p2p = new P2P({ baseDir: env, disableSwarm: process.env.CI })
+    await p2p.ready()
+  }
+
   const input = {}
   for (const [idx, { name, resolve }] of Object.entries(action.input)) {
     input[name] = rawInput[idx] || (resolve && (await resolve(p2p, { env })))
   }
 
   await action.handler({ p2p, ...argv, ...input, env })
-  const spinner = ora('Synchronizing network').start()
-  await p2p.destroy()
-  spinner.stop()
+
+  if (action.p2p !== false) {
+    const spinner = ora('Synchronizing network').start()
+    await p2p.destroy()
+    spinner.stop()
+  }
 }
 
 module.exports = hypergraph
