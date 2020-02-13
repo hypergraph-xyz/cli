@@ -86,16 +86,15 @@ module.exports = {
 
         // parents
         const published = await p2p.listPublished()
-        const choices = published.map(mod => ({
-          title: mod.rawJSON.title,
-          value: mod.rawJSON.url,
-          selected: rawJSON.parents.includes(mod.rawJSON.url)
-        }))
-        if (choices.length) {
+        if (published.length) {
           update.parents = await prompt({
             type: 'multiselect',
             message: 'Parents',
-            choices
+            choices: published.map(mod => ({
+              title: mod.rawJSON.title,
+              value: mod.rawJSON.url,
+              selected: rawJSON.parents.includes(mod.rawJSON.url)
+            }))
           })
         }
       }
