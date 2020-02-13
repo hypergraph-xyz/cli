@@ -33,7 +33,9 @@ module.exports = {
 
     if (key) {
       update[key] = value || ''
-      if (key === 'parents') update[key] = update[key].split(',')
+      if (key === 'parents') {
+        update[key] = update[key].split(',').filter(Boolean)
+      }
     } else {
       const { rawJSON } = await p2p.get(hash)
 
@@ -86,7 +88,9 @@ module.exports = {
 
         // parents
         const published = await p2p.listPublished()
-        const potentialParents = published.filter(mod => mod.rawJSON.url !== rawJSON.url)
+        const potentialParents = published
+          .filter(mod => mod.rawJSON.url !== rawJSON.url)
+          .sort((a, b) => a.rawJSON.title.localeCompare(b.rawJSON.title))
         if (potentialParents.length) {
           update.parents = await prompt({
             type: 'multiselect',

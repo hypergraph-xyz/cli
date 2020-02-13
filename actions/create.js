@@ -59,17 +59,17 @@ module.exports = {
       })
     }
 
-    let parents = []
+    let parents
     if (Array.isArray(parent)) {
       parents = parent
     } else if (typeof parent === 'string') {
-      parents = [parent]
+      parents = [parent].filter(Boolean)
     }
 
     if (type === 'content') {
       if (!subtype) subtype = await prompt.subType()
 
-      if (!parents.length) {
+      if (!parents) {
         const published = await p2p.listPublished()
         const choices = published.map(mod => ({
           title: mod.rawJSON.title,

@@ -4,7 +4,7 @@ require('../lib/fs-promises')
 const { test } = require('tap')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
-const { encode } = require('dat-encoding')
+const { encode, decode } = require('dat-encoding')
 const { createEnv } = require('./util')
 const P2PCommons = require('@p2pcommons/sdk-js')
 
@@ -143,6 +143,94 @@ test('with modules', async t => {
         authors: [],
         parents: []
       }
+    })
+  })
+
+  await t.test('parents', async t => {
+    const parent1Key = contentKey
+    await execa(`publish ${encode(parent1Key)} ${encode(profileKey)}`)
+
+    const { stdout } = await execa('create content -t=z -d -s=Q17737 -p -y')
+    const parent2Key = decode(stdout)
+    await fs.writeFile(`${env}/${encode(parent2Key)}/file.txt`, 'hi')
+    await execa(`update ${encode(parent2Key)} main file.txt`)
+    await execa(`publish ${encode(parent2Key)} ${encode(profileKey)}`)
+
+    await t.test('prompt', async t => {
+      const { stdout } = await execa('create content -t=t -d -s=Q17737 -p -y')
+      const childKey = decode(stdout)
+
+      const ps = execa(`update ${encode(childKey)}`)
+      await match(ps.stdout, 'Title')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Description')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'subtype')
+      ps.stdin.write('\n')
+      await match(ps.stdout, 'Parents')
+      ps.stdin.write(' \n')
+      await ps
+
+      const meta = JSON.parse(
+        await fs.readFile(`${env}/${encode(childKey)}/dat.json`, 'utf8')
+      )
+      t.deepEqual(meta, {
+        title: 't',
+        description: '',
+        url: `dat://${encode(childKey)}`,
+        links: {
+          license: [
+            {
+              href:
+                'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+            }
+          ],
+          spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+        },
+        p2pcommons: {
+          type: 'content',
+          subtype: 'Q17737',
+          main: '',
+          authors: [`dat://${encode(profileKey)}`],
+          parents: [`dat://${encode(parent1Key)}`]
+        }
+      })
+
+      await t.test('arguments', async t => {
+        const { stdout } = await execa('create content -t=t -d -s=Q17737 -p -y')
+        const childKey = decode(stdout)
+
+        await execa(
+          `update ${encode(childKey)} parents ${encode(parent1Key)},${encode(
+            parent2Key
+          )}`
+        )
+
+        const meta = JSON.parse(
+          await fs.readFile(`${env}/${encode(childKey)}/dat.json`, 'utf8')
+        )
+        t.deepEqual(meta, {
+          title: 't',
+          description: '',
+          url: `dat://${encode(childKey)}`,
+          links: {
+            license: [
+              {
+                href:
+                  'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
+              }
+            ],
+            spec: [{ href: 'https://p2pcommons.com/specs/module/0.2.0' }]
+          },
+          p2pcommons: {
+            type: 'content',
+            subtype: 'Q17737',
+            main: '',
+            authors: [profileKey],
+            parents: [encode(parent1Key), encode(parent2Key)]
+          }
+        })
+      })
     })
   })
 
