@@ -77,12 +77,12 @@ module.exports = {
           ])
           const choices = []
           for (const mod of content) {
-            const registered = profiles.find(profile =>
+            const published = profiles.find(profile =>
               profile.rawJSON.contents.find(
                 url => url.split('+')[0] === mod.rawJSON.url
               )
             )
-            if (registered) {
+            if (published) {
               choices.push({
                 title: mod.rawJSON.title,
                 value: mod.rawJSON.url,
