@@ -3,7 +3,6 @@
 const prompt = require('../lib/prompt')
 const readdirp = require('readdirp')
 const validate = require('../lib/validate')
-const capitalize = require('capitalize')
 const UserError = require('../lib/user-error')
 const { encode } = require('dat-encoding')
 
@@ -34,45 +33,76 @@ module.exports = {
 
     if (key) {
       update[key] = value || ''
+      if (key === 'parents') {
+        update[key] = update[key].split(',').filter(Boolean)
+      }
     } else {
       const { rawJSON } = await p2p.get(hash)
-      const keys = [
-        rawJSON.type === 'content' ? 'title' : 'name',
-        'description',
-        'main'
-      ]
-      if (rawJSON.type === 'content') keys.push('subtype')
 
-      for (const key of keys) {
-        if (key === 'main') {
-          const entries = await readdirp.promise(
-            `${env}/${encode(rawJSON.url)}/`,
-            {
-              fileFilter: ['!dat.json', '!.*'],
-              directoryFilter: ['.dat']
-            }
-          )
-          if (!entries.length) {
-            console.log('No main file to set available')
-            continue
-          }
-          update.main = await prompt({
-            type: 'select',
-            message: 'Main',
-            choices: entries.map(entry => ({
-              title: entry.path,
-              value: entry.path
+      if (rawJSON.type === 'content') {
+        // title
+        update.title = await prompt({
+          type: 'text',
+          message: 'Title',
+          initial: rawJSON.title,
+          validate: validate.title
+        })
+      } else {
+        // name
+        update.name = await prompt({
+          type: 'text',
+          message: 'Name',
+          initial: rawJSON.name,
+          validate: validate.name
+        })
+      }
+
+      // description
+      update.description = await prompt({
+        type: 'text',
+        message: 'Description',
+        initial: rawJSON.description
+      })
+
+      // main
+      const entries = await readdirp.promise(`${env}/${encode(rawJSON.url)}/`, {
+        fileFilter: ['!dat.json', '!.*'],
+        directoryFilter: ['.dat']
+      })
+      if (entries.length) {
+        update.main = await prompt({
+          type: 'select',
+          message: 'Main',
+          choices: entries.map(entry => ({
+            title: entry.path,
+            value: entry.path
+          }))
+        })
+      } else {
+        console.log('No main file to set available')
+      }
+
+      if (rawJSON.type === 'content') {
+        // subtype
+        update.subtype = await prompt.subType(rawJSON.subtype)
+
+        // parents
+        const published = await p2p.listPublished()
+        const potentialParents = published
+          .filter(mod => mod.rawJSON.url !== rawJSON.url)
+          .sort((a, b) => a.rawJSON.title.localeCompare(b.rawJSON.title))
+        if (potentialParents.length) {
+          update.parents = await prompt({
+            type: 'multiselect',
+            message: 'Parents',
+            choices: potentialParents.map(mod => ({
+              title: mod.rawJSON.title,
+              value: mod.rawJSON.url,
+              selected: rawJSON.parents.includes(mod.rawJSON.url)
             }))
           })
-        } else if (key === 'subtype') {
-          update.subtype = await prompt.subType(rawJSON.subtype)
         } else {
-          update[key] = await prompt({
-            type: 'text',
-            message: capitalize(key),
-            initial: rawJSON[key],
-            validate: validate[key]
-          })
+          console.log('No parent module to set available')
         }
       }
     }
