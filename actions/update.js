@@ -86,16 +86,19 @@ module.exports = {
 
         // parents
         const published = await p2p.listPublished()
-        if (published.length) {
+        const potentialParents = published.filter(mod => mod.rawJSON.url !== rawJSON.url)
+        if (potentialParents.length) {
           update.parents = await prompt({
             type: 'multiselect',
             message: 'Parents',
-            choices: published.map(mod => ({
+            choices: potentialParents.map(mod => ({
               title: mod.rawJSON.title,
               value: mod.rawJSON.url,
               selected: rawJSON.parents.includes(mod.rawJSON.url)
             }))
           })
+        } else {
+          console.log('No parent module to set available')
         }
       }
     }
