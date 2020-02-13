@@ -71,25 +71,12 @@ module.exports = {
         } else if (key === 'subtype') {
           update.subtype = await prompt.subType(rawJSON.subtype)
         } else if (key === 'parents') {
-          const [content, profiles] = await Promise.all([
-            p2p.listContent(),
-            p2p.listProfiles()
-          ])
-          const choices = []
-          for (const mod of content) {
-            const published = profiles.find(profile =>
-              profile.rawJSON.contents.find(
-                url => url.split('+')[0] === mod.rawJSON.url
-              )
-            )
-            if (published) {
-              choices.push({
-                title: mod.rawJSON.title,
-                value: mod.rawJSON.url,
-                selected: rawJSON.parents.includes(mod.rawJSON.url)
-              })
-            }
-          }
+          const published = await p2p.listPublished()
+          const choices = published.map(mod => ({
+            title: mod.rawJSON.title,
+            value: mod.rawJSON.url,
+            selected: rawJSON.parents.includes(mod.rawJSON.url)
+          }))
           if (choices.length) {
             update.parents = await prompt({
               type: 'multiselect',
