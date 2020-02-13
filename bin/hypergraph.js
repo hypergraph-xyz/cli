@@ -27,7 +27,8 @@ const help = `
     path     <hash>               Print module path
     list     <type>               List writable modules
     edit     <hash>               Edit main file
-    register <content> <profile>  Register content to a profile
+    publish  <content> <profile>  Publish content to a profile
+    config   <key> [value]        Change hypergraph configuration
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
@@ -58,7 +59,6 @@ const argv = minimist(process.argv.slice(2), {
     description: 'd',
     yes: 'y',
     subtype: 's',
-    register: 'r',
     parent: 'p'
   },
   string: ['env', 'title', 'name', 'description', 'parent']

@@ -29,7 +29,7 @@ module.exports = {
     { name: 'key' },
     { name: 'value' }
   ],
-  handler: async (p2p, { env, hash, key, value }) => {
+  handler: async ({ p2p, env, hash, key, value }) => {
     const update = { url: hash }
 
     if (key) {

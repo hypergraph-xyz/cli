@@ -4,7 +4,7 @@
   "description": "Command Line Interface (CLI) for a p2p public collaborative projects",
   "main": "index.js",
   "scripts": {
-    "test": "prettier-standard && standard && tap --timeout=90 --test-ignore=util.js",
+    "test": "prettier-standard && standard && tap --timeout=300 --test-ignore=util.js",
     "postinstall": "node ./bin/autocomplete.js",
     "release": "np"
   },
@@ -26,11 +26,10 @@
   "homepage": "https://github.com/hypergraph-xyz/cli#readme",
   "dependencies": {
     "@hypergraph-xyz/editor": "^1.1.0",
-    "@p2pcommons/sdk-js": "^0.4.3",
+    "@p2pcommons/sdk-js": "^0.5.0",
     "capitalize": "^2.0.0",
     "dat-encoding": "^5.0.1",
     "delegates": "^1.0.0",
-    "fs.promises": "^0.1.2",
     "kleur": "^3.0.3",
     "minimist": "^1.2.0",
     "open": "^7.0.0",
@@ -43,7 +42,8 @@
     "hypergraph": "./bin/hypergraph.js"
   },
   "devDependencies": {
-    "np": "^5.1.2",
+    "execa": "^4.0.0",
+    "np": "^6.0.0",
     "prettier-standard": "^16.0.0",
     "standard": "^14.3.1",
     "stream-match": "^1.2.1",

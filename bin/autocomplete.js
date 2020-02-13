@@ -4,7 +4,7 @@
 require('../lib/fs-promises')
 const { platform } = require('os')
 const { promises: fs } = require('fs')
-const { actions } = require('..')
+const actions = require('../actions')
 const kleur = require('kleur')
 
 const actionNames = Object.keys(actions).join(' ')

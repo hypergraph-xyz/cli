@@ -8,11 +8,11 @@ const P2PCommons = require('@p2pcommons/sdk-js')
 
 test('main', async t => {
   await t.test('no modules', async t => {
-    const { exec } = createEnv()
+    const { execa } = createEnv()
     let err
 
     try {
-      await exec('main')
+      await execa('main')
     } catch (_err) {
       err = _err
     }
@@ -22,7 +22,7 @@ test('main', async t => {
   })
 
   await t.test('with modules', async t => {
-    const { spawn, env } = createEnv()
+    const { execa, env } = createEnv()
 
     const p2p = new P2PCommons({
       baseDir: env,
@@ -37,7 +37,7 @@ test('main', async t => {
     })
     await p2p.destroy()
 
-    const ps = spawn('main')
+    const ps = execa('main')
     await match(ps.stdout, 'Select module')
     ps.kill()
   })

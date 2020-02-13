@@ -1,12 +1,12 @@
-name: Node CI
+name: ci
 on: [push]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
-        os: [ubuntu-latest, windows-latest]
+        node-version: [12.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }}
@@ -15,9 +15,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Use latest npm
         run: npm install -g npm@latest
-      - name: npm install, build, and test
-        run: |
-          npm ci
-          npm test
+      - name: npm install
+        run: npm ci
+      - name: npm test
+        run: npm test -- --bail
         env:
           CI: true

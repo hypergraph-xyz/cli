@@ -7,7 +7,7 @@ const { promises: fs } = require('fs')
 const prompt = require('../lib/prompt')
 
 module.exports = {
-  title: 'Register content to a profile',
+  title: 'Publish content to a profile',
   input: [
     {
       name: 'contentKey',
@@ -69,18 +69,18 @@ module.exports = {
       }
     }
   ],
-  handler: async (p2p, { contentKey, profileKey }) => {
+  handler: async ({ p2p, contentKey, profileKey }) => {
     const [content, profile] = await Promise.all([
       p2p.get(contentKey),
       p2p.get(profileKey)
     ])
-    await p2p.register(contentKey, profileKey)
+    await p2p.publish(contentKey, profileKey)
 
     console.log(
       kleur.green('✔'),
       kleur.cyan().bold(content.rawJSON.title),
       `(version ${kleur.bold(content.metadata.version)})`,
-      'registered to',
+      'published to',
       kleur.cyan().bold(profile.rawJSON.name)
     )
   }

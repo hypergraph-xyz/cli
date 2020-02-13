@@ -14,7 +14,7 @@ const moduleHeader = mod => {
 module.exports = {
   title: 'Read metadata',
   input: [{ name: 'hash', resolve: prompt.modules }],
-  handler: async (p2p, { hash }) => {
+  handler: async ({ p2p, hash }) => {
     const mod = await p2p.get(hash)
 
     console.log(moduleHeader(mod))

@@ -7,6 +7,7 @@ const { encode } = require('dat-encoding')
 module.exports = {
   title: 'Print module path',
   unlisted: true,
+  p2p: false,
   input: [
     {
       name: 'hash',
@@ -17,7 +18,7 @@ module.exports = {
         })
     }
   ],
-  handler: async (_, { hash, env }) => {
+  handler: async ({ hash, env }) => {
     console.log(join(env, encode(hash)))
   }
 }

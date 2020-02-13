@@ -10,10 +10,16 @@ const licenseUrl = 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
 module.exports = {
   title: 'Create a module',
   input: [{ name: 'type', resolve: prompt.type }],
-  handler: async (
+  handler: async ({
     p2p,
-    { type, title, name, description, subtype, yes, parent }
-  ) => {
+    type,
+    title,
+    name,
+    description,
+    subtype,
+    yes,
+    parent
+  }) => {
     if (type === 'profile') {
       const profiles = await p2p.listProfiles()
       if (profiles.find(profile => profile.metadata.isWritable)) {
@@ -70,12 +76,12 @@ module.exports = {
         ])
         const choices = []
         for (const mod of content) {
-          const registered = profiles.find(profile =>
+          const published = profiles.find(profile =>
             profile.rawJSON.contents.find(
               url => url.split('+')[0] === mod.rawJSON.url
             )
           )
-          if (registered) {
+          if (published) {
             choices.push({
               title: mod.rawJSON.title,
               value: mod.rawJSON.url

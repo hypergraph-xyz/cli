@@ -4,6 +4,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Code Style Prettier Standard](https://img.shields.io/badge/format-prettier_standard-ff69b4.svg)](https://github.com/sheerun/prettier-standard)
 [![Greenkeeper badge](https://badges.greenkeeper.io/hypergraph-xyz/cli.svg)](https://greenkeeper.io/)
+![ci](https://github.com/hypergraph-xyz/cli/workflows/ci/badge.svg)
 
 Command Line Interface (CLI) utilising the [peer-to-peer commons](https://p2pcommons.com).
 
@@ -58,7 +59,8 @@ $ hypergraph --help
     path     <hash>               Print module path
     list     <type>               List writable modules
     edit     <hash>               Edit main file
-    register <content> <profile>  Register content to a profile
+    publish  <content> <profile>  Publish content to a profile
+    config   <key> [value]        Change hypergraph configuration
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)

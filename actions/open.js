@@ -9,7 +9,7 @@ module.exports = {
   input: [{ name: 'hash', resolve: prompt.modules }],
   handler:
     // istanbul ignore next
-    async (_, { hash, env }) => {
+    async ({ hash, env }) => {
       await open(`${env}/${encode(hash)}`)
     }
 }

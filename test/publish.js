@@ -4,12 +4,12 @@ require('../lib/fs-promises')
 const { test } = require('tap')
 const match = require('stream-match')
 const { encode } = require('dat-encoding')
-const { createEnv, onExit } = require('./util')
+const { createEnv } = require('./util')
 const P2PCommons = require('@p2pcommons/sdk-js')
 const { promises: fs } = require('fs')
 
 test('with modules', async t => {
-  const { spawn, exec, env } = createEnv()
+  const { execa, env } = createEnv()
 
   const p2p = new P2PCommons({
     baseDir: env,
@@ -33,26 +33,25 @@ test('with modules', async t => {
   await fs.writeFile(`${env}/${contentKey.slice('dat://'.length)}/m`, '')
 
   await t.test('prompt', async t => {
-    const ps = spawn('register')
+    const ps = execa('publish')
     await match(ps.stdout, 'Select content module')
     ps.stdin.write('\n')
     await match(ps.stdout, 'Select profile module')
     ps.stdin.write('\n')
-    await match(ps.stdout, 'registered to')
-    const code = await onExit(ps)
-    t.equal(code, 0)
+    await match(ps.stdout, 'published to')
+    await ps
   })
 
-  await t.test('register <content> <profile>', async t => {
-    await exec(`register ${encode(contentKey)} ${encode(profileKey)}`)
+  await t.test('publish <content> <profile>', async t => {
+    await execa(`publish ${encode(contentKey)} ${encode(profileKey)}`)
   })
 })
 
 test('no content modules', async t => {
-  const { exec } = createEnv()
+  const { execa } = createEnv()
   let threw = false
   try {
-    await exec('register')
+    await execa('publish')
   } catch (err) {
     threw = true
     t.match(err.message, /No content modules/)
@@ -61,7 +60,7 @@ test('no content modules', async t => {
 })
 
 test('no profile modules', async t => {
-  const { exec, env } = createEnv()
+  const { execa, env } = createEnv()
   const p2p = new P2PCommons({
     baseDir: env,
     disableSwarm: true
@@ -71,7 +70,7 @@ test('no profile modules', async t => {
   await p2p.destroy()
   let threw = false
   try {
-    await exec('register')
+    await execa('publish')
   } catch (err) {
     threw = true
     t.match(err.message, /No profile modules/)

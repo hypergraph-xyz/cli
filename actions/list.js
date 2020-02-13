@@ -6,7 +6,7 @@ module.exports = {
   title: 'List writable modules',
   unlisted: true,
   input: [{ name: 'type', resolve: prompt.type }],
-  handler: async (p2p, { type }) => {
+  handler: async ({ p2p, type }) => {
     const fn = {
       content: 'listContent',
       profile: 'listProfiles'
