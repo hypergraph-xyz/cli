@@ -143,6 +143,6 @@ module.exports = {
     )
     if (!publishRes.ok) throw new Error(await publishRes.text())
 
-    console.log('Module successfully published to the vault!')
+    console.log('Module successfully published to the Vault!')
   }
 }
