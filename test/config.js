@@ -6,7 +6,7 @@ const { createEnv } = require('./util')
 test('config', async t => {
   const { execa } = createEnv()
   let { stdout } = await execa('config vaultUrl')
-  t.equal(stdout, 'http://localhost:8080')
+  t.equal(stdout, 'undefined')
 
   await execa('config vaultUrl http://example.com')
   ;({ stdout } = await execa('config vaultUrl'))
