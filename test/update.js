@@ -148,13 +148,13 @@ test('with modules', async t => {
 
   await t.test('parents', async t => {
     const parent1Key = contentKey
-    await execa(`publish ${encode(parent1Key)} ${encode(profileKey)}`)
+    await execa(`publish ${encode(profileKey)} ${encode(parent1Key)}`)
 
     const { stdout } = await execa('create content -t=z -d -s=Q17737 -p -y')
     const parent2Key = decode(stdout)
     await fs.writeFile(`${env}/${encode(parent2Key)}/file.txt`, 'hi')
     await execa(`update ${encode(parent2Key)} main file.txt`)
-    await execa(`publish ${encode(parent2Key)} ${encode(profileKey)}`)
+    await execa(`publish ${encode(profileKey)} ${encode(parent2Key)}`)
 
     await t.test('prompt', async t => {
       const { stdout } = await execa('create content -t=t -d -s=Q17737 -p -y')

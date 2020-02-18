@@ -17,13 +17,30 @@ module.exports = {
   title: 'Publish content to a profile',
   input: [
     {
+      name: 'profileKey',
+      resolve: async p2p => {
+        const profileMods = await p2p.listProfiles()
+        if (!profileMods.length) throw new UserError('No profile modules')
+        const contentMods = await p2p.listContent()
+        if (!contentMods.length) throw new UserError('No content modules')
+
+        return prompt({
+          type: 'select',
+          message: 'Select profile module',
+          warn: 'Not writable',
+          choices: profileMods.map(mod => ({
+            title: mod.rawJSON.title,
+            value: mod.rawJSON.url,
+            disabled: !mod.metadata.isWritable
+          }))
+        })
+      }
+    },
+    {
       name: 'contentKey',
       resolve: async (p2p, { env }) => {
         const mods = await p2p.listContent()
         if (!mods.length) throw new UserError('No content modules')
-
-        const profileMods = await p2p.listProfiles()
-        if (!profileMods.length) throw new UserError('No profile modules')
 
         const choices = []
         for (const mod of mods) {
@@ -56,22 +73,6 @@ module.exports = {
           message: 'Select content module',
           warn: 'Need valid .main and .title',
           choices
-        })
-      }
-    },
-    {
-      name: 'profileKey',
-      resolve: async p2p => {
-        const mods = await p2p.listProfiles()
-        return prompt({
-          type: 'select',
-          message: 'Select profile module',
-          warn: 'Not writable',
-          choices: mods.map(mod => ({
-            title: mod.rawJSON.title,
-            value: mod.rawJSON.url,
-            disabled: !mod.metadata.isWritable
-          }))
         })
       }
     }

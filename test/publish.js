@@ -34,46 +34,46 @@ test('with modules', async t => {
 
   await t.test('prompt', async t => {
     const ps = execa('publish')
-    await match(ps.stdout, 'Select content module')
-    ps.stdin.write('\n')
     await match(ps.stdout, 'Select profile module')
+    ps.stdin.write('\n')
+    await match(ps.stdout, 'Select content module')
     ps.stdin.write('\n')
     await match(ps.stdout, 'published to')
     await ps
   })
 
-  await t.test('publish <content> <profile>', async t => {
-    await execa(`publish ${encode(contentKey)} ${encode(profileKey)}`)
+  await t.test('publish <profile> <content>', async t => {
+    await execa(`publish ${encode(profileKey)} ${encode(contentKey)}`)
   })
 })
 
-test('no content modules', async t => {
+test('no profile modules', async t => {
   const { execa } = createEnv()
   let threw = false
   try {
     await execa('publish')
   } catch (err) {
     threw = true
-    t.match(err.message, /No content modules/)
+    t.match(err.message, /No profile modules/)
   }
   t.ok(threw)
 })
 
-test('no profile modules', async t => {
+test('no content modules', async t => {
   const { execa, env } = createEnv()
   const p2p = new P2PCommons({
     baseDir: env,
     disableSwarm: true
   })
   await p2p.ready()
-  await p2p.init({ type: 'content', title: 't' })
+  await p2p.init({ type: 'profile', title: 't' })
   await p2p.destroy()
   let threw = false
   try {
     await execa('publish')
   } catch (err) {
     threw = true
-    t.match(err.message, /No profile modules/)
+    t.match(err.message, /No content modules/)
   }
   t.ok(threw)
 })

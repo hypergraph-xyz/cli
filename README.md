@@ -59,7 +59,7 @@ $ hypergraph --help
     path     <hash>               Print module path
     list     <type>               List writable modules
     edit     <hash>               Edit main file
-    publish  <content> <profile>  Publish content to a profile
+    publish  <profile> <content>  Publish content to a profile
     config   <key> [value]        Change hypergraph configuration
     logout                        Log out of Vault account
 
