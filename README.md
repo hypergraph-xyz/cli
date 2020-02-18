@@ -61,6 +61,7 @@ $ hypergraph --help
     edit     <hash>               Edit main file
     publish  <content> <profile>  Publish content to a profile
     config   <key> [value]        Change hypergraph configuration
+    logout                        Log out of Vault account
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
