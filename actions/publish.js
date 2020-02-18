@@ -112,16 +112,16 @@ module.exports = {
       profile.rawJSON.name
     )
 
-    if (!(await config.get('vaultUrl'))) return
+    if (!config.get('vaultUrl')) return
     const publishToVault = await prompt({
       type: 'confirm',
       message: `Also publish to the Vault at ${kleur.cyan(
-        await config.get('vaultUrl')
+        config.get('vaultUrl')
       )}?`
     })
     if (!publishToVault) return
 
-    if (!(await config.get('vaultToken'))) {
+    if (!config.get('vaultToken')) {
       const email = await prompt({
         type: 'text',
         message: 'Enter email to authenticate'
@@ -132,7 +132,7 @@ module.exports = {
       await promisify(server.listen.bind(server))()
       const callback = `http://localhost:${server.address().port}`
 
-      const url = `${await config.get('vaultUrl')}/authenticate`
+      const url = `${config.get('vaultUrl')}/authenticate`
       const authenticateRes = await fetch(url, {
         method: 'POST',
         headers: {
@@ -156,19 +156,16 @@ module.exports = {
       log.success('Successfully logged in!')
     }
 
-    const publishRes = await fetch(
-      `${await config.get('vaultUrl')}/api/modules`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${await config.get('vaultToken')}`
-        },
-        body: JSON.stringify({
-          url: `dat://${encode(contentKey)}+${content.metadata.version}`
-        })
-      }
-    )
+    const publishRes = await fetch(`${config.get('vaultUrl')}/api/modules`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.get('vaultToken')}`
+      },
+      body: JSON.stringify({
+        url: `dat://${encode(contentKey)}+${content.metadata.version}`
+      })
+    })
     if (!publishRes.ok) throw new Error(await publishRes.text())
 
     console.log('Module successfully published to the Vault!')

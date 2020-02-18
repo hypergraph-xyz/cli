@@ -28,7 +28,7 @@ module.exports = {
     if (value) {
       await config.set(key, value)
     } else {
-      console.log(await config.get(key))
+      console.log(config.get(key))
     }
   }
 }
