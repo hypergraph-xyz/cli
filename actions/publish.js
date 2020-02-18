@@ -93,7 +93,9 @@ module.exports = {
     if (!(await config.get('vaultUrl'))) return
     const publishToVault = await prompt({
       type: 'confirm',
-      message: `Also publish to the Vault at ${await config.get('vaultUrl')}?`
+      message: `Also publish to the Vault at ${kleur.cyan(
+        await config.get('vaultUrl')
+      )}?`
     })
     if (!publishToVault) return
 
