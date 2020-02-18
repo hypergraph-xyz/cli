@@ -4,6 +4,7 @@ const UserError = require('../lib/user-error')
 const kleur = require('kleur')
 const prompt = require('../lib/prompt')
 const validate = require('../lib/validate')
+const log = require('../lib/log')
 
 const licenseUrl = 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
 
@@ -30,12 +31,9 @@ module.exports = {
     if (type === 'content') {
       const profiles = await p2p.listProfiles()
       if (!profiles.find(profile => profile.metadata.isWritable)) {
-        console.error(kleur.yellow('! Please create your profile first'))
+        log.info('Please create your profile first')
         await module.exports.handler(p2p, { type: 'profile', yes })
-        console.error(
-          kleur.bold().green('✔'),
-          kleur.green('Profile created! Now creating content')
-        )
+        log.success('Profile created! Now creating content')
       }
     }
 

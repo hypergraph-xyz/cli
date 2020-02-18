@@ -111,7 +111,7 @@ test('create content', async t => {
 test('no content without profile allowed', async t => {
   const { execa } = createEnv()
   const ps = execa('create content -y -t=t -d -s=Q17737')
-  await match(ps.stderr, 'create your profile first')
+  await match(ps.stdout, 'create your profile first')
   ps.stdin.write('Julian\n')
   await match(ps.stdout, 'Description')
   ps.stdin.write('\n')

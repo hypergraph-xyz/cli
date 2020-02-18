@@ -10,8 +10,8 @@ const http = require('http')
 const { promisify } = require('util')
 const { once } = require('events')
 const jsonBody = require('body/json')
-const chalk = require('chalk')
 const ora = require('ora')
+const log = require('../lib/log')
 
 module.exports = {
   title: 'Publish content to a profile',
@@ -83,12 +83,11 @@ module.exports = {
     ])
     await p2p.publish(contentKey, profileKey)
 
-    console.log(
-      kleur.green('✔'),
-      kleur.cyan().bold(content.rawJSON.title),
+    log.success(
+      content.rawJSON.title,
       `(version ${kleur.bold(content.metadata.version)})`,
       'published to',
-      kleur.cyan().bold(profile.rawJSON.name)
+      profile.rawJSON.name
     )
 
     if (!(await config.get('vaultUrl'))) return
@@ -121,8 +120,8 @@ module.exports = {
       const { testWords } = await authenticateRes.json()
       spinner.stop()
 
-      console.log('Please check your email for an authentication link.')
-      console.log(`The email must contain "${chalk.bold(testWords)}".`)
+      log.info('Please check your email for an authentication link.')
+      log.info(`The email must contain "${kleur.bold(testWords)}".`)
 
       const [req, res] = await once(server, 'request')
       const { token } = await promisify(jsonBody)(req)
@@ -130,6 +129,7 @@ module.exports = {
       server.close()
 
       await config.set('vaultToken', token)
+      log.success('Successfully logged in!')
     }
 
     const publishRes = await fetch(

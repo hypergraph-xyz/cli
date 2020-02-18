@@ -12,7 +12,7 @@ const updateNotifier = require('update-notifier')
 const {
   errors: { ValidationError, InvalidKeyError }
 } = require('../lib/p2p')
-const kleur = require('kleur')
+const log = require('../lib/log')
 
 const help = `
   Usage
@@ -80,13 +80,13 @@ updateNotifier({ pkg }).notify()
 hypergraph(argv).catch(err => {
   // istanbul ignore else
   if (err instanceof ValidationError) {
-    console.error(`${kleur.red('✖')} Invalid ${err.key}`)
+    log.error(`Invalid ${err.key}`)
   } else if (err instanceof UserError || err instanceof InvalidKeyError) {
     if (err.message) {
-      console.error(`${kleur.red('✖')} ${err.message}`)
+      log.error(err.message)
     }
   } else {
-    console.error(err)
+    log.error(err.message)
   }
 
   process.exit(1)
