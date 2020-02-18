@@ -11,6 +11,7 @@ const { promisify } = require('util')
 const { once } = require('events')
 const jsonBody = require('body/json')
 const chalk = require('chalk')
+const ora = require('ora')
 
 module.exports = {
   title: 'Publish content to a profile',
@@ -103,6 +104,7 @@ module.exports = {
         message: 'Enter email to authenticate'
       })
 
+      const spinner = ora('Sending email').start()
       const server = http.createServer()
       await promisify(server.listen.bind(server))()
       const callback = `http://localhost:${server.address().port}`
@@ -117,6 +119,8 @@ module.exports = {
         body: JSON.stringify({ email, callback })
       })
       const { testWords } = await authenticateRes.json()
+      spinner.stop()
+
       console.log('Please check your email for an authentication link.')
       console.log(`The email must contain "${chalk.bold(testWords)}".`)
 
