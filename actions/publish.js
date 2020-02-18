@@ -38,23 +38,36 @@ module.exports = {
     },
     {
       name: 'contentKey',
-      resolve: async (p2p, { env }) => {
-        const mods = await p2p.listContent()
-        if (!mods.length) throw new UserError('No content modules')
+      resolve: async (p2p, { env, profileKey }) => {
+        const [contentMods, profileMod] = await Promise.all([
+          p2p.listContent(),
+          p2p.get(profileKey)
+        ])
+        if (!contentMods.length) throw new UserError('No content modules')
 
         const choices = []
-        for (const mod of mods) {
+        for (const contentMod of contentMods) {
           const choice = {
-            title: mod.rawJSON.title,
-            value: mod.rawJSON.url,
+            title: contentMod.rawJSON.title,
+            value: contentMod.rawJSON.url,
             disabled: false
           }
-          if (!mod.rawJSON.title || !mod.rawJSON.main) {
+          if (
+            !contentMod.rawJSON.title ||
+            !contentMod.rawJSON.main ||
+            profileMod.rawJSON.contents.find(publishedUrl => {
+              const [publishedKey, publishedVersion] = publishedUrl.split('+')
+              return (
+                encode(publishedKey) === encode(contentMod.rawJSON.url) &&
+                Number(publishedVersion) === contentMod.metadata.version
+              )
+            })
+          ) {
             choice.disabled = true
           } else {
             try {
-              const path = `${env}/${encode(mod.rawJSON.url)}/${
-                mod.rawJSON.main
+              const path = `${env}/${encode(contentMod.rawJSON.url)}/${
+                contentMod.rawJSON.main
               }`
               await fs.stat(path)
             } catch (err) {
@@ -63,6 +76,14 @@ module.exports = {
           }
           choices.push(choice)
         }
+
+        const publishableChoices = choices.filter(choice => !choice.disabled)
+        if (!publishableChoices.length) {
+          throw new UserError(
+            'No unpublished module with valid .main and .title'
+          )
+        }
+
         choices.sort(
           /* istanbul ignore next */
           (a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1)
@@ -71,7 +92,7 @@ module.exports = {
         return prompt({
           type: 'select',
           message: 'Select content module',
-          warn: 'Need valid .main and .title',
+          warn: 'Need unpublished module with valid .main and .title',
           choices
         })
       }

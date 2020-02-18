@@ -35,7 +35,8 @@ const hypergraph = async argv => {
 
   const input = {}
   for (const [idx, { name, resolve }] of Object.entries(action.input || [])) {
-    input[name] = rawInput[idx] || (resolve && (await resolve(p2p, { env })))
+    input[name] =
+      rawInput[idx] || (resolve && (await resolve(p2p, { env, ...input })))
   }
 
   await action.handler({ p2p, ...argv, ...input, env, config })
