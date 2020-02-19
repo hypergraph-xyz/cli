@@ -13,6 +13,7 @@ const {
   errors: { ValidationError, InvalidKeyError }
 } = require('../lib/p2p')
 const log = require('../lib/log')
+const actions = require('../actions')
 
 const help = `
   Usage
