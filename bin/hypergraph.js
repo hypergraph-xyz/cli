@@ -22,6 +22,7 @@ const help = `
     create   <type>               Create a module
     read     <hash> [key]         Read a module's metadata
     update   <hash> [key value]   Update a module's metadata
+    delete   <hash>               Delete a content module
     open     <hash>               Open a module's folder
     main     <hash>               Open a module's main file
     path     <hash>               Print module path
