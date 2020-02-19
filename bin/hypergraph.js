@@ -13,23 +13,25 @@ const {
   errors: { ValidationError, InvalidKeyError }
 } = require('../lib/p2p')
 const log = require('../lib/log')
+const actions = require('../actions')
 
 const help = `
   Usage
     $ hypergraph <action> <input>
 
   Actions
-    create   <type>               Create a module
-    read     <hash> [key]         Read a module's metadata
-    update   <hash> [key value]   Update a module's metadata
-    open     <hash>               Open a module's folder
-    main     <hash>               Open a module's main file
-    path     <hash>               Print module path
-    list     <type>               List writable modules
-    edit     <hash>               Edit main file
-    publish  <profile> <content>  Publish content to a profile
-    config   <key> [value]        Change hypergraph configuration
-    logout                        Log out of Vault account
+    create    <type>                Create a module
+    read      <hash> [key]          Read a module's metadata
+    update    <hash> [key value]    Update a module's metadata
+    open      <hash>                Open a module's folder
+    main      <hash>                Open a module's main file
+    path      <hash>                Print module path
+    list      <type>                List writable modules
+    edit      <hash>                Edit main file
+    publish   <profile> <content>   Publish content to a profile
+    unpublish <profile> <content>   Unpublish content from a profile
+    config    <key> [value]         Change hypergraph configuration
+    logout                          Log out of Vault account
 
   Options
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
