@@ -86,7 +86,7 @@ hypergraph(argv).catch(err => {
       log.error(err.message)
     }
   } else {
-    log.error(err.message)
+    log.error(err.stack)
   }
 
   process.exit(1)
