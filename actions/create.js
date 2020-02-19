@@ -32,7 +32,7 @@ module.exports = {
       const profiles = await p2p.listProfiles()
       if (!profiles.find(profile => profile.metadata.isWritable)) {
         log.info('Please create your profile first')
-        await module.exports.handler(p2p, { type: 'profile', yes })
+        await module.exports.handler({ p2p, type: 'profile', yes })
         log.success('Profile created! Now creating content')
       }
     }
