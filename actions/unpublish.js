@@ -1,6 +1,5 @@
 'use strict'
 
-const { encode } = require('dat-encoding')
 const UserError = require('../lib/user-error')
 const kleur = require('kleur')
 const prompt = require('../lib/prompt')
@@ -33,11 +32,13 @@ module.exports = {
       name: 'contentKey',
       resolve: async (p2p, { env, profileKey }) => {
         const profileMod = await p2p.get(profileKey)
-        const contentMods = await Promise.all(profileMod.rawJSON.contents.map(url => {
-          const [key, version] = url.split('+')
-          const download = false
-          return p2p._getModule(key, version, download)
-        }))
+        const contentMods = await Promise.all(
+          profileMod.rawJSON.contents.map(url => {
+            const [key, version] = url.split('+')
+            const download = false
+            return p2p._getModule(key, version, download)
+          })
+        )
         if (!contentMods.length) throw new UserError('No content modules')
 
         const choices = contentMods.map(mod => ({

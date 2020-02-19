@@ -13,8 +13,17 @@ const createModules = async env => {
     disableSwarm: true
   })
   await p2p.ready()
-  const { rawJSON: { url: contentKey }, metadata: { version: contentVersion } } = await p2p.init({ type: 'content', title: 'c' })
-  const { rawJSON: { url: profileKey } } = await p2p.init({ type: 'profile', title: 'p', contents: [`${contentKey}+${contentVersion}`] })
+  const {
+    rawJSON: { url: contentKey },
+    metadata: { version: contentVersion }
+  } = await p2p.init({ type: 'content', title: 'c' })
+  const {
+    rawJSON: { url: profileKey }
+  } = await p2p.init({
+    type: 'profile',
+    title: 'p',
+    contents: [`${contentKey}+${contentVersion}`]
+  })
   await p2p.destroy()
   return { contentKey, contentVersion, profileKey }
 }
@@ -25,7 +34,9 @@ const verifyProfile = async (t, { env, profileKey }) => {
     disableSwarm: true
   })
   await p2p.ready()
-  const { rawJSON: { contents } } = await p2p.get(profileKey)
+  const {
+    rawJSON: { contents }
+  } = await p2p.get(profileKey)
   t.equal(contents.length, 0)
   await p2p.destroy()
 }
@@ -69,7 +80,9 @@ test('no content modules', async t => {
     disableSwarm: true
   })
   await p2p.ready()
-  const { rawJSON: { url: profileKey } } = await p2p.init({ type: 'profile', title: 't' })
+  const {
+    rawJSON: { url: profileKey }
+  } = await p2p.init({ type: 'profile', title: 't' })
   await p2p.destroy()
   let threw = false
   try {
