@@ -65,7 +65,7 @@ const argv = minimist(process.argv.slice(2), {
   string: ['env', 'title', 'name', 'description', 'parent']
 })
 
-if (argv.help) {
+if (argv.help || (argv._[0] && !actions[argv._[0]])) {
   console.log(help)
   process.exit(1)
 }
