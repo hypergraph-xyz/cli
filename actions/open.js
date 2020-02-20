@@ -4,12 +4,9 @@ const open = require('open')
 const prompt = require('../lib/prompt')
 const { encode } = require('dat-encoding')
 
-module.exports = {
-  title: 'Open module folder',
-  input: [{ name: 'hash', resolve: prompt.modules }],
-  handler:
-    // istanbul ignore next
-    async ({ hash, env }) => {
-      await open(`${env}/${encode(hash)}`)
-    }
+exports.title = 'Open module folder'
+exports.input = [{ name: 'hash', resolve: prompt.modules }]
+// istanbul ignore next
+exports.handler = async ({ hash, env }) => {
+  await open(`${env}/${encode(hash)}`)
 }
