@@ -51,7 +51,7 @@ $ hypergraph --help
     $ hypergraph <action> <input>
 
   Actions
-    create   <type> <options>     Create a module
+    create   <type>               Create a module
     read     <hash> [key]         Read a module's metadata
     update   <hash> [key value]   Update a module's metadata
     open     <hash>               Open a module's folder
@@ -67,7 +67,6 @@ $ hypergraph --help
     --env, -e                  Dotfiles path (default ~/.p2pcommons)
     --help, -h                 Display help text
     --version, -v              Display version
-    The following options only work with the create action
     --title, -t                A content module's title
     --name, -n                 A profile module's name
     --subtype, -s              A content module's subtype
