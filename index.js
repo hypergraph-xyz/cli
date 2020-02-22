@@ -16,6 +16,7 @@ const hypergraph = async argv => {
       type: 'select',
       message: 'Pick an action',
       choices: Object.entries(actions)
+        .map(([key, createAction]) => [key, createAction()])
         .filter(([, { unlisted }]) => !unlisted)
         .map(([value, { title }]) => ({
           title,
