@@ -8,6 +8,7 @@ module.exports = {
   list: require('./list'),
   edit: require('./edit'),
   publish: require('./publish'),
+  unpublish: require('./unpublish'),
   config: require('./config'),
   logout: require('./logout')
 }
