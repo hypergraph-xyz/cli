@@ -7,6 +7,15 @@ const UserError = require('../lib/user-error')
 const { encode } = require('dat-encoding')
 
 exports.title = 'Update metadata'
+exports.help = `
+  Usage
+    $ hypergraph update [hash] [key vaule]
+
+  Examples
+    $ hypergraph update                Interactive mode
+    $ hypergraph update URL            Update module
+    $ hypergraph update URL KEY VALUE  Update key value pair
+`
 exports.input = [
   {
     name: 'hash',

@@ -12,6 +12,14 @@ const moduleHeader = mod => {
 }
 
 exports.title = 'Read metadata'
+exports.help = `
+  Usage
+    $ hypergraph read [hash]
+
+  Examples
+    $ hypergraph read                  Interactive mode
+    $ hypergraph read URL              Read metadata
+`
 exports.input = [{ name: 'hash', resolve: prompt.modules }]
 exports.handler = async ({ p2p, hash }) => {
   const mod = await p2p.get(hash)

@@ -14,6 +14,16 @@ const ora = require('ora')
 const log = require('../lib/log')
 
 exports.title = 'Publish content to a profile'
+exports.help = `
+  Usage
+    $ hypergraph publish [profile] [content]
+
+  Examples
+    $ hypergraph publish                          Interactive mode
+    $ hypergraph publish PROFILE_URL              Publish content to profile
+    $ hypergraph publish PROFILE_URL \\            Publish content
+                         CONTENT_URL
+`
 exports.input = [
   {
     name: 'profileKey',

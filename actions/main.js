@@ -6,6 +6,14 @@ const { encode } = require('dat-encoding')
 const prompt = require('../lib/prompt')
 
 exports.title = 'Open main file'
+exports.help = `
+  Usage
+    $ hypergraph main [hash]
+
+  Examples
+    $ hypergraph main                  Interactive mode
+    $ hypergraph main URL              Open main file
+`
 exports.input = [
   {
     name: 'hash',

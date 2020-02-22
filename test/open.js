@@ -21,3 +21,8 @@ test('open', async t => {
   await match(ps.stdout, 'Select module')
   ps.kill()
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('open --help')
+})

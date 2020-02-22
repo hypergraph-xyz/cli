@@ -9,6 +9,29 @@ const log = require('../lib/log')
 const licenseUrl = 'https://creativecommons.org/publicdomain/zero/1.0/legalcode'
 
 exports.title = 'Create a module'
+exports.help = `
+  Usage
+    $ hypergraph create <type>
+
+  Command options
+    --title, -t                        A content module's title
+    --name, -n                         A profile module's name
+    --subtype, -s                      A content module's subtype
+    --description, -d                  Module description
+    --parent, -p                       Module parent(s)
+    --yes, -y                          Confirm license for module creation
+
+  Module types
+    - content                          A content module
+    - profile                          A user profile module
+
+  Examples
+    $ hypergraph create                Interactive mode
+    $ hypergraph create content        Set type
+    $ hypergraph create -t "Theory"    Set title
+    $ hypergraph create -p URL_A \\     Set parents
+                        -p URL_B
+`
 exports.input = [{ name: 'type', resolve: prompt.type }]
 exports.handler = async ({
   p2p,

@@ -102,3 +102,8 @@ test('no content modules', async t => {
   }
   t.ok(threw)
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('unpublish --help')
+})

@@ -230,3 +230,8 @@ test('create <type> --title --description --subtype --parent', async t => {
     )
   })
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('create --help')
+})
