@@ -65,7 +65,11 @@ if (argv.help || (argv._[0] && !actions[argv._[0]])) {
   } else {
     console.log(help)
   }
-  process.exit(1)
+  if (argv.help) {
+    process.exit(0)
+  } else {
+    process.exit(1)
+  }
 }
 
 if (argv.version) {
