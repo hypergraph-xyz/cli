@@ -107,7 +107,7 @@ module.exports = {
 
     log.success(
       content.rawJSON.title,
-      `(version ${kleur.bold(content.metadata.version)})`,
+      `(v${kleur.bold(content.metadata.version)})`,
       'published to',
       profile.rawJSON.name
     )
