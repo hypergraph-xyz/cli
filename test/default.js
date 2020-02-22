@@ -9,13 +9,7 @@ test('--help', async t => {
   const { execa } = createEnv()
   const ps = execa('--help')
   await match(ps.stdout, 'Interactive mode')
-  let exitCode
-  try {
-    await ps
-  } catch (err) {
-    exitCode = err.exitCode
-  }
-  t.equal(exitCode, 1)
+  await ps
 })
 
 test('--version', async t => {
