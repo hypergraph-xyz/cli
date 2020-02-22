@@ -23,7 +23,7 @@ const hypergraph = async argv => {
         }))
     })
   }
-  const action = actions[actionName]
+  const action = actions[actionName]()
   const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
   const config = new Config(env)
 
