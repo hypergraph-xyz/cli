@@ -23,3 +23,8 @@ test('path <hash>', async t => {
   const { stdout } = await execa(`path ${hash}`)
   t.equal(stdout.trim(), join(env, hash))
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('path --help')
+})

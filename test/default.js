@@ -8,7 +8,7 @@ const { createEnv } = require('./util')
 test('--help', async t => {
   const { execa } = createEnv()
   const ps = execa('--help')
-  await match(ps.stdout, 'interactive mode')
+  await match(ps.stdout, 'Interactive mode')
   let exitCode
   try {
     await ps

@@ -20,3 +20,8 @@ test('config', async t => {
   }
   t.match(stderr, /Available settings/)
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('config --help')
+})

@@ -9,6 +9,14 @@ const { encode } = require('dat-encoding')
 const htmlRegex = /\.html?$/
 
 exports.title = 'Edit main file'
+exports.help = `
+  Usage
+    $ hypergraph edit [hash]
+
+  Examples
+    $ hypergraph edit                  Interactive mode
+    $ hypergraph edit URL              Edit module
+`
 exports.input = [
   {
     name: 'hash',

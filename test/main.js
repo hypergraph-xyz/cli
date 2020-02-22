@@ -42,3 +42,8 @@ test('main', async t => {
     ps.kill()
   })
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('main --help')
+})

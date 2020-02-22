@@ -7,6 +7,15 @@ const settings = {
 }
 
 exports.title = 'Change hypergraph configuration'
+exports.help = `
+  Usage
+    $ hypergraph config <key> [value]
+
+  Examples
+    $ hypergraph config vaultUrl       Display vault url
+    $ hypergraph config vaultUrl \\     Set vault url
+        http://localhost:8080/
+`
 exports.unlisted = true
 exports.p2p = false
 exports.input = [
