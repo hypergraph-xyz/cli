@@ -5,6 +5,7 @@ const readdirp = require('readdirp')
 const validate = require('../lib/validate')
 const UserError = require('../lib/user-error')
 const { encode } = require('dat-encoding')
+const log = require('../lib/log')
 
 exports.title = 'Update metadata'
 exports.help = `
@@ -87,7 +88,7 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
         }))
       })
     } else {
-      console.log('No main file to set available')
+      log.info('No main file to set available')
     }
 
     if (rawJSON.type === 'content') {
@@ -110,7 +111,7 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
           }))
         })
       } else {
-        console.log('No parent module to set available')
+        log.info('No parent module to set available')
       }
     }
   }
