@@ -4,6 +4,7 @@ const kleur = require('kleur')
 const subtypes = require('../lib/subtypes')
 const prompt = require('../lib/prompt')
 const { encode } = require('dat-encoding')
+const { tick, cross } = require('../lib/log')
 
 const moduleHeader = mod => {
   const type = mod.rawJSON.subtype
@@ -68,7 +69,7 @@ exports.handler = async ({ p2p, hash }) => {
   if (mod.rawJSON.main) {
     console.log(`main: ${mod.rawJSON.main}`)
   } else {
-    console.log(`main: ${kleur.red('✖')}`)
+    console.log(`main: ${kleur.red(cross)}`)
   }
 
   if (mod.rawJSON.type === 'profile' && mod.rawJSON.contents.length) {
