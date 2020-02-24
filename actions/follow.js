@@ -26,8 +26,13 @@ module.exports = {
     }
 
     await p2p.follow(writableProfiles[0].rawJSON.url, profileUrl)
-    log.success(
-      `${writableProfiles[0].rawJSON.title} now follows ${profileUrl}`
-    )
+    const [key, version] = profileUrl.split('+')
+    if (version) {
+      log.success(
+        `${writableProfiles[0].rawJSON.title} now follows ${key} (v${version})`
+      )
+    } else {
+      log.success(`${writableProfiles[0].rawJSON.title} now follows ${key}`)
+    }
   }
 }
