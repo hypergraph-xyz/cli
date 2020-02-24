@@ -4,7 +4,7 @@ const kleur = require('kleur')
 const subtypes = require('../lib/subtypes')
 const prompt = require('../lib/prompt')
 const { encode } = require('dat-encoding')
-const { tick, cross } = require('../lib/log')
+const { cross } = require('../lib/log')
 
 const moduleHeader = mod => {
   const type = mod.rawJSON.subtype
