@@ -36,7 +36,7 @@ module.exports = {
           profileMod.rawJSON.contents.map(url => {
             const [key, version] = url.split('+')
             const download = false
-            return p2p._getModule(key, version, download)
+            return p2p.clone(key, version, download)
           })
         )
         if (!contentMods.length) throw new UserError('No content modules')

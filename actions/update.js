@@ -5,11 +5,20 @@ const readdirp = require('readdirp')
 const validate = require('../lib/validate')
 const UserError = require('../lib/user-error')
 const { encode } = require('dat-encoding')
+const log = require('../lib/log')
 
 exports.title = 'Update metadata'
 exports.help = `
   Usage
     $ hypergraph update [hash] [key vaule]
+
+  Keys
+    - title                            A content module's title
+    - name                             A profile module's name
+    - subtype                          WikiData identifier
+    - description                      Module description
+    - main                             Path to main file
+    - parents                          Module parent(s)
 
   Examples
     $ hypergraph update                Interactive mode
@@ -42,7 +51,10 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
   if (key) {
     update[key] = value || ''
     if (key === 'parents') {
-      update[key] = update[key].split(',').filter(Boolean)
+      update[key] = update[key]
+        .split(',')
+        .filter(Boolean)
+        .map(key => `dat://${encode(key)}`)
     }
   } else {
     const { rawJSON } = await p2p.get(hash)
@@ -87,7 +99,7 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
         }))
       })
     } else {
-      console.log('No main file to set available')
+      log.info('No main file to set available')
     }
 
     if (rawJSON.type === 'content') {
@@ -105,12 +117,12 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
           message: 'Parents',
           choices: potentialParents.map(mod => ({
             title: mod.rawJSON.title,
-            value: mod.rawJSON.url,
+            value: `dat://${encode(mod.rawJSON.url)}`,
             selected: rawJSON.parents.includes(mod.rawJSON.url)
           }))
         })
       } else {
-        console.log('No parent module to set available')
+        log.info('No parent module to set available')
       }
     }
   }

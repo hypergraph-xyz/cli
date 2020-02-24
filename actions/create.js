@@ -16,7 +16,7 @@ exports.help = `
   Command options
     --title, -t                        A content module's title
     --name, -n                         A profile module's name
-    --subtype, -s                      A content module's subtype
+    --subtype, -s                      WikiData identifier
     --description, -d                  Module description
     --parent, -p                       Module parent(s)
     --yes, -y                          Confirm license for module creation
