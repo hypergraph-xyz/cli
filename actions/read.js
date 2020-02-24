@@ -3,7 +3,6 @@
 const kleur = require('kleur')
 const subtypes = require('../lib/subtypes')
 const prompt = require('../lib/prompt')
-const { encode } = require('dat-encoding')
 
 const moduleHeader = mod => {
   const type = mod.rawJSON.subtype
@@ -76,9 +75,7 @@ exports.handler = async ({ p2p, hash }) => {
     for (const contentKey of mod.rawJSON.contents) {
       const content = await p2p.get(contentKey)
       console.log(` - ${moduleHeader(content)}`)
-      console.log(
-        `   ${kleur.underline(`dat://${encode(content.rawJSON.url)}`)}`
-      )
+      console.log(`   ${kleur.underline(`dat://${content.rawJSON.url}`)}`)
     }
   }
 }
