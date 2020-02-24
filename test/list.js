@@ -26,3 +26,8 @@ test('list', async t => {
   t.notOk(stdout.includes(contentTitle))
   t.ok(stdout.includes(profileName))
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('list --help')
+})
