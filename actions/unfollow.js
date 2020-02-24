@@ -39,11 +39,20 @@ module.exports = {
     const following = await p2p.get(profileUrl)
 
     await p2p.unfollow(writableProfiles[0].rawJSON.url, profileUrl)
-    log.success(
-      writableProfiles[0].rawJSON.title,
-      'stopped following',
-      following.rawJSON.name,
-      `(v${following.metadata.version})`
-    )
+    const [, version] = profileUrl.split('+')
+    if (version) {
+      log.success(
+        writableProfiles[0].rawJSON.title,
+        'stopped following',
+        following.rawJSON.name,
+        `(v${version})`
+      )
+    } else {
+      log.success(
+        writableProfiles[0].rawJSON.title,
+        'stopped following',
+        following.rawJSON.name
+      )
+    }
   }
 }
