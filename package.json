@@ -26,7 +26,7 @@
   "homepage": "https://github.com/hypergraph-xyz/cli#readme",
   "dependencies": {
     "@hypergraph-xyz/editor": "^1.1.0",
-    "@p2pcommons/sdk-js": "^0.5.0",
+    "@p2pcommons/sdk-js": "^0.5.1",
     "body": "^5.1.0",
     "dat-encoding": "^5.0.1",
     "delegates": "^1.0.0",
@@ -48,7 +48,7 @@
     "prettier-standard": "^16.0.0",
     "standard": "^14.3.1",
     "stream-match": "^1.2.1",
-    "tap": "^14.7.1"
+    "tap": "^14.10.6"
   },
   "np": {
     "yarn": false

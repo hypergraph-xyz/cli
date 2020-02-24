@@ -227,7 +227,10 @@ test('with modules', async t => {
             subtype: 'Q17737',
             main: '',
             authors: [profileKey],
-            parents: [encode(parent1Key), encode(parent2Key)]
+            parents: [
+              `dat://${encode(parent1Key)}`,
+              `dat://${encode(parent2Key)}`
+            ]
           }
         })
       })
