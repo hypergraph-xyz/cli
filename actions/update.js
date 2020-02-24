@@ -11,6 +11,14 @@ exports.help = `
   Usage
     $ hypergraph update [hash] [key vaule]
 
+  Keys
+    - title                            A content module's title
+    - name                             A profile module's name
+    - subtype                          WikiData identifier
+    - description                      Module description
+    - main                             Path to main file
+    - parents                          Module parent(s)
+
   Examples
     $ hypergraph update                Interactive mode
     $ hypergraph update URL            Update module
