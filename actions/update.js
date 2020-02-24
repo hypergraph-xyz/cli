@@ -42,7 +42,10 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
   if (key) {
     update[key] = value || ''
     if (key === 'parents') {
-      update[key] = update[key].split(',').filter(Boolean)
+      update[key] = update[key]
+        .split(',')
+        .filter(Boolean)
+        .map(key => `dat://${encode(key)}`)
     }
   } else {
     const { rawJSON } = await p2p.get(hash)
@@ -105,7 +108,7 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
           message: 'Parents',
           choices: potentialParents.map(mod => ({
             title: mod.rawJSON.title,
-            value: mod.rawJSON.url,
+            value: `dat://${encode(mod.rawJSON.url)}`,
             selected: rawJSON.parents.includes(mod.rawJSON.url)
           }))
         })
