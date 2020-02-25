@@ -21,19 +21,22 @@ exports.input = [
       const writableProfiles = profiles.filter(mod => mod.metadata.isWritable)
       if (!writableProfiles.length) throw new UserError('No local profile')
       const following = await Promise.all(
-        writableProfiles[0].rawJSON.follows.map(url => {
+        writableProfiles[0].rawJSON.follows.map(async url => {
           const [key, version] = url.split('+')
           const download = false
-          return p2p.clone(key, version, download)
+          const {
+            module: { title }
+          } = await p2p.clone(key, version, download)
+          return { title, version, url }
         })
       )
       if (!following.length) throw new UserError('Not following anyone')
       return prompt({
         type: 'select',
         message: 'Select profile module to unfollow',
-        choices: following.map(mod => ({
-          title: `${mod.module.title} (v${mod.version})`,
-          value: `${mod.module.url}+${mod.version}`
+        choices: following.map(({ title, version, url }) => ({
+          title: `${title}${version ? ` (v${version})` : ''}`,
+          value: url
         }))
       })
     }
