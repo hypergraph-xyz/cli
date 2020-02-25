@@ -51,37 +51,28 @@ $ hypergraph --help
     $ hypergraph <action> <input>
 
   Actions
-    create    <type>                Create a module
-    read      <hash> [key]          Read a module's metadata
-    update    <hash> [key value]    Update a module's metadata
-    delete    <hash>                Delete a content module
-    open      <hash>                Open a module's folder
-    main      <hash>                Open a module's main file
-    path      <hash>                Print module path
-    list      <type>                List writable modules
-    edit      <hash>                Edit main file
-    publish   <profile> <content>   Publish content to a profile
-    unpublish <profile> <content>   Unpublish content from a profile
-    config    <key> [value]         Change hypergraph configuration
-    logout                          Log out of Vault account
+    create    [type]                   Create a module
+    read      [hash]                   Read a module's metadata
+    update    [hash] [key value]       Update a module's metadata
+    delete    [hash]                   Delete a contnet module
+    open      [hash]                   Open a module's folder
+    main      [hash]                   Open a module's main file
+    path      [hash]                   Print module path
+    list      [type]                   List writable modules
+    edit      [hash]                   Edit main file
+    publish   [profile] [content]      Publish content to a profile
+    unpublish [profile] [content]      Unpublish content from a profile
+    config    <key> [value]            Change hypergraph configuration
+    logout                             Log out of Vault account
 
-  Options
-    --env, -e                  Dotfiles path (default ~/.p2pcommons)
-    --help, -h                 Display help text
-    --version, -v              Display version
-    --title, -t                A content module's title
-    --name, -n                 A profile module's name
-    --subtype, -s              A content module's subtype
-    --description, -d          Module description
-    --parent, -p               Module parent(s)
-    --yes, -y                  Confirm license for module creation
-
-  Module types
-    - content                  A content module
-    - profile                  A user profile module
+  Global options
+    --env, -e                          Dotfiles path (default ~/.p2pcommons)
+    --help, -h                         Display [action] help text
+    --version, -v                      Display version
 
   Examples
-    $ hypergraph               [interactive mode]
+    $ hypergraph                       Interactive mode
+    $ hypergraph edit --help           Display help text for edit action
 
 ```
 
