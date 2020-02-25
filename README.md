@@ -62,8 +62,7 @@ $ hypergraph --help
     edit      <hash>                Edit main file
     publish   <profile> <content>   Publish content to a profile
     unpublish <profile> <content>   Unpublish content from a profile
-    follow    <profile>             Follow a profile
-    unfollow  <profile>             Unfollow a profile
+
     config    <key> [value]         Change hypergraph configuration
     logout                          Log out of Vault account
 
@@ -82,8 +81,30 @@ $ hypergraph --help
     - content                  A content module
     - profile                  A user profile module
 
+    create    [type]                   Create a module
+    read      [hash]                   Read a module's metadata
+    update    [hash] [key value]       Update a module's metadata
+    delete    [hash]                   Delete a contnet module
+    open      [hash]                   Open a module's folder
+    main      [hash]                   Open a module's main file
+    path      [hash]                   Print module path
+    list      [type]                   List writable modules
+    edit      [hash]                   Edit main file
+    publish   [profile] [content]      Publish content to a profile
+    unpublish [profile] [content]      Unpublish content from a profile
+    follow    [profile]                Follow a profile
+    unfollow  [profile]                Unfollow a profile
+    config    <key> [value]            Change hypergraph configuration
+    logout                             Log out of Vault account
+
+  Global options
+    --env, -e                          Dotfiles path (default ~/.p2pcommons)
+    --help, -h                         Display [action] help text
+    --version, -v                      Display version
+
   Examples
-    $ hypergraph               [interactive mode]
+    $ hypergraph                       Interactive mode
+    $ hypergraph edit --help           Display help text for edit action
 
 ```
 
