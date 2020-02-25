@@ -5,18 +5,6 @@ const { createEnv } = require('./util')
 const match = require('stream-match')
 const P2P = require('@p2pcommons/sdk-js')
 
-test('profile url required', async t => {
-  const { execa } = createEnv()
-  let threw = false
-  try {
-    await execa('follow')
-  } catch (err) {
-    threw = true
-    t.match(err.stderr, /url required/)
-  }
-  t.ok(threw)
-})
-
 test('no profile', async t => {
   const { execa } = createEnv()
   const followUrl =
@@ -26,7 +14,28 @@ test('no profile', async t => {
   ps.kill()
 })
 
-test('follow', async t => {
+test('prompt', async t => {
+  const { execa, env } = createEnv()
+  let p2p = new P2P({ baseDir: env, disableSwarm: true })
+  await p2p.ready()
+  const {
+    rawJSON: { url }
+  } = await p2p.init({ type: 'profile', title: 'p' })
+  await p2p.destroy()
+
+  const ps = execa('follow')
+  await match(ps.stdout, 'Url')
+  ps.stdin.write(`${url}\n`)
+  await ps
+
+  p2p = new P2P({ baseDir: env, disableSwarm: true })
+  await p2p.ready()
+  const mod = await p2p.get(url)
+  t.deepEqual(mod.rawJSON.follows, [url])
+  await p2p.destroy()
+})
+
+test('arguments', async t => {
   const { execa, env } = createEnv()
   let p2p = new P2P({ baseDir: env, disableSwarm: true })
   await p2p.ready()

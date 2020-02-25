@@ -3,20 +3,32 @@
 const UserError = require('../lib/user-error')
 const log = require('../lib/log')
 const create = require('./create')
+const { decode } = require('dat-encoding')
+const prompt = require('../lib/prompt')
 
 exports.title = 'Follow a profile'
 exports.help = `
   Usage
-    $ hypergraph follow <profile>
+    $ hypergraph follow [profile]
 
   Examples
+    $ hypergraph follow                Interactive mode
     $ hypergraph follow PROFILE_URL    Follow profile
 `
 exports.input = [
   {
     name: 'profileUrl',
     resolve: async () => {
-      throw new UserError('Profile url required')
+      const url = await prompt({
+        type: 'text',
+        message: 'Url'
+      })
+      try {
+        decode(url)
+      } catch (_) {
+        throw new UserError('Invalid url')
+      }
+      return url
     }
   }
 ]
