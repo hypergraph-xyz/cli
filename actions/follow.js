@@ -5,6 +5,13 @@ const log = require('../lib/log')
 const create = require('./create')
 
 exports.title = 'Follow a profile'
+exports.help = `
+  Usage
+    $ hypergraph follow <profile>
+
+  Examples
+    $ hypergraph follow PROFILE_URL    Follow profile
+`
 exports.input = [
   {
     name: 'profileUrl',

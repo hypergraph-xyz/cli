@@ -43,3 +43,8 @@ test('follow', async t => {
   t.deepEqual(mod.rawJSON.follows, [url])
   await p2p.destroy()
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('follow --help')
+})

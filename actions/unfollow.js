@@ -5,6 +5,14 @@ const log = require('../lib/log')
 const prompt = require('../lib/prompt')
 
 exports.title = 'Unfollow a profile'
+exports.help = `
+  Usage
+    $ hypergraph unfollow [profile]
+
+  Examples
+    $ hypergraph unfollow              Interactive mode
+    $ hypergraph unfollow PROFILE_URL  Unfollow profile
+`
 exports.input = [
   {
     name: 'profileUrl',

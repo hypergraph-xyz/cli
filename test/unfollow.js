@@ -72,3 +72,8 @@ test('prompt', async t => {
   t.deepEqual(follows, [])
   await p2p.destroy()
 })
+
+test('help', async t => {
+  const { execa } = createEnv()
+  await execa('unfollow --help')
+})
