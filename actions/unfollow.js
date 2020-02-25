@@ -17,7 +17,7 @@ module.exports = {
           writableProfiles[0].rawJSON.follows.map(url => {
             const [key, version] = url.split('+')
             const download = false
-            return p2p._getModule(key, version, download)
+            return p2p.clone(key, version, download)
           })
         )
         if (!following.length) throw new UserError('Not following anyone')
