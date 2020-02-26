@@ -31,6 +31,8 @@ const help = `
     edit      [hash]                   Edit main file
     publish   [profile] [content]      Publish content to a profile
     unpublish [profile] [content]      Unpublish content from a profile
+    follow    [profile]                Follow a profile
+    unfollow  [profile]                Unfollow a profile
     config    <key> [value]            Change hypergraph configuration
     logout                             Log out of Vault account
 

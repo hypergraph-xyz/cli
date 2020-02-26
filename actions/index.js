@@ -10,6 +10,8 @@ module.exports = {
   edit: () => require('./edit'),
   publish: () => require('./publish'),
   unpublish: () => require('./unpublish'),
+  follow: () => require('./follow'),
+  unfollow: () => require('./unfollow'),
   config: () => require('./config'),
   logout: () => require('./logout')
 }
