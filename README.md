@@ -53,7 +53,7 @@ $ hypergraph --help
   Actions
     create    [type]                   Create a module
     read      [hash]                   Read a module's metadata
-    update    [hash] [key value]       Update a module's metadata
+    update    [hash]                   Update a module's metadata
     delete    [hash]                   Delete a contnet module
     open      [hash]                   Open a module's folder
     main      [hash]                   Open a module's main file

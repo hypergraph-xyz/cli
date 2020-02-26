@@ -22,7 +22,7 @@ const help = `
   Actions
     create    [type]                   Create a module
     read      [hash]                   Read a module's metadata
-    update    [hash] [key value]       Update a module's metadata
+    update    [hash]                   Update a module's metadata
     delete    [hash]                   Delete a contnet module
     open      [hash]                   Open a module's folder
     main      [hash]                   Open a module's main file
@@ -56,9 +56,10 @@ const argv = minimist(process.argv.slice(2), {
     description: 'd',
     yes: 'y',
     subtype: 's',
-    parent: 'p'
+    parent: 'p',
+    main: 'm'
   },
-  string: ['env', 'title', 'name', 'description', 'parent']
+  string: ['env', 'title', 'name', 'description', 'subtype', 'parent', 'main']
 })
 
 if (argv.help || (argv._[0] && !actions[argv._[0]])) {
