@@ -33,10 +33,12 @@ test('with modules', async t => {
 
   await t.test('read <hash>', async t => {
     await t.test('profile', async t => {
-      await execa(`read ${encode(profileKey)}`)
+      const { stdout } = await execa(`read ${encode(profileKey)}`)
+      t.match(stdout, 'Profile')
     })
     await t.test('content', async t => {
-      await execa(`read ${encode(contentKey)}`)
+      const { stdout } = await execa(`read ${encode(contentKey)}`)
+      t.match(stdout, 'Unknown')
     })
   })
 })
