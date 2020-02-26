@@ -7,9 +7,10 @@ const { encode } = require('dat-encoding')
 const { cross } = require('../lib/log')
 
 const moduleHeader = mod => {
-  const type = mod.rawJSON.subtype
-    ? subtypes[mod.rawJSON.subtype] || 'Unknown'
-    : 'Profile'
+  const type =
+    mod.rawJSON.type === 'content'
+      ? subtypes[mod.rawJSON.subtype] || 'Unknown'
+      : 'Profile'
   return `${kleur.cyan().bold(mod.rawJSON.title || mod.rawJSON.name)} - ${type}`
 }
 
