@@ -72,7 +72,10 @@ exports.handler = async ({
     if (main !== undefined) update.main = main
     if (parent !== undefined) {
       update.parents = typeof parent === 'string' ? [parent] : parent
-      update.parents = update.parents.map(key => `dat://${encode(key)}`)
+      update.parents = update.parents.map(url => {
+        const [key, ...version] = url.split('+')
+        return [`dat://${encode(key)}`, ...version].join('+')
+      })
     }
   } else {
     const { rawJSON } = await p2p.get(hash)

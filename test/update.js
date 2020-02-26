@@ -18,7 +18,8 @@ test('with modules', async t => {
   await p2p.ready()
   const [
     {
-      rawJSON: { url: contentKey }
+      rawJSON: { url: contentKey },
+      metadata: { version: contentVersion }
     },
     {
       rawJSON: { url: profileKey }
@@ -148,6 +149,7 @@ test('with modules', async t => {
 
   await t.test('parents', async t => {
     const parent1Key = contentKey
+    const parent1Version = contentVersion
     await execa(`publish ${encode(profileKey)} ${encode(parent1Key)}`)
 
     const { stdout } = await execa('create content -t=z -d -s=Q17737 -p -y')
@@ -203,7 +205,7 @@ test('with modules', async t => {
         await execa(
           `update ${encode(childKey)} --parent ${encode(
             parent1Key
-          )} --parent ${encode(parent2Key)}`
+          )}+${parent1Version} --parent ${encode(parent2Key)}`
         )
 
         const meta = JSON.parse(
@@ -228,7 +230,7 @@ test('with modules', async t => {
             main: '',
             authors: [profileKey],
             parents: [
-              `dat://${encode(parent1Key)}`,
+              `dat://${encode(parent1Key)}+${parent1Version}`,
               `dat://${encode(parent2Key)}`
             ]
           }
