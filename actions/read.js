@@ -45,6 +45,7 @@ exports.handler = async ({ p2p, hash }) => {
   console.log(kleur.underline(mod.rawJSON.url))
   if (mod.rawJSON.type === 'content') {
     if (mod.rawJSON.parents.length) {
+      console.log()
       console.log(kleur.bold('Parents:'))
       for (const parent of mod.rawJSON.parents) {
         console.log(` - ${parent}`)
@@ -52,6 +53,7 @@ exports.handler = async ({ p2p, hash }) => {
     }
   } else {
     if (mod.rawJSON.follows.length) {
+      console.log()
       console.log(kleur.bold('Follows:'))
       for (const profile of mod.rawJSON.follows) {
         console.log(` - ${profile}`)
