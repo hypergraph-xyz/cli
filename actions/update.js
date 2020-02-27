@@ -24,7 +24,9 @@ exports.help = `
     $ hypergraph update                     Interactive mode
     $ hypergraph update URL                 Update module
     $ hypergraph update URL -t title \\      Update title and description
-                            -d description       
+                            -d description
+    $ hypergraph update URL -p URL_A \\      Update parents
+                            -p URL_B
 `
 exports.input = [
   {
