@@ -17,7 +17,7 @@ exports.help = `
     --name, -n                              A profile module's name
     --subtype, -s                           WikiData identifier
     --description, -d                       Module description
-    --parent, -p                            Module parent(s)
+    --parent, -p                            A content module's parent(s)
     --main, -m                              Path to main file
 
   Examples
