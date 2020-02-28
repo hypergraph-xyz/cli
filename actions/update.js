@@ -10,20 +10,23 @@ const log = require('../lib/log')
 exports.title = 'Update metadata'
 exports.help = `
   Usage
-    $ hypergraph update [hash] [key vaule]
+    $ hypergraph update [hash]
 
-  Keys
-    - title                            A content module's title
-    - name                             A profile module's name
-    - subtype                          WikiData identifier
-    - description                      Module description
-    - main                             Path to main file
-    - parents                          Module parent(s)
+  Command options
+    --title, -t                             A content module's title
+    --name, -n                              A profile module's name
+    --subtype, -s                           WikiData identifier
+    --description, -d                       Module description
+    --parent, -p                            A content module's parent(s)
+    --main, -m                              Path to main file
 
   Examples
-    $ hypergraph update                Interactive mode
-    $ hypergraph update URL            Update module
-    $ hypergraph update URL KEY VALUE  Update key value pair
+    $ hypergraph update                     Interactive mode
+    $ hypergraph update URL                 Update module
+    $ hypergraph update URL -t title \\      Update title and description
+                            -d description
+    $ hypergraph update URL -p URL_A \\      Update parents
+                            -p URL_B
 `
 exports.input = [
   {
@@ -41,20 +44,40 @@ exports.input = [
         }))
       })
     }
-  },
-  { name: 'key' },
-  { name: 'value' }
+  }
 ]
-exports.handler = async ({ p2p, env, hash, key, value }) => {
+exports.handler = async ({
+  p2p,
+  env,
+  hash,
+  title,
+  name,
+  subtype,
+  description,
+  parent,
+  main
+}) => {
   const update = { url: hash }
 
-  if (key) {
-    update[key] = value || ''
-    if (key === 'parents') {
-      update[key] = update[key]
-        .split(',')
-        .filter(Boolean)
-        .map(key => `dat://${encode(key)}`)
+  if (
+    title !== undefined ||
+    name !== undefined ||
+    subtype !== undefined ||
+    description !== undefined ||
+    parent !== undefined ||
+    main !== undefined
+  ) {
+    if (title !== undefined) update.title = title
+    if (name !== undefined) update.name = name
+    if (subtype !== undefined) update.subtype = subtype
+    if (description !== undefined) update.description = description
+    if (main !== undefined) update.main = main
+    if (parent !== undefined) {
+      update.parents = typeof parent === 'string' ? [parent] : parent
+      update.parents = update.parents.map(url => {
+        const [key, ...version] = url.split('+')
+        return [`dat://${encode(key)}`, ...version].join('+')
+      })
     }
   } else {
     const { rawJSON } = await p2p.get(hash)
