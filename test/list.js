@@ -12,7 +12,6 @@ test('list', async t => {
   const profileName = String(Math.random())
 
   const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
-  await p2p.ready()
   await Promise.all([
     p2p.init({ type: 'content', title: contentTitle }),
     p2p.init({ type: 'profile', name: profileName })

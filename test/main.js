@@ -28,7 +28,6 @@ test('main', async t => {
       baseDir: env,
       disableSwarm: true
     })
-    await p2p.ready()
     await p2p.init({
       type: 'content',
       title: 't',

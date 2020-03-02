@@ -12,7 +12,6 @@ const createModules = async env => {
     baseDir: env,
     disableSwarm: true
   })
-  await p2p.ready()
   const {
     rawJSON: { url: contentKey },
     metadata: { version: contentVersion }
@@ -33,7 +32,6 @@ const verifyProfile = async (t, { env, profileKey }) => {
     baseDir: env,
     disableSwarm: true
   })
-  await p2p.ready()
   const {
     rawJSON: { contents }
   } = await p2p.get(profileKey)
@@ -79,7 +77,6 @@ test('no content modules', async t => {
     baseDir: env,
     disableSwarm: true
   })
-  await p2p.ready()
   const {
     rawJSON: { url: profileKey }
   } = await p2p.init({ type: 'profile', title: 't' })
