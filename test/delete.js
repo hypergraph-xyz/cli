@@ -7,7 +7,6 @@ const match = require('stream-match')
 
 const createModule = async env => {
   const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
-  await p2p.ready()
   await p2p.init({ type: 'content', title: 't' })
   await p2p.destroy()
 }

@@ -32,7 +32,6 @@ test('not following anyone', async t => {
   const { execa, env } = createEnv()
 
   const p2p = new P2P({ baseDir: env, disableSwarm: true })
-  await p2p.ready()
   await p2p.init({ type: 'profile', title: 'p' })
   await p2p.destroy()
 
@@ -51,7 +50,6 @@ test('prompt', async t => {
   const { execa, env } = createEnv()
 
   let p2p = new P2P({ baseDir: env, disableSwarm: true })
-  await p2p.ready()
   const {
     rawJSON: { url }
   } = await p2p.init({ type: 'profile', title: 'p' })
@@ -65,7 +63,6 @@ test('prompt', async t => {
   await ps
 
   p2p = new P2P({ baseDir: env, disableSwarm: true })
-  await p2p.ready()
   const {
     rawJSON: { follows }
   } = await p2p.get(url)

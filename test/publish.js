@@ -15,7 +15,6 @@ test('with modules', async t => {
     baseDir: env,
     disableSwarm: true
   })
-  await p2p.ready()
   const [
     {
       rawJSON: { url: contentKey }
@@ -65,7 +64,6 @@ test('no content modules', async t => {
     baseDir: env,
     disableSwarm: true
   })
-  await p2p.ready()
   await p2p.init({ type: 'profile', title: 't' })
   await p2p.destroy()
   let threw = false

@@ -144,7 +144,6 @@ test('only one profile allowed', async t => {
 test('parent content', async t => {
   const { env, execa } = createEnv()
   const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
-  await p2p.ready()
   const [
     {
       rawJSON: { url: contentKey }
@@ -171,7 +170,6 @@ test('create <type> --title --description --subtype --parent', async t => {
   await t.test('creates files', async t => {
     const { execa, env } = createEnv()
     const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
-    await p2p.ready()
     const {
       rawJSON: { url }
     } = await p2p.init({ type: 'content', title: 'c' })
@@ -211,7 +209,6 @@ test('create <type> --title --description --subtype --parent', async t => {
   await t.test('multiple parents', async t => {
     const { execa, env } = createEnv()
     const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
-    await p2p.ready()
     const [
       {
         rawJSON: { url: parent1 }

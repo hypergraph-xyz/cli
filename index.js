@@ -31,7 +31,6 @@ const hypergraph = async argv => {
   let p2p
   if (action.p2p !== false) {
     p2p = new P2P({ baseDir: env, disableSwarm: process.env.CI })
-    await p2p.ready()
   }
 
   const input = {}

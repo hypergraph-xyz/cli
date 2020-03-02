@@ -15,7 +15,6 @@ test('with modules', async t => {
     baseDir: env,
     disableSwarm: true
   })
-  await p2p.ready()
   const [
     {
       rawJSON: { url: contentKey },
