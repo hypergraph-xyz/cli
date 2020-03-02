@@ -35,7 +35,7 @@
     "node-fetch": "^2.6.0",
     "open": "^7.0.0",
     "ora": "^4.0.3",
-    "prompts": "^2.1.0",
+    "prompts": "github:juliangruber/prompts#fix/autocomplete-bold",
     "readdirp": "^3.2.0",
     "update-notifier": "^4.0.0"
   },
