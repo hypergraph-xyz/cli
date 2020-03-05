@@ -35,11 +35,23 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "jameslibscie",
+      "name": "James Lomas",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/59870484?v=4",
+      "profile": "https://github.com/jameslibscie",
+      "contributions": [
+        "projectManagement",
+        "bug",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "projectName": "cli",
   "projectOwner": "hypergraph-xyz",
   "repoType": "github",
-  "repoHost": "https://github.com"
+  "repoHost": "https://github.com",
+  "skipCi": true
 }
