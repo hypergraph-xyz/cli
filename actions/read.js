@@ -1,7 +1,7 @@
 'use strict'
 
 const kleur = require('kleur')
-const subtypes = require('../lib/subtypes')
+const subtypes = require('@hypergraph-xyz/wikidata-identifiers')
 const prompt = require('../lib/prompt')
 const { encode } = require('dat-encoding')
 const { cross } = require('../lib/log')
