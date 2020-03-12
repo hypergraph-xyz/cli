@@ -140,7 +140,7 @@ exports.handler = async ({
           message: 'Parents',
           choices: potentialParents.map(mod => ({
             title: mod.rawJSON.title,
-            value: `dat://${encode(mod.rawJSON.url)}`,
+            value: `dat://${encode(mod.rawJSON.url)}+${mod.metadata.version}`,
             selected: rawJSON.parents.includes(mod.rawJSON.url)
           }))
         })

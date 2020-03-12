@@ -93,7 +93,7 @@ exports.handler = async ({
       const published = await p2p.listPublished()
       const choices = published.map(mod => ({
         title: mod.rawJSON.title,
-        value: mod.rawJSON.url
+        value: `${mod.rawJSON.url}+${mod.metadata.version}`
       }))
       if (choices.length) {
         parents = await prompt({
