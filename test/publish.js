@@ -8,30 +8,40 @@ const { createEnv } = require('./util')
 const P2PCommons = require('@p2pcommons/sdk-js')
 const { promises: fs } = require('fs')
 
-test('with modules', async t => {
-  const { execa, env } = createEnv()
-
+const createProfileContent = async ({ env }) => {
   const p2p = new P2PCommons({
     baseDir: env,
     disableSwarm: true
   })
+  const {
+    rawJSON: { url: profileKey }
+  } = await p2p.init({ type: 'profile', title: 'n' })
   const [
     {
-      rawJSON: { url: contentKey }
-    },
-    {
-      rawJSON: { url: profileKey }
+      rawJSON: { url: contentKey },
+      metadata: { version: contentVersion }
     }
   ] = await Promise.all([
-    p2p.init({ type: 'content', title: 't', main: 'm' }),
-    p2p.init({ type: 'profile', title: 'n' }),
-    p2p.init({ type: 'content', title: 'no main' }),
-    p2p.init({ type: 'content', title: 'non existing main', main: 'oh' })
+    p2p.init({ type: 'content', title: 't', main: 'm', authors: [profileKey] }),
+    p2p.init({ type: 'content', title: 'no main', authors: [profileKey] }),
+    p2p.init({
+      type: 'content',
+      title: 'non existing main',
+      main: 'oh',
+      authors: [profileKey]
+    })
   ])
   await p2p.destroy()
   await fs.writeFile(`${env}/${contentKey.slice('dat://'.length)}/m`, '')
 
+  return { profileKey, contentKey, contentVersion }
+}
+
+test('with modules', async t => {
   await t.test('prompt', async t => {
+    const { execa, env } = createEnv()
+    await createProfileContent({ env })
+
     const ps = execa('publish')
     await match(ps.stdout, 'Select profile module')
     ps.stdin.write('\n')
@@ -42,7 +52,18 @@ test('with modules', async t => {
   })
 
   await t.test('publish <profile> <content>', async t => {
-    await execa(`publish ${encode(profileKey)} ${encode(contentKey)}`)
+    const { execa, env } = createEnv()
+    const {
+      profileKey,
+      contentKey,
+      contentVersion
+    } = await createProfileContent({ env })
+
+    await execa(
+      `publish ${encode(profileKey)} dat://${encode(
+        contentKey
+      )}+${contentVersion}`
+    )
   })
 })
 

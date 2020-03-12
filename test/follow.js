@@ -14,38 +14,56 @@ test('no profile', async t => {
   ps.kill()
 })
 
+const createProfiles = async ({ envA, envB }) => {
+  const p2pA = new P2P({ baseDir: envA })
+  const p2pB = new P2P({ baseDir: envB })
+
+  const [
+    {
+      rawJSON: { url: writableUrl }
+    },
+    {
+      rawJSON: { url: followedUrl },
+      metadata: { version: followedVersion }
+    }
+  ] = await Promise.all([
+    p2pA.init({ type: 'profile', title: 'A' }),
+    p2pB.init({ type: 'profile', title: 'B' })
+  ])
+  await p2pA.clone(followedUrl, followedVersion, false)
+  await Promise.all([p2pA.destroy(), p2pB.destroy()])
+
+  return { writableUrl, followedUrl }
+}
+
 test('prompt', async t => {
-  const { execa, env } = createEnv()
-  let p2p = new P2P({ baseDir: env, disableSwarm: true })
-  const {
-    rawJSON: { url }
-  } = await p2p.init({ type: 'profile', title: 'p' })
-  await p2p.destroy()
+  const { env: envA, execa } = createEnv()
+  const { env: envB } = createEnv()
+
+  const { writableUrl, followedUrl } = await createProfiles({ envA, envB })
 
   const ps = execa('follow')
   await match(ps.stdout, 'Url')
-  ps.stdin.write(`${url}\n`)
+  ps.stdin.write(`${followedUrl}\n`)
   await ps
 
-  p2p = new P2P({ baseDir: env, disableSwarm: true })
-  const mod = await p2p.get(url)
-  t.deepEqual(mod.rawJSON.follows, [url])
+  const p2p = new P2P({ baseDir: envA, disableSwarm: true })
+  const mod = await p2p.get(writableUrl)
+  t.deepEqual(mod.rawJSON.follows, [followedUrl])
   await p2p.destroy()
 })
 
 test('arguments', async t => {
-  const { execa, env } = createEnv()
-  let p2p = new P2P({ baseDir: env, disableSwarm: true })
-  const {
-    rawJSON: { url }
-  } = await p2p.init({ type: 'profile', title: 'p' })
-  await p2p.destroy()
+  const { env: envA, execa } = createEnv()
+  const { env: envB } = createEnv()
 
-  await execa(`follow ${url}`)
+  const { writableUrl, followedUrl } = await createProfiles({ envA, envB })
 
-  p2p = new P2P({ baseDir: env, disableSwarm: true })
-  const mod = await p2p.get(url)
-  t.deepEqual(mod.rawJSON.follows, [url])
+  await execa(`follow ${followedUrl}`)
+
+  const p2p = new P2P({ baseDir: envA, disableSwarm: true })
+  const mod = await p2p.get(writableUrl)
+  t.deepEqual(mod.rawJSON.follows, [followedUrl])
   await p2p.destroy()
 })
 
