@@ -31,8 +31,9 @@ const createProfileContent = async ({ env }) => {
       authors: [profileKey]
     })
   ])
-  await p2p.destroy()
   await fs.writeFile(`${env}/${contentKey.slice('dat://'.length)}/m`, '')
+  await p2p.set({ url: contentKey, main: 'm' })
+  await p2p.destroy()
 
   return { profileKey, contentKey, contentVersion }
 }

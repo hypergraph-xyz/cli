@@ -103,6 +103,7 @@ test('with modules', async t => {
           type: 'profile',
           subtype: '',
           main: '',
+          avatar: '',
           follows: [],
           contents: []
         }
@@ -257,6 +258,7 @@ test('with modules', async t => {
 
   await t.test('update <hash> <key> <value>', async t => {
     await t.test('updates main', async t => {
+      await fs.writeFile(`${env}/${encode(contentKey)}/main`, '')
       await execa(`update ${encode(contentKey)} --main main`)
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')

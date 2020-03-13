@@ -5,6 +5,8 @@ const { test } = require('tap')
 const match = require('stream-match')
 const { createEnv } = require('./util')
 const P2PCommons = require('@p2pcommons/sdk-js')
+const { promises: fs } = require('fs')
+const { encode } = require('dat-encoding')
 
 test('main', async t => {
   await t.test('no modules', async t => {
@@ -28,12 +30,15 @@ test('main', async t => {
       baseDir: env,
       disableSwarm: true
     })
-    await p2p.init({
+    const {
+      rawJSON: { url }
+    } = await p2p.init({
       type: 'content',
       title: 't',
-      description: 'd',
-      main: 'file'
+      description: 'd'
     })
+    await fs.writeFile(`${env}/${encode(url)}/file`, 'content')
+    await p2p.set({ url, main: 'file' })
     await p2p.destroy()
 
     const ps = execa('main')
