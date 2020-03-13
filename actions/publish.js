@@ -113,10 +113,10 @@ exports.handler = async ({ p2p, contentKey, profileKey, config }) => {
   await p2p.publish(contentKey, profileKey)
 
   log.success(
-    content.rawJSON.title,
+    `"${content.rawJSON.title}"`,
     `(version ${kleur.bold(content.metadata.version)})`,
     'published to',
-    profile.rawJSON.name
+    `"${profile.rawJSON.name}"`
   )
 
   if (!config.get('vaultUrl')) return
