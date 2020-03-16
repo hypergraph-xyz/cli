@@ -143,27 +143,39 @@ test('only one profile allowed', async t => {
 
 test('parent content', async t => {
   const { env, execa } = createEnv()
-  const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
-  const [
-    {
-      rawJSON: { url: contentKey }
-    },
-    {
-      rawJSON: { url: profileKey }
-    }
-  ] = await Promise.all([
-    p2p.init({ type: 'content', title: 'Content' }),
-    p2p.init({ type: 'profile', title: 'Name' })
-  ])
+
+  let p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+  const {
+    rawJSON: { url: profileKey }
+  } = await p2p.init({ type: 'profile', title: 'Name' })
+  const {
+    rawJSON: { url: contentKey }
+  } = await p2p.init({
+    type: 'content',
+    title: 'Content',
+    authors: [profileKey]
+  })
   await p2p.publish(contentKey, profileKey)
   await p2p.destroy()
+
   const ps = execa('create content -y -t=t -d -s=Q17737')
   await match(ps.stdout, 'Select parent modules')
   ps.stdin.write(' \n')
   const createdKey = await match(ps.stdout, /dat:\/\/(.+)/)
   await ps
-  const dat = require(`${env}/${createdKey}/dat.json`)
-  t.deepEqual(dat.p2pcommons.parents, [contentKey])
+
+  p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+  const [
+    {
+      metadata: { version: contentVersion }
+    },
+    {
+      rawJSON: { parents }
+    }
+  ] = await Promise.all([p2p.get(contentKey), p2p.get(createdKey)])
+  await p2p.destroy()
+
+  t.deepEqual(parents, [`${contentKey}+${contentVersion}`])
 })
 
 test('create <type> --title --description --subtype --parent', async t => {
@@ -171,12 +183,15 @@ test('create <type> --title --description --subtype --parent', async t => {
     const { execa, env } = createEnv()
     const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
     const {
-      rawJSON: { url }
-    } = await p2p.init({ type: 'content', title: 'c' })
+      rawJSON: { url: profileKey }
+    } = await p2p.init({ type: 'profile', title: 'n' })
+    const {
+      rawJSON: { url: parentKey },
+      metadata: { version: parentVersion }
+    } = await p2p.init({ type: 'content', title: 'c', authors: [profileKey] })
     await p2p.destroy()
-    await execa('create profile -y -n=n -d')
     const { stdout } = await execa(
-      `create content -t=t -d=d -s=Q17737 --parent=${url} -y`
+      `create content -t=t -d=d -s=Q17737 --parent=${parentKey}+${parentVersion} -y`
     )
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
@@ -211,10 +226,12 @@ test('create <type> --title --description --subtype --parent', async t => {
     const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
     const [
       {
-        rawJSON: { url: parent1 }
+        rawJSON: { url: parent1Key },
+        metadata: { version: parent1Version }
       },
       {
-        rawJSON: { url: parent2 }
+        rawJSON: { url: parent2Key },
+        metadata: { version: parent2Version }
       }
     ] = await Promise.all([
       p2p.init({ type: 'content', title: 'c' }),
@@ -223,7 +240,7 @@ test('create <type> --title --description --subtype --parent', async t => {
     ])
     await p2p.destroy()
     await execa(
-      `create content -t=t -d=d -s=Q17737 --parent=${parent1} --parent=${parent2} -y`
+      `create content -t=t -d=d -s=Q17737 --parent=${parent1Key}+${parent1Version} --parent=${parent2Key}+${parent2Version} -y`
     )
   })
 })

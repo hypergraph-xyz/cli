@@ -85,7 +85,7 @@ updateNotifier({ pkg }).notify()
 hypergraph(argv).catch(err => {
   // istanbul ignore else
   if (err instanceof ValidationError) {
-    log.error(`Invalid ${err.key}`)
+    log.error(err.message)
   } else if (err instanceof UserError || err instanceof InvalidKeyError) {
     if (err.message) {
       log.error(err.message)

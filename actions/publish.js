@@ -57,8 +57,8 @@ exports.input = [
       const choices = []
       for (const contentMod of contentMods) {
         const choice = {
-          title: contentMod.rawJSON.title,
-          value: contentMod.rawJSON.url,
+          title: `${contentMod.rawJSON.title} (v${contentMod.metadata.version})`,
+          value: `${contentMod.rawJSON.url}+${contentMod.metadata.version}`,
           disabled: false
         }
         if (

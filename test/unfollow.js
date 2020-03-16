@@ -47,14 +47,25 @@ test('not following anyone', async t => {
 })
 
 test('prompt', async t => {
-  const { execa, env } = createEnv()
+  const { env: envA, execa } = createEnv()
+  const { env: envB } = createEnv()
 
-  let p2p = new P2P({ baseDir: env, disableSwarm: true })
-  const {
-    rawJSON: { url }
-  } = await p2p.init({ type: 'profile', title: 'p' })
-  await p2p.follow(url, url)
-  await p2p.destroy()
+  let p2pA = new P2P({ baseDir: envA })
+  const p2pB = new P2P({ baseDir: envB })
+
+  const [
+    {
+      rawJSON: { url: writableUrl }
+    },
+    {
+      rawJSON: { url: followedUrl }
+    }
+  ] = await Promise.all([
+    p2pA.init({ type: 'profile', title: 'A' }),
+    p2pB.init({ type: 'profile', title: 'B' })
+  ])
+  await p2pA.follow(writableUrl, followedUrl)
+  await Promise.all([p2pA.destroy(), p2pB.destroy()])
 
   const ps = execa('unfollow')
   await match(ps.stdout, 'Select profile module')
@@ -62,12 +73,12 @@ test('prompt', async t => {
   await match(ps.stdout, 'stopped following')
   await ps
 
-  p2p = new P2P({ baseDir: env, disableSwarm: true })
+  p2pA = new P2P({ baseDir: envA, disableSwarm: true })
   const {
     rawJSON: { follows }
-  } = await p2p.get(url)
+  } = await p2pA.get(writableUrl)
   t.deepEqual(follows, [])
-  await p2p.destroy()
+  await p2pA.destroy()
 })
 
 test('help', async t => {

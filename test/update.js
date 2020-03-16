@@ -15,17 +15,20 @@ test('with modules', async t => {
     baseDir: env,
     disableSwarm: true
   })
+  const {
+    rawJSON: { url: profileKey }
+  } = await p2p.init({ type: 'profile', title: 'n', description: 'd' })
   const [
     {
-      rawJSON: { url: contentKey },
-      metadata: { version: contentVersion }
-    },
-    {
-      rawJSON: { url: profileKey }
+      rawJSON: { url: contentKey }
     }
   ] = await Promise.all([
-    p2p.init({ type: 'content', title: 't', description: 'd' }),
-    p2p.init({ type: 'profile', title: 'n', description: 'd' })
+    p2p.init({
+      type: 'content',
+      title: 't',
+      description: 'd',
+      authors: [profileKey]
+    })
   ])
   await p2p.destroy()
 
@@ -66,7 +69,7 @@ test('with modules', async t => {
           type: 'content',
           subtype: 'Q17737',
           main: '',
-          authors: [],
+          authors: [profileKey],
           parents: []
         }
       })
@@ -100,6 +103,7 @@ test('with modules', async t => {
           type: 'profile',
           subtype: '',
           main: '',
+          avatar: '',
           follows: [],
           contents: []
         }
@@ -140,7 +144,7 @@ test('with modules', async t => {
         type: 'content',
         subtype: 'Q17737',
         main: 'file.txt',
-        authors: [],
+        authors: [profileKey],
         parents: []
       }
     })
@@ -148,14 +152,31 @@ test('with modules', async t => {
 
   await t.test('parents', async t => {
     const parent1Key = contentKey
-    const parent1Version = contentVersion
-    await execa(`publish ${encode(profileKey)} ${encode(parent1Key)}`)
 
-    const { stdout } = await execa('create content -t=z -d -s=Q17737 -p -y')
-    const parent2Key = decode(stdout)
-    await fs.writeFile(`${env}/${encode(parent2Key)}/file.txt`, 'hi')
-    await execa(`update ${encode(parent2Key)} --main file.txt`)
-    await execa(`publish ${encode(profileKey)} ${encode(parent2Key)}`)
+    const p2p = new P2PCommons({ baseDir: env, disableSwarm: true })
+    const {
+      metadata: { version: parent1Version }
+    } = await p2p.get(parent1Key)
+    await p2p.publish(
+      `dat://${encode(parent1Key)}+${parent1Version}`,
+      encode(profileKey)
+    )
+    const {
+      rawJSON: { url: parent2Key },
+      metadata: { version: parent2Version }
+    } = await p2p.init({
+      type: 'content',
+      title: 'z',
+      description: '',
+      subtype: 'Q17737',
+      authors: [profileKey],
+      main: 'file.txt'
+    })
+    await p2p.publish(
+      `dat://${encode(parent2Key)}+${parent2Version}`,
+      encode(profileKey)
+    )
+    await p2p.destroy()
 
     await t.test('prompt', async t => {
       const { stdout } = await execa('create content -t=t -d -s=Q17737 -p -y')
@@ -193,7 +214,7 @@ test('with modules', async t => {
           subtype: 'Q17737',
           main: '',
           authors: [`dat://${encode(profileKey)}`],
-          parents: [`dat://${encode(parent1Key)}`]
+          parents: [`dat://${encode(parent1Key)}+${parent1Version}`]
         }
       })
 
@@ -204,7 +225,7 @@ test('with modules', async t => {
         await execa(
           `update ${encode(childKey)} --parent ${encode(
             parent1Key
-          )}+${parent1Version} --parent ${encode(parent2Key)}`
+          )}+${parent1Version}`
         )
 
         const meta = JSON.parse(
@@ -228,10 +249,7 @@ test('with modules', async t => {
             subtype: 'Q17737',
             main: '',
             authors: [profileKey],
-            parents: [
-              `dat://${encode(parent1Key)}+${parent1Version}`,
-              `dat://${encode(parent2Key)}`
-            ]
+            parents: [`dat://${encode(parent1Key)}+${parent1Version}`]
           }
         })
       })
@@ -240,6 +258,7 @@ test('with modules', async t => {
 
   await t.test('update <hash> <key> <value>', async t => {
     await t.test('updates main', async t => {
+      await fs.writeFile(`${env}/${encode(contentKey)}/main`, '')
       await execa(`update ${encode(contentKey)} --main main`)
       const meta = JSON.parse(
         await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
@@ -269,7 +288,7 @@ test('with modules', async t => {
         await execa(`update ${encode(contentKey)} --title`)
       } catch (err) {
         threw = true
-        t.match(err.message, /Invalid title/)
+        t.match(err.message, /Expected: title/)
       }
       t.ok(threw)
     })
@@ -280,7 +299,7 @@ test('with modules', async t => {
         await execa(`update ${encode(profileKey)} --name`)
       } catch (err) {
         threw = true
-        t.match(err.message, /Invalid name/)
+        t.match(err.message, /name/)
       }
       t.ok(threw)
     })
