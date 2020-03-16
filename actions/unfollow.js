@@ -52,16 +52,16 @@ exports.handler = async ({ p2p, profileUrl }) => {
   const [, version] = profileUrl.split('+')
   if (version) {
     log.success(
-      writableProfiles[0].rawJSON.title,
+      `"${writableProfiles[0].rawJSON.title}"`,
       'stopped following',
-      following.rawJSON.name,
+      `"${following.rawJSON.name}"`,
       `(v${version})`
     )
   } else {
     log.success(
-      writableProfiles[0].rawJSON.title,
+      `"${writableProfiles[0].rawJSON.title}"`,
       'stopped following',
-      following.rawJSON.name
+      `"${following.rawJSON.name}"`
     )
   }
 }

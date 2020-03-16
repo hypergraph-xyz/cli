@@ -47,9 +47,9 @@ exports.handler = async ({ p2p, profileUrl }) => {
   const [key, version] = profileUrl.split('+')
   if (version) {
     log.success(
-      `${writableProfiles[0].rawJSON.title} now follows ${key} (v${version})`
+      `"${writableProfiles[0].rawJSON.title}" now follows ${key} (v${version})`
     )
   } else {
-    log.success(`${writableProfiles[0].rawJSON.title} now follows ${key}`)
+    log.success(`"${writableProfiles[0].rawJSON.title}" now follows ${key}`)
   }
 }

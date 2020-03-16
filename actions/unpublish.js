@@ -70,7 +70,7 @@ module.exports = {
       `"${content.rawJSON.title}"`,
       `(v${kleur.bold(content.metadata.version)})`,
       'unpublished from',
-      profile.rawJSON.name
+      `"${profile.rawJSON.name}"`
     )
   }
 }
