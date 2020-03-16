@@ -288,7 +288,7 @@ test('with modules', async t => {
         await execa(`update ${encode(contentKey)} --title`)
       } catch (err) {
         threw = true
-        t.match(err.message, /required-string/)
+        t.match(err.message, /Expected: title/)
       }
       t.ok(threw)
     })
