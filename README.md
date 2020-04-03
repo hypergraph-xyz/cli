@@ -6,7 +6,15 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/hypergraph-xyz/cli.svg)](https://greenkeeper.io/)
 ![ci](https://github.com/hypergraph-xyz/cli/workflows/ci/badge.svg)
 
-Command Line Interface (CLI) utilising the [peer-to-peer commons](https://p2pcommons.com).
+Hypergraph is a tool for creating and publishing research projects as-you-go, built upon the [p2pcommons](https://p2pcommons.com).
+
+With Hypergraph, we aim to reinvent the publication process in a way that empowers researchers to do better science. Science that is transparent, accessible to everyone and free from publication bias, time-consuming bureaucracy and centralized control.
+
+The Hypergraph command-line interface (CLI) is a power-user alternative to [Hypergraph Desktop](https://github.com/hypergraph-xyz/desktop), that we use (among other things) for trying out new [p2pcommons SDK](https://github.com/p2pcommons/sdk-js) features.
+
+Right now, Hypergraph is in active development. The current version supports an offline as-you-go workflow and demonstrates some of Hypergraph's core concepts.
+
+![Hypergraph CLI menu, create content & read content screenshot](/docs/screenshots/screenshot-menu-create-read.png)
 
 This environment was developed initially for use in scholarly
 communication but can be applied outside as well. Anything that can
