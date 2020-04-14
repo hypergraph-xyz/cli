@@ -109,20 +109,6 @@ omit an action, input, or argument(s) (if relevant).
 Help is provided under `hypergraph --help` and the maintainers will do
 their best to answer your questions in the issues.
 
-## Contributing
-
-Please note we adhere to a [Code of Conduct](./CODE_OF_CONDUCT.md) and
-any contributions not in line with it (_tl;dr_ be an empathetic,
-considerate person) will not be accepted. Please notify
-[@chartgerink](mailto:chris@libscie.org) if anything happens.
-
-If you want to develop your own applications using this public
-collaborative infrastructure, we recommend you look at our
-[Application Programmatic Interface
-(API)](https://github.com/libscie/api). All data is portable between
-applications if it adheres to the specifications outlined in that
-repository.
-
 ## How to release
 
 1. `npm run release` will guide you through the node module process and create a GitHub release
@@ -150,4 +136,4 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome! See also our [contributing guidelines](CONTRIBUTING.md).
