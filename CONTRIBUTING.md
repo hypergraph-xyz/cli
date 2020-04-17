@@ -61,13 +61,7 @@ Bug fixes and features **should come with tests**.
 $ npm test
 ```
 
-#### Step 4: Lint
-
-Make sure the linter is happy and that all tests pass. Please, do not submit patches that fail either check.
-
-We use [standard](https://standardjs.com/).
-
-#### Step 5: Commit
+#### Step 4: Commit
 
 Make sure git knows your name and email address:
 
@@ -78,13 +72,13 @@ $ git config --global user.email "bruce@batman.com"
 
 Writing good commit logs is important. A commit log should describe what changed and why.
 
-#### Step 6: Push
+#### Step 5: Push
 
 ```bash
 $ git push origin my-feature-branch
 ```
 
-#### Step 7: Make a pull request ;)
+#### Step 6: Make a pull request ;)
 
 ### Documentation
 
