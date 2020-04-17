@@ -84,12 +84,6 @@ $ git push origin my-feature-branch
 
 If your work adds functionality or changes the way existing functionality works, please document this in the [README.md](https://github.com/hypergraph-xyz/cli/blob/master/README.md).
 
-### Style guide
-
-We are using `eslint` with the `standard` [config](https://github.com/standard/eslint-config-standard).
-
-**Tip**: If you are using an editor like `vim` you can check out GEUT's [xd](https://github.com/geut/xd) to improve your _dx_. :v:
-
 ## Build your own p2pcommons application!
 
 If you want to develop your own applications using this public collaborative infrastructure, we recommend you look at the [p2pcommons Software Development Kit (SDK)](https://github.com/p2pcommons/sdk-js). All data is portable between applications if it adheres to the specifications outlined in the [@p2pcommons/specs](https://github.com/p2pcommons/specs) repository.
