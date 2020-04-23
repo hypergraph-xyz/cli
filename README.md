@@ -109,6 +109,12 @@ omit an action, input, or argument(s) (if relevant).
 Help is provided under `hypergraph --help` and the maintainers will do
 their best to answer your questions in the issues.
 
+## How to release
+
+1. `npm run release` will guide you through the node module process and create a GitHub release
+1. Write release notes and publish the GitHub release
+1. Tell your Hypergraph friends about it
+
 ## Glossary
 
 If you're interested in learning more about our terminology, the [Hypergraph glossary](https://www.notion.so/Glossary-d4bdf18fb4624c049c7a2663559ef5ad) explains many of the terms we use across Hypergraph products and documentation.
