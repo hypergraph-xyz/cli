@@ -115,6 +115,10 @@ their best to answer your questions in the issues.
 1. Write release notes and publish the GitHub release
 1. Tell your Hypergraph friends about it
 
+## Glossary
+
+If you're interested in learning more about our terminology, the [Hypergraph glossary](https://www.notion.so/Glossary-d4bdf18fb4624c049c7a2663559ef5ad) explains many of the terms we use across Hypergraph products and documentation.
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):

@@ -24,7 +24,7 @@ Please report security vulnerabilities directly to [@chartgerink](mailto:chris@l
 
 ### Where to start?
 
-Our work is organized on [GitHub Issues](https://github.com/hypergraph-xyz/cli/issues). Our [Roadmap (see issues in the CLI column marked with an ❌)](https://github.com/hypergraph-xyz/desktop/wiki/Roadmap) contains issues that we are planning on working on further down the line. If you're enthusiastic about one of these features, come and discuss it with us on [Slack](https://libscie.slack.com/) ([invite link](https://join.slack.com/t/libscie/shared_invite/zt-9l0ig1x1-Sxjun7D6056cOUQ2Ai_Bkw)).
+Our work is organized on [GitHub Issues](https://github.com/hypergraph-xyz/cli/issues). Our [Roadmap (see issues in the CLI column marked with an ❌)](https://github.com/hypergraph-xyz/desktop/wiki/Roadmap) contains issues that we are planning on working on further down the line. If you're enthusiastic about one of these features, come and discuss it with us on [Slack](https://libscie.slack.com/) ([invite link](https://join.slack.com/t/libscie/shared_invite/zt-9l0ig1x1-Sxjun7D6056cOUQ2Ai_Bkw)). You might also find the [Hypergraph glossary](https://www.notion.so/Glossary-d4bdf18fb4624c049c7a2663559ef5ad) useful as it explains most of the product-specific terminology we use.
 
 Technical improvements, bug fixes, documentation and other non-feature work is also totally welcome.
 
