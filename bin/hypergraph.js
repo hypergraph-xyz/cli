@@ -49,6 +49,7 @@ const help = `
 const argv = minimist(process.argv.slice(2), {
   alias: {
     env: 'e',
+    root: 'r',
     help: 'h',
     version: 'v',
     title: 't',
@@ -59,7 +60,16 @@ const argv = minimist(process.argv.slice(2), {
     parent: 'p',
     main: 'm'
   },
-  string: ['env', 'title', 'name', 'description', 'subtype', 'parent', 'main']
+  string: [
+    'env',
+    'root',
+    'title',
+    'name',
+    'description',
+    'subtype',
+    'parent',
+    'main'
+  ]
 })
 
 if (argv.help || (argv._[0] && !actions[argv._[0]])) {
