@@ -33,13 +33,19 @@ const createLocalDHT = async () => {
 
 const createEnv = ({
   env = `${tmpdir()}/${Date.now()}-${randomBytes(16).toString('hex')}`,
-  rootDir = `${tmpdir()}/${Date.now()}-${randomBytes(16).toString('hex')}`
+  rootDir = `${tmpdir()}/${Date.now()}-${randomBytes(16).toString('hex')}`,
+  mountpoint = `p2pcommons-${new Date().getTime()}`
 } = {}) => {
   if (env) fs.mkdirSync(env)
   const wrapExeca = args => {
     const ps = execa(
       path,
-      [...args.split(' '), `--env=${env}`, `--root=${rootDir}`],
+      [
+        ...args.split(' '),
+        `--env=${env}`,
+        `--root=${rootDir}`,
+        `--mountpoint=${mountpoint}`
+      ],
       {
         env: { CI: true }
       }
@@ -56,7 +62,7 @@ const createEnv = ({
     }
     return ps
   }
-  return { env, execa: wrapExeca, rootDir }
+  return { env, execa: wrapExeca, rootDir, mountpoint }
 }
 
 module.exports = { createEnv, createLocalDHT }

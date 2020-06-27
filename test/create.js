@@ -4,6 +4,7 @@ require('../lib/fs-promises')
 const { test, beforeEach, afterEach } = require('tap')
 const match = require('stream-match')
 const { promises: fs } = require('fs')
+const { encode } = require('dat-encoding')
 const { createEnv, createLocalDHT } = require('./util')
 const P2PCommons = require('@p2pcommons/sdk-js')
 
@@ -103,7 +104,9 @@ test('license confirmation can be skipped', async t => {
 })
 
 test('create content', async t => {
-  const { execa, env, rootDir } = createEnv({ bootstrap: t.context.bootstrap })
+  const { execa, env, rootDir, mountpoint } = createEnv({
+    bootstrap: t.context.bootstrap
+  })
   await execa('create profile -y -n=n -d')
   const ps = execa('create content -y')
   await match(ps.stdout, 'Title')
@@ -118,7 +121,8 @@ test('create content', async t => {
   const p2p = new P2PCommons({
     baseDir: env,
     root: rootDir,
-    disableSwarm: true
+    disableSwarm: true,
+    mountpoint
   })
   const {
     metadata: { id: contentId }
@@ -161,12 +165,13 @@ test('only one profile allowed', async t => {
 })
 
 test('parent content', async t => {
-  const { env, rootDir, execa } = createEnv()
+  const { env, rootDir, execa, mountpoint } = createEnv()
   const p2p = new P2PCommons({
     baseDir: env,
     root: rootDir,
     disableSwarm: true,
-    bootstrap: t.context.bootstrap
+    bootstrap: t.context.bootstrap,
+    mountpoint
   })
   const [
     {
@@ -184,13 +189,15 @@ test('parent content', async t => {
 
   await fs.writeFile(`${p2p.storage}/${contentId}/m`, '')
 
-  await new Promise(resolve => {
-    driveWatch.on('put-end', src => {
-      if (src.name.endsWith('m')) {
-        return resolve()
-      }
+  if (driveWatch) {
+    await new Promise(resolve => {
+      driveWatch.on('put-end', src => {
+        if (src.name.endsWith('m')) {
+          return resolve()
+        }
+      })
     })
-  })
+  }
 
   const authors = [profileKey]
   await p2p.set({ url: contentKey, authors })
@@ -217,7 +224,8 @@ test('parent content', async t => {
     baseDir: env,
     root: rootDir,
     disableSwarm: true,
-    bootstrap: t.context.bootstrap
+    bootstrap: t.context.bootstrap,
+    mountpoint
   })
   const {
     metadata: { id: createdId }
@@ -231,24 +239,40 @@ test('parent content', async t => {
 
 test('create <type> --title --description --subtype --parent', async t => {
   await t.test('creates files', async t => {
-    const { execa, env } = createEnv()
+    const { execa, env, rootDir, mountpoint } = createEnv()
     const p2p = new P2PCommons({
       baseDir: env,
+      root: rootDir,
       disableSwarm: true,
+      mountpoint,
       bootstrap: t.context.bootstrap
     })
     const {
       rawJSON: { url },
-      metadata: { id: contentId, version }
+      metadata: { version }
     } = await p2p.init({ type: 'content', title: 'c' })
     await p2p.destroy()
     await execa('create profile -y -n=n -d')
-    await execa(
+
+    const { stdout } = await execa(
       `create content -t=t -d=d -s=Q17737 --parent=${url}+${version} -y`
     )
-    await fs.stat(`${p2p.storage}/${contentId}`)
-    await fs.stat(`${p2p.storage}/${contentId}/dat.json`)
-    // await fs.stat(`${p2p.storage}/.dat`)
+    const hash = encode(stdout.trim())
+
+    const p2p2 = new P2PCommons({
+      baseDir: env,
+      root: rootDir,
+      disableSwarm: true,
+      mountpoint,
+      bootstrap: t.context.bootstrap
+    })
+    const {
+      metadata: { id: contentId2 }
+    } = await p2p2.get(hash)
+    await p2p2.destroy()
+
+    await fs.stat(`${p2p2.storage}/${contentId2}`)
+    await fs.stat(`${p2p2.storage}/${contentId2}/dat.json`)
   })
 
   await t.test('requires title', async t => {
@@ -274,11 +298,12 @@ test('create <type> --title --description --subtype --parent', async t => {
   })
 
   await t.test('multiple parents', async t => {
-    const { execa, env } = createEnv()
+    const { execa, env, mountpoint } = createEnv()
     const p2p = new P2PCommons({
       baseDir: env,
       disableSwarm: true,
-      bootstrap: t.context.bootstrap
+      bootstrap: t.context.bootstrap,
+      mountpoint
     })
     const [
       {
