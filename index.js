@@ -27,6 +27,7 @@ const hypergraph = async argv => {
   const action = actions[actionName]()
   const env = argv.env ? resolve(argv.env) : `${homedir()}/.p2pcommons`
   const rootDir = argv.root ? resolve(argv.root) : undefined
+  const mountpoint = argv.mountpoint
   const config = new Config(env)
 
   let p2p
@@ -34,6 +35,7 @@ const hypergraph = async argv => {
     p2p = new P2P({
       baseDir: env,
       root: rootDir,
+      mountpoint,
       disableSwarm: process.env.CI,
       bootstrap: argv.bootstrap
     })

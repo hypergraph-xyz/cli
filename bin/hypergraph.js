@@ -50,6 +50,7 @@ const argv = minimist(process.argv.slice(2), {
   alias: {
     env: 'e',
     root: 'r',
+    mountpoint: 'p',
     help: 'h',
     version: 'v',
     title: 't',
@@ -63,6 +64,7 @@ const argv = minimist(process.argv.slice(2), {
   string: [
     'env',
     'root',
+    'mountpoint',
     'title',
     'name',
     'description',
