@@ -6,7 +6,9 @@
   "scripts": {
     "test": "prettier-standard && standard && tap --timeout=300 --test-ignore=util.js",
     "postinstall": "node ./bin/autocomplete.js",
-    "release": "np"
+    "release": "np",
+    "build:fuse": "docker build -t cli-fuse-test .",
+    "test:fuse": "docker run --rm --cap-add SYS_ADMIN --device /dev/fuse cli-fuse-test"
   },
   "repository": {
     "type": "git",
