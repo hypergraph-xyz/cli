@@ -47,7 +47,7 @@ test('with modules', async t => {
       await ps
 
       const meta = JSON.parse(
-        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+        await fs.readFile(`${env}/${encode(contentKey)}/index.json`, 'utf8')
       )
       t.deepEqual(meta, {
         title: 't',
@@ -81,7 +81,7 @@ test('with modules', async t => {
       await ps
 
       const meta = JSON.parse(
-        await fs.readFile(`${env}/${encode(profileKey)}/dat.json`, 'utf8')
+        await fs.readFile(`${env}/${encode(profileKey)}/index.json`, 'utf8')
       )
       t.deepEqual(meta, {
         title: 'n',
@@ -122,7 +122,7 @@ test('with modules', async t => {
     await ps
 
     const meta = JSON.parse(
-      await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+      await fs.readFile(`${env}/${encode(contentKey)}/index.json`, 'utf8')
     )
     t.deepEqual(meta, {
       title: 't',
@@ -172,7 +172,7 @@ test('with modules', async t => {
       await ps
 
       const meta = JSON.parse(
-        await fs.readFile(`${env}/${encode(childKey)}/dat.json`, 'utf8')
+        await fs.readFile(`${env}/${encode(childKey)}/index.json`, 'utf8')
       )
       t.deepEqual(meta, {
         title: 't',
@@ -207,7 +207,7 @@ test('with modules', async t => {
         )
 
         const meta = JSON.parse(
-          await fs.readFile(`${env}/${encode(childKey)}/dat.json`, 'utf8')
+          await fs.readFile(`${env}/${encode(childKey)}/index.json`, 'utf8')
         )
         t.deepEqual(meta, {
           title: 't',
@@ -238,7 +238,7 @@ test('with modules', async t => {
     await t.test('updates main', async t => {
       await execa(`update ${encode(contentKey)} main main`)
       const meta = JSON.parse(
-        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+        await fs.readFile(`${env}/${encode(contentKey)}/index.json`, 'utf8')
       )
       t.equal(meta.p2pcommons.main, 'main')
     })
@@ -246,7 +246,7 @@ test('with modules', async t => {
     await t.test('updates title', async t => {
       await execa(`update ${encode(contentKey)} title beep`)
       const meta = JSON.parse(
-        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+        await fs.readFile(`${env}/${encode(contentKey)}/index.json`, 'utf8')
       )
       t.equal(meta.title, 'beep')
     })
@@ -266,7 +266,7 @@ test('with modules', async t => {
       await execa(`update ${encode(contentKey)} main`)
 
       const meta = JSON.parse(
-        await fs.readFile(`${env}/${encode(contentKey)}/dat.json`, 'utf8')
+        await fs.readFile(`${env}/${encode(contentKey)}/index.json`, 'utf8')
       )
       t.equal(meta.p2pcommons.main, '')
     })

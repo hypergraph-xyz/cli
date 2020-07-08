@@ -65,7 +65,7 @@ exports.handler = async ({ p2p, env, hash, key, value }) => {
 
     // main
     const entries = await readdirp.promise(`${env}/${encode(rawJSON.url)}/`, {
-      fileFilter: ['!dat.json', '!.*'],
+      fileFilter: ['!index.json', '!.*'],
       directoryFilter: ['.dat']
     })
     if (entries.length) {

@@ -104,7 +104,7 @@ test('create content', async t => {
   const url = await match(ps.stdout, /dat:\/\/(.+)/)
   await ps
 
-  const dat = require(`${env}/${url}/dat.json`)
+  const dat = require(`${env}/${url}/index.json`)
   t.equal(dat.p2pcommons.authors.length, 1)
 })
 
@@ -163,7 +163,7 @@ test('parent content', async t => {
   ps.stdin.write(' \n')
   const createdKey = await match(ps.stdout, /dat:\/\/(.+)/)
   await ps
-  const dat = require(`${env}/${createdKey}/dat.json`)
+  const dat = require(`${env}/${createdKey}/index.json`)
   t.deepEqual(dat.p2pcommons.parents, [contentKey])
 })
 
@@ -182,7 +182,7 @@ test('create <type> --title --description --subtype --parent', async t => {
     )
     const hash = encode(stdout.trim())
     await fs.stat(`${env}/${hash}`)
-    await fs.stat(`${env}/${hash}/dat.json`)
+    await fs.stat(`${env}/${hash}/index.json`)
     await fs.stat(`${env}/.dat`)
   })
 
