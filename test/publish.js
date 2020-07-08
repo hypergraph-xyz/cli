@@ -30,7 +30,7 @@ test('with modules', async t => {
     p2p.init({ type: 'content', title: 'non existing main', main: 'oh' })
   ])
   await p2p.destroy()
-  await fs.writeFile(`${env}/${contentKey.slice('dat://'.length)}/m`, '')
+  await fs.writeFile(`${env}/${contentKey.slice('hyper://'.length)}/m`, '')
 
   await t.test('prompt', async t => {
     const ps = execa('publish')

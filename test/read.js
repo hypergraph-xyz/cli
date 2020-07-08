@@ -27,7 +27,7 @@ test('with modules', async t => {
     const ps = execa('read')
     await match(ps.stdout, 'Select module')
     ps.stdin.write('\n')
-    await match(ps.stdout, 'dat://')
+    await match(ps.stdout, 'hyper://')
     await ps
   })
 

@@ -52,7 +52,7 @@ test('with modules', async t => {
       t.deepEqual(meta, {
         title: 't',
         description: 'beep',
-        url: `dat://${encode(contentKey)}`,
+        url: `hyper://${encode(contentKey)}`,
         links: {
           license: [
             {
@@ -86,7 +86,7 @@ test('with modules', async t => {
       t.deepEqual(meta, {
         title: 'n',
         description: 'beep',
-        url: `dat://${encode(profileKey)}`,
+        url: `hyper://${encode(profileKey)}`,
         links: {
           license: [
             {
@@ -127,7 +127,7 @@ test('with modules', async t => {
     t.deepEqual(meta, {
       title: 't',
       description: 'beep',
-      url: `dat://${encode(contentKey)}`,
+      url: `hyper://${encode(contentKey)}`,
       links: {
         license: [
           {
@@ -177,7 +177,7 @@ test('with modules', async t => {
       t.deepEqual(meta, {
         title: 't',
         description: '',
-        url: `dat://${encode(childKey)}`,
+        url: `hyper://${encode(childKey)}`,
         links: {
           license: [
             {
@@ -191,8 +191,8 @@ test('with modules', async t => {
           type: 'content',
           subtype: 'Q17737',
           main: '',
-          authors: [`dat://${encode(profileKey)}`],
-          parents: [`dat://${encode(parent1Key)}`]
+          authors: [`hyper://${encode(profileKey)}`],
+          parents: [`hyper://${encode(parent1Key)}`]
         }
       })
 
@@ -212,7 +212,7 @@ test('with modules', async t => {
         t.deepEqual(meta, {
           title: 't',
           description: '',
-          url: `dat://${encode(childKey)}`,
+          url: `hyper://${encode(childKey)}`,
           links: {
             license: [
               {

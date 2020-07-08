@@ -160,7 +160,7 @@ exports.handler = async ({ p2p, contentKey, profileKey, config }) => {
       Authorization: `Bearer ${config.get('vaultToken')}`
     },
     body: JSON.stringify({
-      url: `dat://${encode(contentKey)}+${content.metadata.version}`
+      url: `hyper://${encode(contentKey)}+${content.metadata.version}`
     })
   })
   if (!publishRes.ok) throw new Error(await publishRes.text())

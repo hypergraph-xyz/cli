@@ -67,7 +67,7 @@ exports.handler = async ({ p2p, hash }) => {
     for (const contentKey of mod.rawJSON.contents) {
       const content = await p2p.get(contentKey)
       console.log(` - ${moduleHeader(content)}`)
-      console.log(`   ${kleur.underline(`dat://${content.rawJSON.url}`)}`)
+      console.log(`   ${kleur.underline(`hyper://${content.rawJSON.url}`)}`)
     }
   }
 }
