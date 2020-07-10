@@ -191,8 +191,8 @@ test('with modules', async t => {
           type: 'content',
           subtype: 'Q17737',
           main: '',
-          authors: [`hyper://${encode(profileKey)}`],
-          parents: [`hyper://${encode(parent1Key)}`]
+          authors: [`${encode(profileKey)}`],
+          parents: [`${encode(parent1Key)}`]
         }
       })
 
