@@ -3,15 +3,9 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Code Style Prettier Standard](https://img.shields.io/badge/format-prettier_standard-ff69b4.svg)](https://github.com/sheerun/prettier-standard)
-[![Greenkeeper badge](https://badges.greenkeeper.io/hypergraph-xyz/cli.svg)](https://greenkeeper.io/)
-![ci](https://github.com/hypergraph-xyz/cli/workflows/ci/badge.svg)
 
-Command Line Interface (CLI) utilising the [peer-to-peer commons](https://p2pcommons.com).
+Command Line Interface (CLI) of the Hypergraph application. Primarily utilized to create modules.
 
-This environment was developed initially for use in scholarly
-communication but can be applied outside as well. Anything that can
-benefit from a step-by-step approach with provenance pretty much
-(@chartgerink also hopes to use it for music :musical_keyboard:).
 
 ## Installation
 
@@ -85,9 +79,6 @@ $ hypergraph --help
 
 ```
 
-This tool _directly_ allows you to start using public collaborative
-infrastructure.
-
 After installation, the `hypergraph` command is exported to your command
 line.
 
@@ -110,17 +101,7 @@ their best to answer your questions in the issues.
 
 ## Contributing
 
-Please note we adhere to a [Code of Conduct](./CODE_OF_CONDUCT.md) and
-any contributions not in line with it (_tl;dr_ be an empathetic,
-considerate person) will not be accepted. Please notify
-[@chartgerink](mailto:chris@libscie.org) if anything happens.
-
-If you want to develop your own applications using this public
-collaborative infrastructure, we recommend you look at our
-[Application Programmatic Interface
-(API)](https://github.com/libscie/api). All data is portable between
-applications if it adheres to the specifications outlined in that
-repository.
+Any contributions to this repository are subject to the [Liberate Science Code of Conduct](https://www.notion.so/libscie/Code-of-Conduct-580ab64832a2478fad7d9dfad9d3da15). 
 
 ## How to release
 
